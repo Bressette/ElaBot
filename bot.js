@@ -1,9 +1,13 @@
 const discord = require('discord.js');
 const client = new discord.Client;
+const gayNames = ["Bryce", "Ian", "Raymond"];
 
 client.on('message', message => {
-    if (message.content.includes("Bryce") || message.content.includes("Ian") || message.content.includes("Raymond")) {
-        message.channel.send("Placeholder Message");
+    //code used because my friends are not very creative and call each other gay every half second
+    for(var i in gayNames) {
+        if(message.content.toLowerCase().includes(gayNames[i].toLowerCase())) {
+            message.channel.send("Gay");
+        }
     }
 });
 
