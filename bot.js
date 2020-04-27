@@ -26,13 +26,15 @@ client.on('message', message => {
         if(content.localeCompare("daily") === 0) {
             message.channel.send("You claimed your daily reward of 5000$, You can claim it again in 24h")
         }
-    }
 
-    for(var i in gayNames) {
-        if(content.toLowerCase().includes(gayNames[i].toLowerCase())) {
-            message.channel.send(gayUserIds[i] + " is Gay");
+        for(var i in gayNames) {
+            if(content.toLowerCase().includes(gayNames[i].toLowerCase())) {
+                message.channel.send(gayUserIds[i] + " is Gay");
+            }
         }
     }
+
+    
 });
 
 client.login("NzAzNDI3ODE3MDA5ODQwMTg4.XqOduA.SS_g1f36getFYGINMArKTzH7it0");
