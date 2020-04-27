@@ -1,13 +1,27 @@
 const discord = require('discord.js');
 const client = new discord.Client;
-const gayNames = ["Bryce", "Ian", "Raymond"];
-const gayUserIds = ["<@!326546102537158666>", "<@!354954586529726465>", "<@!300054377505226752>"];
+const gayNames = ["Bryce", "Ian", "Raymond", "Jom", "Parker", "Matthew", "Jimbo"];
+const gayUserIds = ["<@!326546102537158666>", "<@!354954586529726465>", "<@!300054377505226752>", "<@!304475016936816640>", "<@289037025427062785>", "<@!447183354077380613>", "<@!289860934401392642>"];
+const dbName = 'ela-bot'
+const MongoClient = require('mongodb').MongoClient
+const url = 'mongodb://127.0.0.1:27017'
+let db
+
+MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true}, (err, dbClient) => {
+    if(err) return console.log(err)
+    db = dbClient.db(dbName)
+    console.log(`Connected MongoDB: ${url}`)
+    console.log(`Database: ${dbName}`)
+})
 
 client.on('message', message => {
     //code used because my friends are not very creative and call each other gay every half second
+    
+    const content = message.content;
+
     for(var i in gayNames) {
-        if(message.content.toLowerCase().includes(gayNames[i].toLowerCase())) {
-            message.channel.send(gayUserIds[i] + " Gay");
+        if(content.toLowerCase().includes(gayNames[i].toLowerCase())) {
+            message.channel.send(gayUserIds[i] + " is Gay");
         }
     }
 });
