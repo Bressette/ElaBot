@@ -5,51 +5,9 @@ const gayUserIds = ["<@!326546102537158666>", "<@!354954586529726465>", "<@!3000
 const dbName = 'ela-bot'
 const MongoClient = require('mongodb').MongoClient
 const url = 'mongodb://127.0.0.1:27017'
-// let db
 let userTag
 
-// function main() {
-//     const client = new MongoClient(url, { useUnifiedTopology: true });
-//     client.connect();
 
-//     db = client.db(dbName);
-//     const items = db.collection('users').find();
-
-//     console.log("In console.log " + items.name);
-    
-//     //const admin = client.db(dbName).admin();
-//     //console.log(await admin.serverStatus());
-//     //console.log(await admin.listDatabases());
-// }
-
-MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
-    if (err) throw err;
-    var dbo = db.db(dbName);
-    dbo.collection("users").findOne({name: "Bill"}, function(err, result) {
-      if (err) throw err;
-
-        console.log(result._id);
-
-      if(result === null) {
-          console.log("In if");
-          dbo.collection("users").insertOne({ name: "Bill", amount: 5}, function(err, result) {
-              if(err) throw err;
-          });
-      }
-
-
-      else {
-        dbo.collection("users").updateOne({ name: "Bill"}, { $set: {name: "Bill", amount: 10}}, function(err, res) {
-            testVal = dbo.collection("users").findOne({name: "Bill"}, function(err, res2) {
-                console.log(res2.amount)
-            })
-        })
-      }
-    //   db.close();
-    });
-  });
-
-// main();
 
 client.on('message', message => {
     //code used because my friends are not very creative and call each other gay every half second
@@ -61,25 +19,37 @@ client.on('message', message => {
         content = content.trim()
         if(content.localeCompare("daily") === 0) {
             
-            message.channel.send("You claimed your daily reward of 5000$, You can claim it again in 24h")
+            message.channel.send("You claimed your daily reward of 5000$, You can claim it infinitely (Time WIP)")
             addBalance(userTag, 5000);
         }
 
 
         if(content.startsWith("coinflip", 0)) {
-            console.log("In coinflip if")
             coinFlipStr = content.substr(8, content.length)
             coinFlipStr = coinFlipStr.trim()
             amount = parseInt(coinFlipStr)
+            console.log("The value of amount is: " + amount);
 
-            if(Math.floor(Math.random() * 2) === 1) {
-                addBalance(userTag, amount)
-            }
-            else {
-                addBalance(userTag, -Math.abs(amount))
-            }
+            if(!isNaN(amount)) {
 
-            
+                if(Math.floor(Math.random() * 2) === 1) {
+                    addBalance(userTag, amount)
+                    getBalance(userTag, function(totalBalance) {
+                        message.channel.send("You won the coinflip and " + amount);
+                    })
+                }
+                else {
+                    addBalance(userTag, -Math.abs(amount))
+                    getBalance(userTag, function(totalBalance) {
+                        message.channel.send("You lost the coinflip and " + amount);
+                    })
+                }
+
+            }
+        }
+
+        if(content.startsWith("balance", 0)) {
+            messageCurrentBalance(userTag, message);
         }
 
         for(var i in gayNames) {
@@ -115,6 +85,29 @@ function addBalance(name, amount) {
       });
 }
 
+function getBalance(name, fn) {
+    let currentBalance
+    MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db(dbName);
+        dbo.collection("users").findOne({name: name}, function(err, result) {
+          if (err) throw err;
+    
+          if(result === null) {
+              dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) {
+                  if(err) throw err;
+              });
+          }
+    
+          fn(result.amount)
+        });
+      });
+}
 
+function messageCurrentBalance(userTag, message) {
+    getBalance(userTag, function(amount) {
+        message.channel.send("Your current balance is: " + amount);
+    })
+}
 
 client.login("NzAzNDI3ODE3MDA5ODQwMTg4.XqOduA.SS_g1f36getFYGINMArKTzH7it0");
