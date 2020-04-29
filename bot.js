@@ -6,6 +6,7 @@ const dbName = 'ela-bot'
 const MongoClient = require('mongodb').MongoClient
 const url = 'mongodb://127.0.0.1:27017'
 let userTag
+const economy = require('./economy')
 
 
 
@@ -24,10 +25,10 @@ client.on('message', message => {
         switch(content) {
             case "daily":
                 message.channel.send("You claimed your daily reward of 5000$, You can claim it infinitely (Time WIP)")
-                addBalance(userTag, 5000);
+                economy.addBalance(userTag, 5000);
                 break;
         case "balance":
-            messageCurrentBalance(userTag, message);
+            economy.messageCurrentBalance(userTag, message);
             break;
         }
 
@@ -39,14 +40,14 @@ client.on('message', message => {
             if(!isNaN(amount)) {
 
                 if(Math.floor(Math.random() * 2) === 1) {
-                    addBalance(userTag, amount)
-                    getBalance(userTag, function(totalBalance) {
+                    economy.addBalance(userTag, amount)
+                    economy.getBalance(userTag, function(totalBalance) {
                         message.channel.send("You won the coinflip and " + amount);
                     })
                 }
                 else {
-                    addBalance(userTag, -Math.abs(amount))
-                    getBalance(userTag, function(totalBalance) {
+                    economy.addBalance(userTag, -Math.abs(amount))
+                    economy.getBalance(userTag, function(totalBalance) {
                         message.channel.send("You lost the coinflip and " + amount);
                     })
                 }
@@ -63,53 +64,53 @@ client.on('message', message => {
 
 });
 
-function addBalance(name, amount) {
-    MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db(dbName);
-        dbo.collection("users").findOne({name: name}, function(err, result) {
-          if (err) throw err;
+// function addBalance(name, amount) {
+//     MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
+//         if (err) throw err;
+//         var dbo = db.db(dbName);
+//         dbo.collection("users").findOne({name: name}, function(err, result) {
+//           if (err) throw err;
     
-          if(result === null) {
+//           if(result === null) {
               
-              dbo.collection("users").insertOne({ name: name, amount: amount}, function(err, result) {
-                  if(err) throw err;
-              });
-          }
+//               dbo.collection("users").insertOne({ name: name, amount: amount}, function(err, result) {
+//                   if(err) throw err;
+//               });
+//           }
     
     
-          else {
+//           else {
               
-            dbo.collection("users").updateOne({ name: name}, { $set: {name: name, amount: (result.amount + amount)}}, function(err, res) {
-            })
-          }
-        });
-      });
-}
+//             dbo.collection("users").updateOne({ name: name}, { $set: {name: name, amount: (result.amount + amount)}}, function(err, res) {
+//             })
+//           }
+//         });
+//       });
+// }
 
-function getBalance(name, fn) {
-    let currentBalance
-    MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db(dbName);
-        dbo.collection("users").findOne({name: name}, function(err, result) {
-          if (err) throw err;
+// function getBalance(name, fn) {
+//     let currentBalance
+//     MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
+//         if (err) throw err;
+//         var dbo = db.db(dbName);
+//         dbo.collection("users").findOne({name: name}, function(err, result) {
+//           if (err) throw err;
     
-          if(result === null) {
-              dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) {
-                  if(err) throw err;
-              });
-          }
+//           if(result === null) {
+//               dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) {
+//                   if(err) throw err;
+//               });
+//           }
     
-          fn(result.amount)
-        });
-      });
-}
+//           fn(result.amount)
+//         });
+//       });
+// }
 
-function messageCurrentBalance(userTag, message) {
-    getBalance(userTag, function(amount) {
-        message.channel.send("Your current balance is: " + amount);
-    })
-}
+// function messageCurrentBalance(userTag, message) {
+//     getBalance(userTag, function(amount) {
+//         message.channel.send("Your current balance is: " + amount);
+//     })
+// }
 
 client.login("NzAzNDI3ODE3MDA5ODQwMTg4.XqOduA.SS_g1f36getFYGINMArKTzH7it0");
