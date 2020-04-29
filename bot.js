@@ -14,21 +14,27 @@ client.on('message', message => {
     userTag = message.member.user.tag;
     content = message.content;
 
+    //message.channel.send(":cherries:")
+
     if(content.trim().startsWith("e!", 0)) {
         content = content.substr(2, content.length)
         content = content.trim()
-        if(content.localeCompare("daily") === 0) {
-            
-            message.channel.send("You claimed your daily reward of 5000$, You can claim it infinitely (Time WIP)")
-            addBalance(userTag, 5000);
-        }
 
+        console.log("The value of content is: " + content)
+        switch(content) {
+            case "daily":
+                message.channel.send("You claimed your daily reward of 5000$, You can claim it infinitely (Time WIP)")
+                addBalance(userTag, 5000);
+                break;
+        case "balance":
+            messageCurrentBalance(userTag, message);
+            break;
+        }
 
         if(content.startsWith("coinflip", 0)) {
             coinFlipStr = content.substr(8, content.length)
             coinFlipStr = coinFlipStr.trim()
             amount = parseInt(coinFlipStr)
-            console.log("The value of amount is: " + amount);
 
             if(!isNaN(amount)) {
 
@@ -48,10 +54,6 @@ client.on('message', message => {
             }
         }
 
-        if(content.startsWith("balance", 0)) {
-            messageCurrentBalance(userTag, message);
-        }
-
         for(var i in gayNames) {
             if(content.toLowerCase().includes(gayNames[i].toLowerCase())) {
                 message.channel.send(gayUserIds[i] + " is Gay");
@@ -69,7 +71,7 @@ function addBalance(name, amount) {
           if (err) throw err;
     
           if(result === null) {
-              console.log("in if")
+              
               dbo.collection("users").insertOne({ name: name, amount: amount}, function(err, result) {
                   if(err) throw err;
               });
@@ -77,7 +79,7 @@ function addBalance(name, amount) {
     
     
           else {
-              console.log("in else")
+              
             dbo.collection("users").updateOne({ name: name}, { $set: {name: name, amount: (result.amount + amount)}}, function(err, res) {
             })
           }
