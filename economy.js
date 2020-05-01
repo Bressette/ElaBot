@@ -47,10 +47,15 @@ module.exports = {
             if(result === null) {
                 dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) {
                     if(err) throw err;
+
+                    fn(0)
                 });
             }
         
-            fn(result.amount)
+            else {
+                fn(result.amount)
+            }
+            
             });
         });
     },

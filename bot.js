@@ -9,12 +9,13 @@ let userTag
 const economy = require('./economy')
 
 
-
 client.on('message', message => {
     //code used because my friends are not very creative and call each other gay every half second
     userTag = message.member.user.tag;
     content = message.content;
 
+    // console.log("The message content is: " + message.content)
+    // console.log("Bryce's tag is: " + users.get(326546102537158666))
     //message.channel.send(":cherries:")
 
     if(content.trim().startsWith("e!", 0)) {
@@ -24,8 +25,12 @@ client.on('message', message => {
         console.log("The value of content is: " + content)
         switch(content) {
             case "daily":
-                message.channel.send("You claimed your daily reward of 5000$, You can claim it infinitely (Time WIP)")
-                economy.addBalance(userTag, 5000);
+                const localTag = message.member.user.tag
+                message.channel.send("You claimed your daily reward of 69420$, You can claim it infinitely (Time WIP)")
+                economy.addBalance(localTag, 69420);
+                setTimeout(function() {
+                    economy.messageCurrentBalance(localTag, message);
+                }, 100)
                 break;
         case "balance":
             economy.messageCurrentBalance(userTag, message);
@@ -39,6 +44,7 @@ client.on('message', message => {
 
             if(!isNaN(amount)) {
 
+                const localTag = message.member.user.tag
                 if(Math.floor(Math.random() * 2) === 1) {
                     economy.addBalance(userTag, amount)
                     economy.getBalance(userTag, function(totalBalance) {
@@ -51,6 +57,11 @@ client.on('message', message => {
                         message.channel.send("You lost the coinflip and " + amount);
                     })
                 }
+
+                setTimeout(function() {
+                    economy.messageCurrentBalance(localTag, message)
+                }, 100)
+                
 
             }
         }
