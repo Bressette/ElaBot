@@ -22,15 +22,7 @@ const sekiroReview = "First off, fuck this game. It sucks so much id rather remo
 //  });
 
 
-//  async function getUser() {
-//      try {
-//      const userObject = await client.users.fetch(304475016936816640, false)
 
-//      console.log(userObject.tag)
-//      } catch(err) {
-//          console.error(err)
-//      }
-//  }
 
 client.on('message', message => {
     //code used because my friends are not very creative and call each other gay every half second
@@ -38,38 +30,27 @@ client.on('message', message => {
     userId = message.member.user.id;
     content = message.content;
 
-    // if(content.includes("!") && !(content.trim().startsWith("e!", 0))) {
-    //     userId = content.split("!")[1].split(">")[0];
-    //     client.user.fetch(304475016936816640, result => {
-    //         console.log(result.tag)    
-
-    //     })
-        
-    // }
-
-    // else if(content.includes("@")) {
-    //     userId = content.split("@")[1].split(">")[0];
-    //     client.user.fetch(304475016936816640, result => {
-    //         console.log(result.tag)    
-
-    //     })
-        
-    // }
+    //changes all characters to lower case to allow the commands to not be case sensitive
     content = content.toLowerCase()
 
-    if(content.trim().startsWith("e!", 0)) {
+    //check if content starts with the command prefix e!
+    if(content.trim().startsWith("e!", 0)) 
+    {
+        //removes e! from the content string
         content = content.substr(2, content.length).trim()
 
+        //create a command string to hold the command keyword
         command = content
-        if(command.includes(" ")) {
+        if(command.includes(" ")) 
+        {
             command = command.substr(0, content.indexOf(" "))
         }
 
-        console.log("The value of command is: " + command)
-
-        switch(command) {
+        
+        //switch statement to determine what command the user used
+        switch(command) 
+        {
             case "daily":
-                console.log("in daily")
                 economy.daily(userId, message, 5000);
                 break;
             case "balance":
@@ -78,24 +59,26 @@ client.on('message', message => {
             case "coinflip":
                 economy.coinflip(content, message, userId);
                 break;
-
             case "give":
-                console.log("In case give")
                 economy.give(content, message, userId);
                 break;
-
             case "sekiro":
                 message.channel.send(sekiroReview)
                 break;
+        }
+
+    
         
     }
 
-        for(var i in gayNames) {
-            if(content.includes(gayNames[i].toLowerCase())) {
+    //checks if a gay name is in a string
+    for(var i in gayNames) 
+        {
+            if(content.includes(gayNames[i].toLowerCase())) 
+            {
                 message.channel.send(gayUserIds[i] + " is Gay");
             }
         }
-    }
 
 });
 
