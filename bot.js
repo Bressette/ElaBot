@@ -61,8 +61,15 @@ client.on('message', message => {
     if(content.trim().startsWith("e!", 0)) {
         content = content.substr(2, content.length)
         content = content.trim()
+        command = content
+        if(command.includes(" ")) {
+            command = command.substr(0, content.indexOf(" "))
+        }
+        
 
-        switch(content) {
+        console.log("The value of command is: " + command);
+
+        switch(command) {
             case "daily":
                 const localId = userId
                 message.channel.send("You claimed your daily reward of 69420$, You can claim it infinitely (Time WIP)")
@@ -74,9 +81,9 @@ client.on('message', message => {
         case "balance":
             economy.messageCurrentBalance(userId, message);
             break;
-        }
+        
 
-        if(content.startsWith("coinflip", 0)) {
+        case "coinflip":
             coinFlipStr = content.substr(8, content.length)
             coinFlipStr = coinFlipStr.trim()
             amount = parseInt(coinFlipStr)
@@ -103,11 +110,14 @@ client.on('message', message => {
                 
 
             }
-        }
+            break;
+        
 
-        if(content.startsWith("sekiro", 0)) {
-                message.channel.send(sekiroReview)
-        }
+        case "sekiro":
+            message.channel.send(sekiroReview)
+            break;
+        
+    }
 
         for(var i in gayNames) {
             if(content.includes(gayNames[i].toLowerCase())) {
