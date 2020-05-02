@@ -17,16 +17,16 @@ client.on('ready', () => {
     .catch(console.error)
  });
 
- // TODO: Store the values for each user in the database as client ID because the user tag can change
- async function getUser() {
-     try {
-     const userObject = await client.users.fetch(304475016936816640, false)
 
-     console.log(userObject.tag)
-     } catch(err) {
-         console.error(err)
-     }
- }
+//  async function getUser() {
+//      try {
+//      const userObject = await client.users.fetch(304475016936816640, false)
+
+//      console.log(userObject.tag)
+//      } catch(err) {
+//          console.error(err)
+//      }
+//  }
 
 client.on('message', message => {
     //code used because my friends are not very creative and call each other gay every half second
@@ -34,7 +34,6 @@ client.on('message', message => {
     userId = message.member.user.id;
     content = message.content;
 
-    getUser();
     // if(content.includes("!") && !(content.trim().startsWith("e!", 0))) {
     //     userId = content.split("!")[1].split(">")[0];
     //     client.user.fetch(304475016936816640, result => {
@@ -57,6 +56,7 @@ client.on('message', message => {
     
     // console.log("The message content is: " + message.content)
     //message.channel.send(":cherries:")
+    content = content.toLowerCase()
 
     if(content.trim().startsWith("e!", 0)) {
         content = content.substr(2, content.length)
@@ -110,7 +110,7 @@ client.on('message', message => {
         }
 
         for(var i in gayNames) {
-            if(content.toLowerCase().includes(gayNames[i].toLowerCase())) {
+            if(content.includes(gayNames[i].toLowerCase())) {
                 message.channel.send(gayUserIds[i] + " is Gay");
             }
         }
