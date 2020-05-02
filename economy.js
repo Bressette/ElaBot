@@ -12,23 +12,23 @@ module.exports =
         {
             if (err) 
             {
-                throw err;
+                throw err
             }
 
             //create a database object based on the db name ela-bot
-            var dbo = db.db(dbName);
+            var dbo = db.db(dbName)
 
             //retrieve the record for the given user
             dbo.collection("users").findOne({name: name}, function(err, result) {
-            if (err) throw err;
+            if (err) throw err
         
             //if the user does not exist insert the user with the given amount
             if(result === null) 
             {
                 dbo.collection("users").insertOne({ name: name, amount: amount}, function(err, result) 
                 {
-                    if(err) throw err;
-                });
+                    if(err) throw err
+                })
             }
 
             //if the user already exists update the record with the new amount
@@ -37,8 +37,8 @@ module.exports =
                 dbo.collection("users").updateOne({ name: name}, { $set: {name: name, amount: (result.amount + amount)}}, function(err, res) {
                 })
             }
-            });
-        });
+            })
+        })
     },
 
     //function that gets the balance for a given user and passes the value into a callback function. If the user does not exist a new record is inserted with the user id and an amount of 0
@@ -47,16 +47,16 @@ module.exports =
         //connect to mongodb
         MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
         {
-            if (err) throw err;
+            if (err) throw err
 
             //create a database object for the database ela-bot
-            var dbo = db.db(dbName);
+            var dbo = db.db(dbName)
 
             //finds the record associated with the given userId
             dbo.collection("users").findOne({name: name}, function(err, result) {
             if (err) 
             {
-                throw err;
+                throw err
             }
 
             //if the user does not exist a new record is inserted with a default amount of 0
@@ -64,9 +64,9 @@ module.exports =
             {
                 dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) 
                 {
-                    if(err) throw err;
+                    if(err) throw err
                     fn(0) //passes the amount for the user to the function fn()
-                });
+                })
             }
         
             //if the user exists pass the result amount to the function fn()
@@ -75,8 +75,8 @@ module.exports =
                 fn(result.amount)
             }
             
-            });
-        });
+            })
+        })
     },
 
     //function that sends a message after getting the balance from a userId that is passed into the function
@@ -84,23 +84,34 @@ module.exports =
     {
         module.exports.getBalance(userTag, function(amount) 
         {
-            message.channel.send("Your current balance is: " + amount);
+            message.channel.send("Your current balance is: " + amount)
         })
     },
 
     //function that adds the daily reward to a user if it has been less than 24 hours since previously claiming it (Date functionality currently WIP)
     daily : function getDailyReward(userId, message, dailyAmount) 
     {
+
+        MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
+        {
+            dbo = db.db(dbName)
+            results = dbo.collection("users").find({})
+
+        })
+        date = new Date()
+        
+
         message.channel.send("You claimed your daily reward of $" + dailyAmount +  ", You can claim it infinitely (Time WIP)")
 
         //add the daily balance to the user
-        module.exports.addBalance(userId, dailyAmount);
+        module.exports.addBalance(userId, dailyAmount)
 
         //wait to tell their user their new balance after the amount is added
         setTimeout(function() 
         {
-            module.exports.messageCurrentBalance(userId, message);
+            module.exports.messageCurrentBalance(userId, message)
         }, 100)
+    
     },
 
 
@@ -123,13 +134,13 @@ module.exports =
                 if(Math.floor(Math.random() * 2) === 1) 
                 {
                     module.exports.addBalance(userId, amount)
-                    message.channel.send("You won the coinflip and " + amount);
+                    message.channel.send("You won the coinflip and " + amount)
                 }
 
                 else 
                 {
                     module.exports.addBalance(userId, -Math.abs(amount))
-                    message.channel.send("You lost the coinflip and " + amount);
+                    message.channel.send("You lost the coinflip and " + amount)
                 }
 
                 //tell the user their new balance after waiting for db to finish
@@ -162,7 +173,7 @@ module.exports =
             }
             else if(targetUserId.includes("@"))
             {
-                targetUserId = targetUserId.split("@")[1].split(">")[0];
+                targetUserId = targetUserId.split("@")[1].split(">")[0]
             }
 
             
