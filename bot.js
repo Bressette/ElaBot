@@ -1,5 +1,6 @@
 const discord = require('discord.js');
 const client = new discord.Client;
+const userManager = new discord.UserManager;
 const gayNames = ["Bryce", "Ian", "Raymond", "Jom", "Parker", "Matthew", "Jimbo"];
 const gayUserIds = ["<@!326546102537158666>", "<@!354954586529726465>", "<@!300054377505226752>", "<@!304475016936816640>", "<@289037025427062785>", "<@!447183354077380613>", "<@!289860934401392642>"];
 const dbName = 'ela-bot'
@@ -16,11 +17,41 @@ client.on('ready', () => {
     .catch(console.error)
  });
 
+ // TODO: Store the values for each user in the database as client ID because the user tag can change
+ async function getUser() {
+     try {
+     const userObject = await client.users.fetch(304475016936816640, false)
+
+     console.log(userObject.tag)
+     } catch(err) {
+         console.error(err)
+     }
+ }
+
 client.on('message', message => {
     //code used because my friends are not very creative and call each other gay every half second
     userTag = message.member.user.tag;
+    userId = message.member.user.id;
     content = message.content;
 
+    getUser();
+    // if(content.includes("!") && !(content.trim().startsWith("e!", 0))) {
+    //     userId = content.split("!")[1].split(">")[0];
+    //     client.user.fetch(304475016936816640, result => {
+    //         console.log(result.tag)    
+
+    //     })
+        
+    // }
+
+    // else if(content.includes("@")) {
+    //     userId = content.split("@")[1].split(">")[0];
+    //     client.user.fetch(304475016936816640, result => {
+    //         console.log(result.tag)    
+
+    //     })
+        
+    // }
     
 
     
@@ -33,15 +64,15 @@ client.on('message', message => {
 
         switch(content) {
             case "daily":
-                const localTag = message.member.user.tag
+                const localId = userId
                 message.channel.send("You claimed your daily reward of 69420$, You can claim it infinitely (Time WIP)")
-                economy.addBalance(localTag, 69420);
+                economy.addBalance(localId, 69420);
                 setTimeout(function() {
-                    economy.messageCurrentBalance(localTag, message);
+                    economy.messageCurrentBalance(localId, message);
                 }, 100)
                 break;
         case "balance":
-            economy.messageCurrentBalance(userTag, message);
+            economy.messageCurrentBalance(userId, message);
             break;
         }
 
@@ -52,22 +83,22 @@ client.on('message', message => {
 
             if(!isNaN(amount)) {
 
-                const localTag = message.member.user.tag
+                const localId = userId
                 if(Math.floor(Math.random() * 2) === 1) {
-                    economy.addBalance(userTag, amount)
-                    economy.getBalance(userTag, function(totalBalance) {
+                    economy.addBalance(localId, amount)
+                    economy.getBalance(localId, function(totalBalance) {
                         message.channel.send("You won the coinflip and " + amount);
                     })
                 }
                 else {
-                    economy.addBalance(userTag, -Math.abs(amount))
-                    economy.getBalance(userTag, function(totalBalance) {
+                    economy.addBalance(localId, -Math.abs(amount))
+                    economy.getBalance(localId, function(totalBalance) {
                         message.channel.send("You lost the coinflip and " + amount);
                     })
                 }
 
                 setTimeout(function() {
-                    economy.messageCurrentBalance(localTag, message)
+                    economy.messageCurrentBalance(localId, message)
                 }, 100)
                 
 
