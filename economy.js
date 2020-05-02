@@ -111,5 +111,28 @@ module.exports =
                 }, 100)
             }
         })
+    },
+
+    give : function give(content, message, userId) 
+    {
+        content = content.substr(4, content.length).trim()
+        console.log("The value of content is: " + content)
+        module.exports.getBalance(userId, (amount) => {
+            targetUserId = content.split(" ")[0]
+            if(targetUserId.includes("!"))
+            {
+                targetUserId = targetUserId.split("!")[1].split(">")[0]
+            }
+
+            else if(targetUserId.includes("@"))
+            {
+                targetUserId = targetUserId.split("@")[1].split(">")[0];
+            }
+
+            targetValue = content.split(" ")[1]
+            module.exports.addBalance(userId, -Math.abs(targetValue))
+            module.exports.addBalance(targetUserId, targetValue)
+            message.channel.send(targetValue + " was given to " + "<@" + targetUserId + ">")
+        })
     }
 }
