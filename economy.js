@@ -2,10 +2,12 @@ const MongoClient = require('mongodb').MongoClient
 const url = 'mongodb://127.0.0.1:27017'
 const dbName = 'ela-bot'
 
-module.exports = {
-
-    addBalance : function addBalance(name, amount) {
-        MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
+module.exports = 
+{
+    addBalance : function addBalance(name, amount) 
+    {
+        MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
+        {
             if (err) 
             {
                 throw err;
@@ -14,15 +16,15 @@ module.exports = {
             dbo.collection("users").findOne({name: name}, function(err, result) {
             if (err) throw err;
         
-            if(result === null) {
-                
-                dbo.collection("users").insertOne({ name: name, amount: amount}, function(err, result) {
+            if(result === null) 
+            {
+                dbo.collection("users").insertOne({ name: name, amount: amount}, function(err, result) 
+                {
                     if(err) throw err;
                 });
             }
-        
-            else {
-                
+            else 
+            {
                 dbo.collection("users").updateOne({ name: name}, { $set: {name: name, amount: (result.amount + amount)}}, function(err, res) {
                 })
             }
@@ -32,27 +34,28 @@ module.exports = {
 
     getBalance : function getBalance(name, fn) {
         
-        MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
-
+        MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
+        {
             if (err) throw err;
-
             var dbo = db.db(dbName);
 
             dbo.collection("users").findOne({name: name}, function(err, result) {
-
-            if (err) {
+            if (err) 
+            {
                 throw err;
             }
 
-            if(result === null) {
-                dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) {
+            if(result === null) 
+            {
+                dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) 
+                {
                     if(err) throw err;
-
                     fn(0)
                 });
             }
         
-            else {
+            else 
+            {
                 fn(result.amount)
             }
             
@@ -60,9 +63,20 @@ module.exports = {
         });
     },
 
-    messageCurrentBalance : function messageCurrentBalance(userTag, message) {
-        module.exports.getBalance(userTag, function(amount) {
+    messageCurrentBalance : function messageCurrentBalance(userTag, message) 
+    {
+        module.exports.getBalance(userTag, function(amount) 
+        {
             message.channel.send("Your current balance is: " + amount);
         })
+    },
+
+    daily : function getDailyReward(userId, message, dailyAmount) {
+        message.channel.send("You claimed your daily reward of $" + dailyAmount +  ", You can claim it infinitely (Time WIP)")
+        module.exports.addBalance(userId, dailyAmount);
+        setTimeout(function() 
+        {
+            module.exports.messageCurrentBalance(userId, message);
+        }, 100)
     }
 }

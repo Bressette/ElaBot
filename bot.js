@@ -61,22 +61,16 @@ client.on('message', message => {
     if(content.trim().startsWith("e!", 0)) {
         content = content.substr(2, content.length)
         content = content.trim()
+
         command = content
         if(command.includes(" ")) {
             command = command.substr(0, content.indexOf(" "))
         }
-        
 
-        console.log("The value of command is: " + command);
 
         switch(command) {
             case "daily":
-                const localId = userId
-                message.channel.send("You claimed your daily reward of 69420$, You can claim it infinitely (Time WIP)")
-                economy.addBalance(localId, 69420);
-                setTimeout(function() {
-                    economy.messageCurrentBalance(localId, message);
-                }, 100)
+                economy.daily(userId, message, 5000);
                 break;
         case "balance":
             economy.messageCurrentBalance(userId, message);
