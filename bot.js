@@ -78,32 +78,7 @@ client.on('message', message => {
         
 
         case "coinflip":
-            coinFlipStr = content.substr(8, content.length)
-            coinFlipStr = coinFlipStr.trim()
-            amount = parseInt(coinFlipStr)
-
-            if(!isNaN(amount)) {
-
-                const localId = userId
-                if(Math.floor(Math.random() * 2) === 1) {
-                    economy.addBalance(localId, amount)
-                    economy.getBalance(localId, function(totalBalance) {
-                        message.channel.send("You won the coinflip and " + amount);
-                    })
-                }
-                else {
-                    economy.addBalance(localId, -Math.abs(amount))
-                    economy.getBalance(localId, function(totalBalance) {
-                        message.channel.send("You lost the coinflip and " + amount);
-                    })
-                }
-
-                setTimeout(function() {
-                    economy.messageCurrentBalance(localId, message)
-                }, 100)
-                
-
-            }
+            economy.coinflip(content, message, userId);
             break;
         
 
