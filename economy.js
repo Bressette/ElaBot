@@ -195,4 +195,28 @@ module.exports =
             }
         })
     },
+
+    leaderboard : function(message, client)
+    {
+        MongoClient.connect(url, { useUnifiedTopology: true }, async function(err, db) 
+        {
+            dbo = db.db(dbName)
+            cursor = dbo.collection("users").find({}).sort([['amount', -1]])
+            results = await cursor.toArray()
+
+            leaderBoardString = "```"
+
+            for(i in results)
+            {
+                user = await client.users.fetch(results[i].name)
+                userName = user.tag.split("#")[0]
+                leaderBoardString += userName + " " + results[i].amount + "\n"
+            }
+
+            leaderBoardString += "```"
+
+            message.channel.send(leaderBoardString)
+
+        })
+    }
 }

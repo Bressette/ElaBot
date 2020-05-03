@@ -61,6 +61,9 @@ client.on('message', message => {
             case "give":
                 economy.give(content, message, userId)
                 break
+            case "leaderboard":
+                economy.leaderboard(message, client)
+                break
             case "sekiro":
                 message.channel.send(sekiroReview)
                 break
