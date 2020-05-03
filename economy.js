@@ -180,18 +180,31 @@ module.exports =
                 targetUserId = targetUserId.split("@")[1].split(">")[0]
             }
 
-            targetValue = parseInt(targetValue)
-            //checks if the user can give the specified value
-            if(targetValue > amount) 
+            if(message.guild.member(targetUserId))
             {
-                message.channel.send("You cannot give more than you have!")
+                targetValue = parseInt(targetValue)
+                //checks if the user can give the specified value
+                if(targetValue > amount) 
+                {
+                    message.channel.send("You cannot give more than you have!")
+                }
+
+                else if(targetValue < 0) 
+                {
+                    message.channel.send("You cannot steal money!")
+                }
+
+                else 
+                {
+                    module.exports.addBalance(userId, -Math.abs(targetValue))
+                    module.exports.addBalance(targetUserId, targetValue)
+                    message.channel.send(targetValue + " was given to " + "<@" + targetUserId + ">")
+                }
             }
 
-            else 
+            else
             {
-                module.exports.addBalance(userId, -Math.abs(targetValue))
-                module.exports.addBalance(targetUserId, targetValue)
-                message.channel.send(targetValue + " was given to " + "<@" + targetUserId + ">")
+                message.channel.send("That user does not exist...")
             }
         })
     },
