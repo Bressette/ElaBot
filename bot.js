@@ -66,6 +66,9 @@ client.on('message', message => {
             case "kick":
                 admin.kick(message)
                 break
+            case "ban":
+                admin.ban(message)
+                break
             case "sekiro":
                 message.channel.send(copyPastas.sekiro)
                 break
