@@ -5,6 +5,7 @@ const dbName = 'ela-bot'
 const MongoClient = require('mongodb').MongoClient
 const url = 'mongodb://127.0.0.1:27017'
 const economy = require('./economy')
+const admin = require('./admin')
 const token = require('./token.json')
 const copyPastas = require('./copy-pastas.json')
 
@@ -63,21 +64,7 @@ client.on('message', message => {
                 economy.leaderboard(message, client)
                 break
             case "kick":
-                if(message.member.hasPermission("ADMINISTRATOR"))
-                {
-                    member = message.mentions.members.first()
-                    member.kick().then((member) =>
-                    {
-                        message.channel.send(":wave: " + member.displayName + " has been kicked from the server :sunglasses: ")
-                    }).catch(() =>
-                    {
-                        console.log("Error")
-                    })
-                }
-                else
-                {
-                    message.channel.send("You do not have the permission to do that :rage:")
-                }
+                admin.kick(message)
                 break
             case "sekiro":
                 message.channel.send(copyPastas.sekiro)
