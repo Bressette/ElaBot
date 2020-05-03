@@ -89,16 +89,20 @@ module.exports =
     },
 
     //function that adds the daily reward to a user if it has been less than 24 hours since previously claiming it (Date functionality currently WIP)
-    daily : function getDailyReward(userId, message, dailyAmount) 
+    daily : function(userId, message, dailyAmount) 
     {
 
-        MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
+        MongoClient.connect(url, { useUnifiedTopology: true }, async function(err, db) 
         {
             dbo = db.db(dbName)
             results = dbo.collection("users").find({})
+            testResults = await results.toArray()
+            console.log(testResults)
+            console.log(testResults[0].amount)
 
         })
         date = new Date()
+        console.log("Date.getTime is: " + date.getTime())
         
 
         message.channel.send("You claimed your daily reward of $" + dailyAmount +  ", You can claim it infinitely (Time WIP)")
@@ -176,9 +180,9 @@ module.exports =
                 targetUserId = targetUserId.split("@")[1].split(">")[0]
             }
 
-            
+            targetValue = parseInt(targetValue)
             //checks if the user can give the specified value
-            if(parseInt(targetValue) > amount) 
+            if(targetValue > amount) 
             {
                 message.channel.send("You cannot give more than you have!")
             }
