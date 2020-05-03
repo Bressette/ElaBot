@@ -5,7 +5,7 @@ const dbName = 'ela-bot'
 module.exports = 
 {
     //function that adds the balance to a record associated with the user id that is passed into the function
-    addBalance : function addBalance(name, amount) 
+    addBalance : function(name, amount) 
     {
         //connect to mongodb
         MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
@@ -42,7 +42,7 @@ module.exports =
     },
 
     //function that gets the balance for a given user and passes the value into a callback function. If the user does not exist a new record is inserted with the user id and an amount of 0
-    getBalance : function getBalance(name, fn) 
+    getBalance : function(name, fn) 
     {
         //connect to mongodb
         MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
@@ -80,7 +80,7 @@ module.exports =
     },
 
     //function that sends a message after getting the balance from a userId that is passed into the function
-    messageCurrentBalance : function messageCurrentBalance(userTag, message) 
+    messageCurrentBalance : function(userTag, message) 
     {
         module.exports.getBalance(userTag, function(amount) 
         {
@@ -120,7 +120,7 @@ module.exports =
 
 
     //function that lets the user coinflip a certain value with a 50% chance that they double the staked money
-    coinflip : function coinflip(content, message, userId)
+    coinflip : function(content, message, userId)
     {
         //parse the staked amount from the content string 
         amount = parseInt(content.substr(8, content.length).trim())
@@ -158,7 +158,7 @@ module.exports =
 
     //function that lets a user give some of their balance to another user
     //The target user must be mentioned by the source user and 
-    give : function give(content, message, userId) 
+    give : function(content, message, userId) 
     {
         //removes give from the content string
         content = content.substr(4, content.length).trim()
@@ -194,5 +194,5 @@ module.exports =
                 message.channel.send(targetValue + " was given to " + "<@" + targetUserId + ">")
             }
         })
-    }
+    },
 }
