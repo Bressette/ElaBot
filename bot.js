@@ -71,8 +71,14 @@ client.on('message', message => {
                 content = content.substr(8, content.length)
                 if(!isNaN(parseInt(content)))
                 {
-                    slotSize = parseInt(content)
-                    message.channel.send("The new slot size is: " + slotSize)
+                    if(parseInt(content) < 3 || parseInt(content) > 12)
+                        message.channel.send("The slot size must be from 3-12")
+                    else
+                    {
+                        slotSize = parseInt(content)
+                        message.channel.send("The new slot size is: " + slotSize)
+                    }
+                        
                 }
                 else
                 {
