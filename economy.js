@@ -156,6 +156,122 @@ module.exports =
         })
     },
 
+    getSlotEmoji : function(value)
+    {
+        if(value < 50)
+            return ":seven:"
+        else if(value >= 50 && value < 70)
+            return ":game_die:"
+        else if(value >= 70 && value < 85)
+            return ":cherries:"
+        else if(value >= 85 && value < 95)
+            return ":sunglasses:"
+        else if(value >= 95 && value < 100)
+            return ":moneybag:"
+    },
+
+    slots : function(content, message, userId, slotSize)
+    {
+        //parse the staked amount from the content string 
+        amount = parseInt(content.substr(5, content.length).trim())
+
+        //call get balance to check if the user entered a value value to stake
+        module.exports.getBalance(userId, function(balance) {
+            if(amount > balance)
+            {
+                message.channel.send("You cannot gamble more than you have!")
+            }
+
+            //if amount is a number execute the coinflip
+            else if(!isNaN(amount)) 
+            {
+                let slotDisplay = ""
+                let slotArray = []
+                let results = []
+
+                for(i = 1; i <= slotSize * slotSize; i++)
+                {
+                    rollSlots = Math.floor(Math.random() * 100)
+                    slotArray[i-1] = module.exports.getSlotEmoji(rollSlots)
+                    slotDisplay += slotArray[i-1]
+
+                    if(i % slotSize === 0)
+                        slotDisplay += "\n"
+                }
+
+                for(i = 0; i < slotSize; i++)
+                {
+                    rowCounter = 0
+                    columnCounter = 0
+                    for(j = 0; j < slotSize - 1; j++)
+                    {
+                        if(slotArray[i*slotSize + j] === slotArray[i*slotSize + j + 1])
+                            rowCounter++
+                        if(slotArray[j*slotSize + i] === slotArray[(j+1)*slotSize + i])
+                            columnCounter++
+
+                        if(rowCounter === slotSize - 1)
+                            results.push(slotArray[i*slotSize])
+                        if(columnCounter === slotSize - 1)
+                            results.push(slotArray[i])
+                    }
+                }
+
+                counter = 0
+                secondCounter = 0
+                for(i = 0; i < slotSize - 1; i++)
+                {
+                    console.log("the value is: " + (slotSize*slotSize - slotSize - i*slotSize + i) + " and" + (slotSize*slotSize - slotSize - (i+1)*slotSize + i + 1))
+                    if(slotArray[i*slotSize + i] === slotArray[(i+1)*slotSize + i + 1])
+                        counter++
+                    if(slotArray[slotSize*slotSize - slotSize - i*slotSize + i] === slotArray[slotSize*slotSize - slotSize - (i+1)*slotSize + i + 1])
+                        secondCounter++
+                    if(counter === slotSize - 1)
+                        results.push(slotArray[0])
+                    if(secondCounter === slotSize - 1)
+                        results.push(slotArray[slotSize])
+                }
+
+                message.channel.send(slotDisplay)
+
+                reward = 0
+                if(results.length === 0)
+                {
+                    message.channel.send("No rows won")
+                    module.exports.addBalance(userId, -Math.abs(amount))
+                }
+                    
+                else
+                {
+                    for(i of results)
+                    {
+                        switch(i)
+                        {
+                            case ":seven:":
+                                reward += 3 * amount + amount
+                            case ":game_die:":
+                                reward += 6 * amount + amount
+                            case ":cherries:":
+                                reward += 7 * amount + amount
+                            case ":sunglasses:":
+                                reward += 8 * amount + amount
+                            case ":moneybag:":
+                                reward += 10 * amount + amount
+                        }
+                    }
+                    module.exports.addBalance(userId, Math.abs(reward))
+                    message.channel.send("You won " + results.length + " rows")
+                }
+
+                //tell the user their new balance after waiting for db to finish
+                setTimeout(function() 
+                {
+                    module.exports.messageCurrentBalance(userId, message)
+                }, 100)
+            }
+        })
+    },
+
     //function that lets a user give some of their balance to another user
     //The target user must be mentioned by the source user and 
     give : function(content, message, userId) 

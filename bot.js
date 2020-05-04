@@ -9,6 +9,8 @@ const admin = require('./admin')
 const token = require('./token.json')
 const copyPastas = require('./copy-pastas.json')
 
+slotSize = 5
+
 client.on('ready', () => 
 {
     client.user.setPresence(
@@ -44,7 +46,6 @@ client.on('message', message => {
             command = command.substr(0, content.indexOf(" "))
         }
 
-        
         //switch statement to determine what command the user used
         switch(command) 
         {
@@ -57,11 +58,26 @@ client.on('message', message => {
             case "coinflip":
                 economy.coinflip(content, message, userId)
                 break
+            case "slots":
+                economy.slots(content, message, userId, slotSize)
+                break
             case "give":
                 economy.give(content, message, userId)
                 break
             case "leaderboard":
                 economy.leaderboard(message, client)
+                break
+            case "slotsize":
+                content = content.substr(8, content.length)
+                if(!isNaN(parseInt(content)))
+                {
+                    slotSize = parseInt(content)
+                    message.channel.send("The new slot size is: " + slotSize)
+                }
+                else
+                {
+                    message.channel.send("You must enter a value number for slot size")
+                }
                 break
             case "kick":
                 admin.kick(message)
