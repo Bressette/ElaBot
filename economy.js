@@ -221,7 +221,6 @@ module.exports =
                 secondCounter = 0
                 for(i = 0; i < slotSize - 1; i++)
                 {
-                    console.log("the value is: " + (slotSize*slotSize - slotSize - i*slotSize + i) + " and" + (slotSize*slotSize - slotSize - (i+1)*slotSize + i + 1))
                     if(slotArray[i*slotSize + i] === slotArray[(i+1)*slotSize + i + 1])
                         counter++
                     if(slotArray[slotSize*slotSize - slotSize - i*slotSize + i] === slotArray[slotSize*slotSize - slotSize - (i+1)*slotSize + i + 1])
@@ -248,15 +247,20 @@ module.exports =
                         switch(i)
                         {
                             case ":seven:":
-                                reward += 3 * amount + amount
+                                reward = (3 * amount + amount)
+                                break
                             case ":game_die:":
                                 reward += 6 * amount + amount
+                                break
                             case ":cherries:":
                                 reward += 7 * amount + amount
+                                break
                             case ":sunglasses:":
                                 reward += 8 * amount + amount
+                                break
                             case ":moneybag:":
                                 reward += 10 * amount + amount
+                                break
                         }
                     }
                     module.exports.addBalance(userId, Math.abs(reward))

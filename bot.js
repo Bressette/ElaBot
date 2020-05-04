@@ -76,7 +76,7 @@ client.on('message', message => {
                 }
                 else
                 {
-                    message.channel.send("You must enter a value number for slot size")
+                    message.channel.send("You must enter a valid number for slot size")
                 }
                 break
             case "kick":
