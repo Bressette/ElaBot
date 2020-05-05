@@ -74,9 +74,10 @@ module.exports =
             {
                 fn(result.amount)
             }
-            
             })
+            
         })
+        
     },
 
     //function that sends a message after getting the balance from a userId that is passed into the function

@@ -11,6 +11,9 @@ const copyPastas = require('./copy-pastas.json')
 
 slotSize = 5
 
+
+
+
 client.on('ready', () => 
 {
     client.user.setPresence(
@@ -84,6 +87,9 @@ client.on('message', message => {
                 {
                     message.channel.send("You must enter a valid number for slot size")
                 }
+                break
+            case "getslotsize":
+                message.channel.send("The slot size is: " + slotSize)
                 break
             case "kick":
                 admin.kick(message)
