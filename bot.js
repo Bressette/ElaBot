@@ -12,9 +12,6 @@ mongoUtil.connectToServer(() =>
 
 slotSize = 5
 
-
-
-
 client.on('ready', () => 
 {
     client.user.setPresence(
@@ -25,9 +22,6 @@ client.on('ready', () =>
     .catch(console.error)
  })
 
-
-
-
 client.on('message', message => {
     
     userTag = message.member.user.tag
@@ -36,7 +30,8 @@ client.on('message', message => {
 
     //changes all characters to lower case to allow the commands to not be case sensitive
     content = content.toLowerCase()
-
+    
+    
     //check if content starts with the command prefix e!
     if(content.trim().startsWith("e!", 0)) 
     {
@@ -72,22 +67,7 @@ client.on('message', message => {
                 economy.leaderboard(message, client)
                 break
             case "slotsize":
-                content = content.substr(8, content.length)
-                if(!isNaN(parseInt(content)))
-                {
-                    if(parseInt(content) < 3 || parseInt(content) > 12)
-                        message.channel.send("The slot size must be from 3-12")
-                    else
-                    {
-                        slotSize = parseInt(content)
-                        message.channel.send("The new slot size is: " + slotSize)
-                    }
-                        
-                }
-                else
-                {
-                    message.channel.send("You must enter a valid number for slot size")
-                }
+                slotSize = economy.slotSize(content, message, slotSize)
                 break
             case "getslotsize":
                 message.channel.send("The slot size is: " + slotSize)
@@ -102,11 +82,7 @@ client.on('message', message => {
                 message.channel.send(copyPastas.sekiro)
                 break
         }
-
-    
-        
     }
-
 })
 
 client.login(token.token)

@@ -143,6 +143,27 @@ module.exports =
             return ":moneybag:"
     },
 
+    slotSize : function(content, message, slotSize)
+    {
+        newSize = parseInt(content.substr(8, content.length))
+        if(!isNaN(newSize))
+        {
+            if(newSize < 3 || newSize > 12)
+                message.channel.send("The slot size must be from 3-12")
+            else
+            {
+                message.channel.send("The new slot size is: " + newSize)
+                return newSize
+            }
+                
+        }
+        else
+        {
+            message.channel.send("You must enter a valid number for slot size")
+            return slotSize
+        }
+    },
+
     //method that gambles balance and displays a slot machine
     slots : function(content, message, userId, slotSize)
     {
