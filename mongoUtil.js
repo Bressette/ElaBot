@@ -5,7 +5,7 @@ var db;
 
 module.exports = {
   connectToServer: function(callback) {
-    MongoClient.connect(url,  {useNewUrlParser: true}, function(err, client) {
+    MongoClient.connect(url,  {useUnifiedTopology: true}, function(err, client) {
       db  = client.db('ela-bot');
       return callback(err);
     } );

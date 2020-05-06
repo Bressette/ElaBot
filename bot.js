@@ -1,13 +1,14 @@
 const discord = require('discord.js')
 const client = new discord.Client
-const userManager = new discord.UserManager
-const dbName = 'ela-bot'
-const MongoClient = require('mongodb').MongoClient
-const url = 'mongodb://127.0.0.1:27017'
+const mongoUtil = require('./mongoUtil.js')
 const economy = require('./economy')
 const admin = require('./admin')
 const token = require('./token.json')
 const copyPastas = require('./copy-pastas.json')
+
+mongoUtil.connectToServer(() =>
+{
+})
 
 slotSize = 5
 
@@ -20,7 +21,7 @@ client.on('ready', () =>
         { activity: 
             { name: 'Rainbow Six Siege', 
             type: "WATCHING", 
-            url: 'https://www.youtube.com/channel/UCDsShdUQolkO3N0bn6VcTNg'}, status: 'online' }).then(console.log)
+            url: 'https://www.youtube.com/channel/UCDsShdUQolkO3N0bn6VcTNg'}, status: 'online' }).then()
     .catch(console.error)
  })
 

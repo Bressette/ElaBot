@@ -1,6 +1,4 @@
-const MongoClient = require('mongodb').MongoClient
-const url = 'mongodb://127.0.0.1:27017'
-const dbName = 'ela-bot'
+const mongoUtil = require('./mongoUtil.js')
 
 module.exports = 
 {
@@ -8,76 +6,63 @@ module.exports =
     addBalance : function(name, amount) 
     {
         //connect to mongodb
-        MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
-        {
-            if (err) 
-            {
-                throw err
-            }
+        dbo = mongoUtil.getDb()
 
-            //create a database object based on the db name ela-bot
-            var dbo = db.db(dbName)
-
-            //retrieve the record for the given user
-            dbo.collection("users").findOne({name: name}, function(err, result) {
-            if (err) throw err
         
-            //if the user does not exist insert the user with the given amount
-            if(result === null) 
-            {
-                dbo.collection("users").insertOne({ name: name, amount: amount}, function(err, result) 
-                {
-                    if(err) throw err
-                })
-            }
 
-            //if the user already exists update the record with the new amount
-            else 
+        //retrieve the record for the given user
+        dbo.collection("users").findOne({name: name}, function(err, result) {
+        if (err) throw err
+    
+        //if the user does not exist insert the user with the given amount
+        if(result === null) 
+        {
+            dbo.collection("users").insertOne({ name: name, amount: amount}, function(err, result) 
             {
-                dbo.collection("users").updateOne({ name: name}, { $set: {name: name, amount: (result.amount + amount)}}, function(err, res) {
-                })
-            }
+                if(err) throw err
             })
+        }
+
+        //if the user already exists update the record with the new amount
+        else 
+        {
+            dbo.collection("users").updateOne({ name: name}, { $set: {name: name, amount: (result.amount + amount)}}, function(err, res) {
+            })
+        }
         })
+        
     },
 
     //function that gets the balance for a given user and passes the value into a callback function. If the user does not exist a new record is inserted with the user id and an amount of 0
     getBalance : function(name, fn) 
     {
-        //connect to mongodb
-        MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) 
+
+        dbo = mongoUtil.getDb()
+        
+
+        //finds the record associated with the given userId
+        dbo.collection("users").findOne({name: name}, function(err, result) {
+        if (err) 
         {
-            if (err) throw err
+            throw err
+        }
 
-            //create a database object for the database ela-bot
-            var dbo = db.db(dbName)
-
-            //finds the record associated with the given userId
-            dbo.collection("users").findOne({name: name}, function(err, result) {
-            if (err) 
+        //if the user does not exist a new record is inserted with a default amount of 0
+        if(result === null) 
+        {
+            dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) 
             {
-                throw err
-            }
-
-            //if the user does not exist a new record is inserted with a default amount of 0
-            if(result === null) 
-            {
-                dbo.collection("users").insertOne({ name: name, amount: 0}, function(err, result) 
-                {
-                    if(err) throw err
-                    fn(0) //passes the amount for the user to the function fn()
-                })
-            }
-        
-            //if the user exists pass the result amount to the function fn()
-            else 
-            {
-                fn(result.amount)
-            }
+                if(err) throw err
+                fn(0) //passes the amount for the user to the function fn()
             })
-            
+        }
+    
+        //if the user exists pass the result amount to the function fn()
+        else 
+        {
+            fn(result.amount)
+        }
         })
-        
     },
 
     //function that sends a message after getting the balance from a userId that is passed into the function
@@ -92,20 +77,6 @@ module.exports =
     //function that adds the daily reward to a user if it has been less than 24 hours since previously claiming it (Date functionality currently WIP)
     daily : function(userId, message, dailyAmount) 
     {
-
-        MongoClient.connect(url, { useUnifiedTopology: true }, async function(err, db) 
-        {
-            dbo = db.db(dbName)
-            results = dbo.collection("users").find({})
-            testResults = await results.toArray()
-            console.log(testResults)
-            console.log(testResults[0].amount)
-
-        })
-        date = new Date()
-        console.log("Date.getTime is: " + date.getTime())
-        
-
         message.channel.send("You claimed your daily reward of $" + dailyAmount +  ", You can claim it infinitely (Time WIP)")
 
         //add the daily balance to the user
@@ -337,27 +308,23 @@ module.exports =
         })
     },
 
-    leaderboard : function(message, client)
+    leaderboard : async function(message, client)
     {
-        MongoClient.connect(url, { useUnifiedTopology: true }, async function(err, db) 
+        dbo = mongoUtil.getDb()
+        cursor = dbo.collection("users").find({}).sort([['amount', -1]])
+        results = await cursor.toArray()
+
+        leaderBoardString = "```"
+
+        for(i in results)
         {
-            dbo = db.db(dbName)
-            cursor = dbo.collection("users").find({}).sort([['amount', -1]])
-            results = await cursor.toArray()
+            user = await client.users.fetch(results[i].name)
+            userName = user.tag.split("#")[0]
+            leaderBoardString += userName + " " + results[i].amount + "\n"
+        }
 
-            leaderBoardString = "```"
+        leaderBoardString += "```"
 
-            for(i in results)
-            {
-                user = await client.users.fetch(results[i].name)
-                userName = user.tag.split("#")[0]
-                leaderBoardString += userName + " " + results[i].amount + "\n"
-            }
-
-            leaderBoardString += "```"
-
-            message.channel.send(leaderBoardString)
-
-        })
+        message.channel.send(leaderBoardString)
     }
 }
