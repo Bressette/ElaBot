@@ -157,6 +157,7 @@ module.exports =
         })
     },
 
+    //method that returns the emoticon to display given a random value
     getSlotEmoji : function(value)
     {
         if(value < 50)
@@ -171,6 +172,7 @@ module.exports =
             return ":moneybag:"
     },
 
+    //method that gambles balance and displays a slot machine
     slots : function(content, message, userId, slotSize)
     {
         //parse the staked amount from the content string 
@@ -190,6 +192,7 @@ module.exports =
                 let slotArray = []
                 let results = []
 
+                //loop that computes the random values and adds the emoticons to slotDisplay
                 for(i = 1; i <= slotSize * slotSize; i++)
                 {
                     rollSlots = Math.floor(Math.random() * 100)
@@ -200,6 +203,7 @@ module.exports =
                         slotDisplay += "\n"
                 }
 
+                //loop that computes if the rows and columns are winning values
                 for(i = 0; i < slotSize; i++)
                 {
                     rowCounter = 0
@@ -218,6 +222,7 @@ module.exports =
                     }
                 }
 
+                //loop that computes if the diagonals are winning values
                 counter = 0
                 secondCounter = 0
                 for(i = 0; i < slotSize - 1; i++)
@@ -232,6 +237,7 @@ module.exports =
                         results.push(slotArray[slotSize])
                 }
 
+                //displays the slot emoticons
                 message.channel.send(slotDisplay)
 
                 reward = 0
@@ -243,6 +249,7 @@ module.exports =
                     
                 else
                 {
+                    //iterates over the winning rows and adds the winning amount to reward 
                     for(i of results)
                     {
                         switch(i)
