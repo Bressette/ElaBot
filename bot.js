@@ -93,12 +93,10 @@ client.on('message', async message =>
                 break
             case "play":
                 searchKeywords = content.substr(4, content.length)
-                console.log("The search keywords are: " + searchKeywords)
                 search(searchKeywords, opts, function(err, results) 
                 {
                     if(err) return console.log("This is an error\n" + err)
 
-                    console.log("The results from search are\n" + results[0].link)
                     execute(message, results[0].link, serverQueue)
 
                 })
