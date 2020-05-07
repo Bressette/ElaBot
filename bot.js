@@ -3,7 +3,7 @@ const client = new discord.Client
 const mongoUtil = require('./mongoUtil.js')
 const economy = require('./economy')
 const admin = require('./admin')
-const token = require('./token.json')
+const config = require('./config.json')
 const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
 const queue = new Map()
@@ -12,7 +12,7 @@ const search = require('youtube-search')
 
 var opts = {
     maxResults: 10,
-    key: 'AIzaSyDTgw5RCq55zJmbssgtxtXjOkv4bzYOYJ4'
+    key: config.googlekey
 }
 
 mongoUtil.connectToServer(() =>
@@ -41,10 +41,12 @@ client.on('message', async message =>
 
     
     //check if content starts with the command prefix e!
-    if(content.trim().startsWith("e!", 0)) 
+    if(content.trim().startsWith("e!", 0) || content.trim().startsWith("-",0)) 
     {
-        //removes e! from the content string
-        content = content.substr(2, content.length).trim()
+        if(content.trim().startsWith("e!", 0))
+            content = content.substr(2, content.length).trim()
+        else
+            content = content.substr(1, content.length).trim()
 
         //create a command string to hold the command keyword
         command = content.toLowerCase()
@@ -197,4 +199,4 @@ async function execute(message, link, serverQueue) {
     serverQueue.textChannel.send(`Started playing: **${song.title}**`);
   }
 
-client.login(token.token)
+client.login(config.token)
