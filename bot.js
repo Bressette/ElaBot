@@ -103,10 +103,31 @@ client.on('message', async message =>
 
                 })
                 break
+            case "p":
+                searchKeywords = content.substr(4, content.length)
+                console.log(searchKeywords)
+                search(searchKeywords, opts, function(err, results) 
+                {
+                    if(err) return console.log("This is an error\n" + err)
+
+                    for(i in results)
+                    {
+                      console.log(results[i].link + "\n")
+                    }
+                    console.log(results[0].link)
+                    execute(message, results[0].link, serverQueue)
+
+                })
+                break
+            case "r":
+                stop(message, serverQueue)
+                break
             case "skip":
                 skip(message, serverQueue)
+                break
             case "reset":
                 stop(message, serverQueue)
+                break
                 
         }
     }
