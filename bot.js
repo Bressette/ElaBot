@@ -90,6 +90,9 @@ client.on('message', async message =>
             case "ban":
                 admin.ban(message)
                 break
+            case "purge":
+                admin.purge(message, content)
+                break
             case "sekiro":
                 message.channel.send(copyPastas.sekiro)
                 break
@@ -116,7 +119,6 @@ client.on('message', async message =>
                     }
                     console.log(results[0].link)
                     execute(message, results[0].link, serverQueue)
-
                 })
                 break
             case "r":
