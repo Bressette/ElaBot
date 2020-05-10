@@ -25,9 +25,10 @@ client.on('ready', () =>
 {
     client.user.setPresence(
         { activity: 
-            { name: 'Rainbow Six Siege', 
+            { 
+            name: 'Rainbow Six Siege youtube.com/watch?v=NCRRt9izjP4', 
             type: "WATCHING", 
-            url: 'https://www.youtube.com/channel/UCDsShdUQolkO3N0bn6VcTNg'}, status: 'online' }).then()
+            }, status: 'online' }).then()
     .catch(console.error)
  })
 
@@ -39,6 +40,20 @@ client.on('message', async message =>
     userId = message.member.user.id
     content = message.content
 
+    if(message.channel.id === config.linkid)
+    {
+        if(!message.content.includes("http"))
+        {
+            message.channel.send("That isn't a link!").then(msg =>
+            {
+                setTimeout(() =>
+                {
+                    message.delete()
+                    msg.delete()
+                }, 2000)
+            })
+        }
+    }
     
     //check if content starts with the command prefix e!
     if(content.trim().startsWith("e!", 0) || content.trim().startsWith("-",0)) 
@@ -54,6 +69,8 @@ client.on('message', async message =>
         {
             command = command.substr(0, content.indexOf(" "))
         }
+
+        
 
         const serverQueue = queue.get(message.guild.id)
 
