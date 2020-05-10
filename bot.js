@@ -118,6 +118,11 @@ client.on('message', async message =>
                 search(searchKeywords, opts, function(err, results) 
                 {
                     if(err) return console.log("This is an error\n" + err)
+                    i = 0
+                    while(results[i].link.includes("channel") || results[i].link.includes("playlist"))
+                    {
+                        i++
+                    }
 
                     execute(message, results[0].link, serverQueue)
 
@@ -128,8 +133,12 @@ client.on('message', async message =>
                 search(searchKeywords, opts, function(err, results) 
                 {
                     if(err) return console.log("This is an error\n" + err)
-
-                    execute(message, results[0].link, serverQueue)
+                    i = 0
+                    while(results[i].link.includes("channel") || results[i].link.includes("playlist"))
+                    {
+                        i++
+                    }
+                    execute(message, results[i].link, serverQueue)
                 })
                 break
             case "r":
