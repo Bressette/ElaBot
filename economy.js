@@ -89,6 +89,18 @@ module.exports =
             dbo.collection("users").insertOne({ name: userId, amount: dailyAmount, date: date}, function(err, result) 
             {
                 if(err) throw err
+
+                message.channel.send(`You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again`)
+            })
+        }
+
+        else if(userData === null)
+        {
+            dbo.collection("users").insertOne({ name: userId, amount: dailyAmount, date: date}, function(err, result) 
+            {
+                if(err) throw err
+
+                message.channel.send(`You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again`)
             })
         }
 
