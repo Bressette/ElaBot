@@ -79,17 +79,13 @@ module.exports =
     {
         dbo = mongoUtil.getDb()
         date = new Date()
-        console.log("The new date is: " + date + "\nThe new time is: " + date.getTime())
         userData = await dbo.collection("users").findOne({name: userId})
-
-        console.log(userData)
 
         if(userData === undefined)
         {
             dbo.collection("users").insertOne({ name: userId, amount: dailyAmount, date: date}, function(err, result) 
             {
                 if(err) throw err
-
                 message.channel.send(`You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again`)
             })
         }
@@ -99,7 +95,6 @@ module.exports =
             dbo.collection("users").insertOne({ name: userId, amount: dailyAmount, date: date}, function(err, result) 
             {
                 if(err) throw err
-
                 message.channel.send(`You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again`)
             })
         }
@@ -121,10 +116,7 @@ module.exports =
             else
             {
                 storedDate = new Date(userData.date)
-                console.log("The stored date is: " + storedDate + "\nThe stored time is: " + storedDate.getTime())
-                console.log("The current date is: " + date + "\nThe current time is: " + date.getTime())
                 timeDiff = date.getTime() - storedDate.getTime()
-                console.log("The time diff is: " + timeDiff)
                 targetTime = storedDate.getTime() + 24*3600000
                 if(timeDiff > 24 * 3600000 )
                 {
@@ -143,13 +135,12 @@ module.exports =
                 {
                     targetTime = (storedDate.getTime() / 1000) + 24 *3600
                     remainingTime = targetTime - (date.getTime() / 1000)
-                    console.log("The remaining time is: " + remainingTime)
                     remainingHours = Math.floor(remainingTime / 3600)
                     remainingTime -= remainingHours * 3600
                     remainingMinutes = Math.floor(remainingTime / 60)
                     remainingTime -= remainingMinutes * 60
-                    console.log(targetTime - date.getTime())
-                    message.channel.send(`You need to wait ${remainingHours}:${remainingMinutes}:${remainingTime} to claim a balance`)
+                    remainingTime = Math.floor(remainingTime)
+                    message.channel.send(`You need to wait ${remainingHours}:${remainingMinutes}:${remainingTime} to claim a daily balance`)
                 }
             }
         }
