@@ -66,7 +66,7 @@ module.exports =
             {
                 member = message.mentions.members.first()
 
-                member.voice.setMute(true, "Muted")
+                member.voice.setMute(true, "Muted").then(message.channel.send(member.displayName + " has been muted"))
             }
         }
     },
@@ -79,7 +79,7 @@ module.exports =
             {
                 member = message.mentions.members.first()
 
-                member.voice.setMute(false, "Unmuted")
+                member.voice.setMute(false, "Unmuted").then(message.channel.send(member.displayName + " has been unmuted"))
             }
         }
     },
