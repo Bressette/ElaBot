@@ -58,6 +58,32 @@ module.exports =
         }
     },
 
+    mute : (message) =>
+    {
+        if(message.mentions.members.first() != null)
+        {
+            if(message.member.hasPermission("ADMINISTRATOR"))
+            {
+                member = message.mentions.members.first()
+
+                member.voice.setMute(true, "Muted")
+            }
+        }
+    },
+
+    unMute : (message) =>
+    {
+        if(message.mentions.members.first() != null)
+        {
+            if(message.member.hasPermission("ADMINISTRATOR"))
+            {
+                member = message.mentions.members.first()
+
+                member.voice.setMute(false, "Unmuted")
+            }
+        }
+    },
+
     purge : async (message, content) =>
     {
         if(message.member.hasPermission("ADMINISTRATOR"))

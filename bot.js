@@ -107,6 +107,12 @@ client.on('message', async message =>
             case "ban":
                 admin.ban(message)
                 break
+            case "mute":
+                admin.mute(message)
+                break
+            case "unmute":
+                admin.unMute(message)
+                break
             case "purge":
                 admin.purge(message, content)
                 break
