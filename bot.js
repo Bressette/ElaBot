@@ -113,6 +113,12 @@ client.on('message', async message =>
             case "unmute":
                 admin.unMute(message)
                 break
+            case "deafen":
+                admin.deafen(message)
+                break
+            case "undeafen":
+                admin.unDeafen(message)
+                break
             case "purge":
                 admin.purge(message, content)
                 break
