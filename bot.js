@@ -56,7 +56,7 @@ client.on('message', async message =>
     }
     
     //check if content starts with the command prefix e!
-    if(content.trim().startsWith("e!", 0) || content.trim().startsWith("-",0)) 
+    if(content.trim().startsWith("e!", 0) || content.trim().startsWith("-",0) || content.trim().startsWith("%", 0)) 
     {
         if(content.trim().startsWith("e!", 0))
             content = content.substr(2, content.length).trim()
@@ -146,7 +146,7 @@ client.on('message', async message =>
                 {
                     if(err) return console.log("This is an error\n" + err)
                     i = 0
-                    while(results[i].link.includes("channel") || results[i].link.includes("playlist"))
+                    while(results[i].link.includes("channel") || results[i].link.includes("list="))
                     {
                         i++
                     }
