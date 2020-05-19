@@ -113,6 +113,18 @@ module.exports =
                 }, 100)
             }
 
+            else if(userData.date === undefined)
+            {
+                module.exports.addBalance(userId, dailyAmount)
+                dbo.collection("users").updateOne({ name: userId}, { $set: {date: date}}, function(err, res) {
+                })
+                message.channel.send("You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again")
+                setTimeout(function() 
+                {
+                    module.exports.messageCurrentBalance(userId, message)
+                }, 100)
+            }
+
             else
             {
                 storedDate = new Date(userData.date)
