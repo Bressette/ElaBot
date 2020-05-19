@@ -152,7 +152,26 @@ module.exports =
                     remainingMinutes = Math.floor(remainingTime / 60)
                     remainingTime -= remainingMinutes * 60
                     remainingTime = Math.floor(remainingTime)
-                    message.channel.send(`You need to wait ${remainingHours}:${remainingMinutes}:${remainingTime} to claim a daily balance`)
+
+                    hours = remainingHours.toString()
+                    minutes = remainingMinutes.toString()
+                    seconds = remainingTime.toString()
+                    if(remainingHours < 10)
+                    {
+                        hours = "0" + hours
+                    }
+
+                    if(remainingMinutes < 10)
+                    {
+                        minutes = "0" + minutes
+                    }
+
+                    if(remainingTime < 10)
+                    {
+                        seconds = "0" + seconds
+                    }
+
+                    message.channel.send(`You need to wait ${hours}:${minutes}:${seconds} to claim a daily balance`)
                 }
             }
         }
