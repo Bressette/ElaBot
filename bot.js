@@ -10,6 +10,8 @@ const queue = new Map()
 const ytdl = require('ytdl-core')
 const search = require('youtube-search')
 
+prefix = "-"
+
 var opts = {
     maxResults: 10,
     key: config.googlekey
@@ -55,11 +57,14 @@ client.on('message', async message =>
         }
     }
     
+
     //check if content starts with the command prefix e!
-    if(content.trim().startsWith("e!", 0) || content.trim().startsWith("-",0) || content.trim().startsWith("%", 0)) 
+    if(content.trim().startsWith("e!", 0) || content.trim().startsWith(prefix,0) || content.trim().startsWith("%", 0)) 
     {
         if(content.trim().startsWith("e!", 0))
             content = content.substr(2, content.length).trim()
+        else if(content.trim().startsWith(prefix,0))
+            content = content.substr(prefix.length, content.length).trim()
         else
             content = content.substr(1, content.length).trim()
 
@@ -73,6 +78,7 @@ client.on('message', async message =>
         
 
         const serverQueue = queue.get(message.guild.id)
+
 
         //switch statement to determine what command the user used
         switch(command) 
@@ -161,6 +167,10 @@ client.on('message', async message =>
                 break
             case "reset":
                 stop(message, serverQueue)
+                break
+            case "prefix":
+                prefix = content.substr(6, content.length).trim()
+                message.channel.send(`The command prefix has been changed to ${prefix}`)
                 break
                 
         }
