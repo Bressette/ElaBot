@@ -169,10 +169,17 @@ client.on('message', async message =>
                 stop(message, serverQueue)
                 break
             case "prefix":
-                prefix = content.substr(6, content.length).trim()
-                message.channel.send(`The command prefix has been changed to ${prefix}`)
+                var ascii = /^[ -~]+$/;
+                if(!ascii.test(content.substr(6,content.length).trim()))
+                {
+                    message.channel.send("That prefix is not allowed")
+                }
+                else
+                {
+                    prefix = content.substr(6, content.length).trim()
+                    message.channel.send(`The command prefix has been changed to ${prefix}`)
+                }
                 break
-                
         }
     }
 })
