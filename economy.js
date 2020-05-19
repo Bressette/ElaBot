@@ -81,16 +81,7 @@ module.exports =
         date = new Date()
         userData = await dbo.collection("users").findOne({name: userId})
 
-        if(userData === undefined)
-        {
-            dbo.collection("users").insertOne({ name: userId, amount: dailyAmount, date: date}, function(err, result) 
-            {
-                if(err) throw err
-                message.channel.send(`You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again`)
-            })
-        }
-
-        else if(userData === null)
+        if(userData === undefined || userData === null)
         {
             dbo.collection("users").insertOne({ name: userId, amount: dailyAmount, date: date}, function(err, result) 
             {
@@ -101,19 +92,7 @@ module.exports =
 
         else
         {
-            if(userData.date === null)
-            {
-                module.exports.addBalance(userId, dailyAmount)
-                dbo.collection("users").updateOne({ name: userId}, { $set: {date: date}}, function(err, res) {
-                })
-                message.channel.send("You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again")
-                setTimeout(function() 
-                {
-                    module.exports.messageCurrentBalance(userId, message)
-                }, 100)
-            }
-
-            else if(userData.date === undefined)
+            if(userData.date === null || userData.date === undefined)
             {
                 module.exports.addBalance(userId, dailyAmount)
                 dbo.collection("users").updateOne({ name: userId}, { $set: {date: date}}, function(err, res) {
@@ -130,6 +109,7 @@ module.exports =
                 storedDate = new Date(userData.date)
                 timeDiff = date.getTime() - storedDate.getTime()
                 targetTime = storedDate.getTime() + 24*3600000
+                
                 if(timeDiff > 24 * 3600000 )
                 {
                     module.exports.addBalance(userId, dailyAmount)
