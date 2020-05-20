@@ -56,6 +56,11 @@ client.on('message', async message =>
             })
         }
     }
+
+    if(message.content.includes("printprefix"))
+    {
+        message.channel.send(`The current prefix is ${prefix}`)
+    }
     
 
     //check if content starts with the command prefix e!
