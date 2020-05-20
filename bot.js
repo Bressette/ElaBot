@@ -138,31 +138,45 @@ client.on('message', async message =>
                 break
             case "play":
                 searchKeywords = content.substr(4, content.length).trim()
-                search(searchKeywords, opts, function(err, results) 
+
+                if(!searchKeywords.includes("http"))
                 {
-                    if(err) return console.log("This is an error\n" + err)
-                    i = 0
-                    while(results[i].link.includes("channel") || results[i].link.includes("playlist"))
-                    {
-                        i++
-                    }
+                  search(searchKeywords, opts, function(err, results) 
+                  {
+                      if(err) return console.log("This is an error\n" + err)
+                      i = 0
+                      while(results[i].link.includes("channel") || results[i].link.includes("list="))
+                      {
+                          i++
+                      }
 
-                    execute(message, results[0].link, serverQueue)
+                      execute(message, results[0].link, serverQueue)
 
-                })
+                  })
+                }
+
+                else
+                  execute(message, searchKeywords, serverQueue)
                 break
             case "p":
                 searchKeywords = content.substr(1, content.length).trim()
-                search(searchKeywords, opts, function(err, results) 
+
+                if(!searchKeywords.includes("http"))
                 {
-                    if(err) return console.log("This is an error\n" + err)
-                    i = 0
-                    while(results[i].link.includes("channel") || results[i].link.includes("list="))
-                    {
-                        i++
-                    }
-                    execute(message, results[i].link, serverQueue)
-                })
+                  search(searchKeywords, opts, function(err, results) 
+                  {
+                      if(err) return console.log("This is an error\n" + err)
+                      i = 0
+                      while(results[i].link.includes("channel") || results[i].link.includes("list="))
+                      {
+                          i++
+                      }
+                      execute(message, results[i].link, serverQueue)
+                  })
+                }
+
+                else
+                    execute(message, searchKeywords, serverQueue)
                 break
             case "r":
                 stop(message, serverQueue)
