@@ -36,15 +36,30 @@ client.on('ready', () =>
 
 client.on('message', async message => 
 {
-    if(message.author.bot)
+    if(message.author.id != 712443987801145355)
+    {
+        if(message.author.bot)
         return
+    }
+
+    else
+    {
+        message.react("713172523424153610")
+    }
+    
     userTag = message.member.user.tag
     userId = message.member.user.id
     content = message.content
 
     if(message.channel.id === config.linkid)
     {
-        if(!message.content.includes("http"))
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i');
+        if(!pattern.test(message.content))
         {
             message.channel.send("That isn't a link!").then(msg =>
             {
@@ -53,7 +68,7 @@ client.on('message', async message =>
                     message.delete()
                     msg.delete()
                 }, 2000)
-            })
+            }).catch((error) => {message.channel.send(error)})
         }
     }
 
