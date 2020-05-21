@@ -214,6 +214,8 @@ client.on('message', async message =>
                     message.channel.send(`The command prefix has been changed to ${prefix}`)
                 }
                 break
+            case "link":
+              message.channel.send("The bot authorization link is: https://discord.com/api/oauth2/authorize?client_id=703427817009840188&permissions=8&scope=bot")
         }
     }
 })
