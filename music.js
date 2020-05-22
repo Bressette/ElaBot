@@ -1,10 +1,27 @@
 const ytdl = require('ytdl-core')
+const search = require('youtube-search')
+const config = require('./config.json')
+
+var opts = 
+{
+    maxResults: 10,
+    key: config.googlekey
+}
 
 const queue = new Map()
 
 module.exports =
 {
-    execute : async function(message, link) {
+    execute : async function(message, content) {
+      let results
+      if(content.startsWith("play"))
+          searchKeywords = content.substr(4, content.length).trim()
+      else
+          searchKeywords = content.substr(1, content.length).trim()
+
+      module.exports.search(searchKeywords, async function(results, index)
+      {
+
         serverQueue = queue.get(message.guild.id)
       
         const voiceChannel = message.member.voice.channel;
@@ -18,7 +35,19 @@ module.exports =
             "I need the permissions to join and speak in your voice channel!"
           );
         }
+
+        link = ""
+        if(index === -1)
+            link = results
+        else
+        {
+            link = results[index].link
+        }
+
+        console.log(`The value of link is ${link}`)
         const songInfo = await ytdl.getInfo(link);
+
+
         const song = {
           title: songInfo.title,
           url: songInfo.video_url
@@ -51,6 +80,30 @@ module.exports =
           serverQueue.songs.push(song);
           return message.channel.send(`${song.title} has been added to the queue!`);
         }
+      })
+    },
+
+      search : async function(searchKeywords, returnFunction)
+      {
+          if(!searchKeywords.includes("http"))
+          {
+            console.log("Before search")
+            search(searchKeywords, opts, function(err, results) 
+            {
+                if(err) return console.log("This is an error\n" + err)
+                i = 0
+                while(results[i].link.includes("channel") || results[i].link.includes("list="))
+                {
+                    i++
+                }
+
+                returnFunction(results, i)
+            })
+          }
+          else
+          {
+              returnFunction(searchKeywords, -1)
+          }
       },
       
       skip : function(message) {
