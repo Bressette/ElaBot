@@ -6,13 +6,12 @@ const admin = require('./admin')
 const config = require('./config.json')
 const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
-const queue = new Map()
-const ytdl = require('ytdl-core')
 const search = require('youtube-search')
 
 prefix = "-"
 
-var opts = {
+var opts = 
+{
     maxResults: 10,
     key: config.googlekey
 }
@@ -32,7 +31,7 @@ client.on('ready', () =>
             type: "WATCHING", 
             }, status: 'online' }).then()
     .catch(console.error)
- })
+})
 
 client.on('message', async message => 
 {
@@ -94,12 +93,6 @@ client.on('message', async message =>
         {
             command = command.substr(0, content.indexOf(" "))
         }
-
-        
-
-        const serverQueue = queue.get(message.guild.id)
-
-
         //switch statement to determine what command the user used
         switch(command) 
         {
@@ -165,13 +158,15 @@ client.on('message', async message =>
                           i++
                       }
 
-                      execute(message, results[0].link, serverQueue)
+                      // execute(message, results[0].link, serverQueue)
+                      music.execute(message, results[i].link)
 
                   })
                 }
 
                 else
-                  execute(message, searchKeywords, serverQueue)
+                  // execute(message, searchKeywords, serverQueue)
+                  music.execute(message, searchKeywords)
                 break
             case "p":
                 searchKeywords = content.substr(1, content.length).trim()
@@ -186,21 +181,21 @@ client.on('message', async message =>
                       {
                           i++
                       }
-                      execute(message, results[i].link, serverQueue)
+                      music.execute(message, resuts[i].link)
                   })
                 }
 
                 else
-                    execute(message, searchKeywords, serverQueue)
+                    music.execute(message, results[i].link)
                 break
             case "r":
-                stop(message, serverQueue)
+                music.stop(message)
                 break
             case "skip":
-                skip(message, serverQueue)
+                music.skip(message)
                 break
             case "reset":
-                stop(message, serverQueue)
+                music.stop(message)
                 break
             case "prefix":
                 var ascii = /^[ -~]+$/;
@@ -215,96 +210,10 @@ client.on('message', async message =>
                 }
                 break
             case "link":
-              message.channel.send("The bot authorization link is: https://discord.com/api/oauth2/authorize?client_id=703427817009840188&permissions=8&scope=bot")
+                message.channel.send("The bot authorization link is: https://discord.com/api/oauth2/authorize?client_id=703427817009840188&permissions=8&scope=bot")
+                break
         }
     }
 })
-
-async function execute(message, link, serverQueue) {
-    
-    const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel)
-      return message.channel.send(
-        "You need to be in a voice channel to play music!"
-      );
-    const permissions = voiceChannel.permissionsFor(message.client.user);
-    if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
-      return message.channel.send(
-        "I need the permissions to join and speak in your voice channel!"
-      );
-    }
-  
-    const songInfo = await ytdl.getInfo(link);
-    const song = {
-      title: songInfo.title,
-      url: songInfo.video_url
-    };
-  
-    if (!serverQueue) {
-      const queueContruct = {
-        textChannel: message.channel,
-        voiceChannel: voiceChannel,
-        connection: null,
-        songs: [],
-        volume: 5,
-        playing: true
-      };
-  
-      queue.set(message.guild.id, queueContruct);
-  
-      queueContruct.songs.push(song);
-  
-      try {
-        var connection = await voiceChannel.join();
-        queueContruct.connection = connection;
-        play(message.guild, queueContruct.songs[0]);
-      } catch (err) {
-        console.log(err);
-        queue.delete(message.guild.id);
-        return message.channel.send(err);
-      }
-    } else {
-      serverQueue.songs.push(song);
-      return message.channel.send(`${song.title} has been added to the queue!`);
-    }
-  }
-  
-  function skip(message, serverQueue) {
-    if (!message.member.voice.channel)
-      return message.channel.send(
-        "You have to be in a voice channel to stop the music!"
-      );
-    if (!serverQueue)
-      return message.channel.send("There is no song that I could skip!");
-    serverQueue.connection.dispatcher.end();
-  }
-  
-  function stop(message, serverQueue) {
-    if (!message.member.voice.channel)
-      return message.channel.send(
-        "You have to be in a voice channel to stop the music!"
-      );
-    serverQueue.songs = [];
-    serverQueue.connection.dispatcher.end();
-  }
-  
-  function play(guild, song) {
-    const serverQueue = queue.get(guild.id);
-    if (!song) {
-      serverQueue.voiceChannel.leave();
-      queue.delete(guild.id);
-      return;
-    }
-  
-    const dispatcher = serverQueue.connection
-      .play(ytdl(song.url))
-      .on("finish", () => {
-        serverQueue.songs.shift();
-        play(guild, serverQueue.songs[0]);
-      })
-      .on("error", error => console.error(error));
-    dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-    serverQueue.textChannel.send(`Started playing: **${song.title}**`);
-  }
 
 client.login(config.token)
