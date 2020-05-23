@@ -6,15 +6,8 @@ const admin = require('./admin')
 const config = require('./config.json')
 const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
-const search = require('youtube-search')
 
 prefix = "-"
-
-var opts = 
-{
-    maxResults: 10,
-    key: config.googlekey
-}
 
 mongoUtil.connectToServer(() =>
 {
@@ -45,8 +38,7 @@ client.on('message', async message =>
     {
         message.react("713172523424153610")
     }
-    
-    userTag = message.member.user.tag
+  
     userId = message.member.user.id
     content = message.content
 
@@ -78,14 +70,9 @@ client.on('message', async message =>
     
 
     //check if content starts with the command prefix e!
-    if(content.trim().startsWith("e!", 0) || content.trim().startsWith(prefix,0) || content.trim().startsWith("%", 0)) 
+    if(content.trim().startsWith(prefix, 0)) 
     {
-        if(content.trim().startsWith("e!", 0))
-            content = content.substr(2, content.length).trim()
-        else if(content.trim().startsWith(prefix,0))
-            content = content.substr(prefix.length, content.length).trim()
-        else
-            content = content.substr(1, content.length).trim()
+        content = content.substr(prefix.length, content.length).trim()
 
         //create a command string to hold the command keyword
         command = content.toLowerCase()
@@ -145,48 +132,10 @@ client.on('message', async message =>
                 message.channel.send(copyPastas.sekiro)
                 break
             case "play":
-                searchKeywords = content.substr(4, content.length).trim()
-
-                if(!searchKeywords.includes("http"))
-                {
-                  search(searchKeywords, opts, function(err, results) 
-                  {
-                      if(err) return console.log("This is an error\n" + err)
-                      i = 0
-                      while(results[i].link.includes("channel") || results[i].link.includes("list="))
-                      {
-                          i++
-                      }
-
-                      // execute(message, results[0].link, serverQueue)
-                      music.execute(message, results[i].link)
-
-                  })
-                }
-
-                else
-                  // execute(message, searchKeywords, serverQueue)
-                  music.execute(message, searchKeywords)
+                music.execute(message, content)
                 break
             case "p":
-                searchKeywords = content.substr(1, content.length).trim()
-
-                if(!searchKeywords.includes("http"))
-                {
-                  search(searchKeywords, opts, function(err, results) 
-                  {
-                      if(err) return console.log("This is an error\n" + err)
-                      i = 0
-                      while(results[i].link.includes("channel") || results[i].link.includes("list="))
-                      {
-                          i++
-                      }
-                      music.execute(message, resuts[i].link)
-                  })
-                }
-
-                else
-                    music.execute(message, results[i].link)
+                music.execute(message, content)
                 break
             case "r":
                 music.stop(message)
