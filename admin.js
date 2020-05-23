@@ -193,8 +193,9 @@ module.exports =
             return result.prefix
     },
 
-    prefix: (message, content) =>
+    setPrefix: (message, content) =>
     {
+        dbo = mongoUtil.getDb()
         var ascii = /^[ -~]+$/;
         if(!ascii.test(content.substr(6,content.length).trim()))
         {
@@ -202,9 +203,12 @@ module.exports =
         }
         else
         {
-            prefix = content.substr(6, content.length).trim()
+            dbo.collection("servers").updateOne({id: message.guild.id}, {$set: {prefix: content.substr(6, content.length).trim()}}, (err, res) =>
+            {
+                if(err) throw err
 
-            message.channel.send(`The command prefix has been changed to ${prefix}`)
+                message.channel.send(`The command prefix has been changed to ${content.substr(6, content.length).trim()}`)
+            })
         }
     }
 }

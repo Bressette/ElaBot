@@ -130,16 +130,7 @@ client.on('message', async message =>
                 music.stop(message)
                 break
             case "prefix":
-                var ascii = /^[ -~]+$/;
-                if(!ascii.test(content.substr(6,content.length).trim()))
-                {
-                    message.channel.send("That prefix is not allowed")
-                }
-                else
-                {
-                    prefix = content.substr(6, content.length).trim()
-                    message.channel.send(`The command prefix has been changed to ${prefix}`)
-                }
+                admin.setPrefix(message, content)
                 break
             case "link":
                 message.channel.send("The bot authorization link is: https://discord.com/api/oauth2/authorize?client_id=703427817009840188&permissions=8&scope=bot")
