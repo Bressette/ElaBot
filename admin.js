@@ -137,5 +137,30 @@ module.exports =
         {
             message.channel.send("You do not have the permission to do that :rage:")
         }
+    },
+
+    //method that deletes any messages that are not a link in the channel defined in the config file
+    linkManagement: (message) =>
+    {
+        if(message.channel.id === config.linkid)
+        {
+            var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i');
+            if(!pattern.test(message.content))
+            {
+                message.channel.send("That isn't a link!").then(msg =>
+                {
+                    setTimeout(() =>
+                    {
+                        message.delete()
+                        msg.delete()
+                    }, 2000)
+                }).catch((error) => {message.channel.send(error)})
+            }
+        }
     }
 }
