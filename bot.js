@@ -7,7 +7,7 @@ const config = require('./config.json')
 const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
 
-prefix = "-"
+
 
 mongoUtil.connectToServer(() =>
 {
@@ -28,6 +28,8 @@ client.on('ready', () =>
 
 client.on('message', async message => 
 {
+    prefix = await admin.getPrefix(message)
+
     if(message.author.id != 712443987801145355)
     {
         if(message.author.bot)
@@ -50,7 +52,7 @@ client.on('message', async message =>
     }
     
 
-    //check if content starts with the command prefix e!
+    //check if content starts with the command prefix
     if(content.trim().startsWith(prefix, 0)) 
     {
         content = content.substr(prefix.length, content.length).trim()

@@ -1,4 +1,5 @@
-
+const mongoUtil = require('./mongoUtil.js')
+const config = require('./config.json')
 
 module.exports = 
 {
@@ -161,6 +162,49 @@ module.exports =
                     }, 2000)
                 }).catch((error) => {message.channel.send(error)})
             }
+        }
+    },
+
+    getPrefix: async (message) =>
+    {
+        dbo = mongoUtil.getDb()
+        result = await dbo.collection("servers").findOne({id: message.guild.id})
+        if(result === null || result === undefined)
+        {
+            dbo.collection("servers").insertOne({id: message.guild.id, prefix: "-"}, (err, res) =>
+            {
+                if(err) throw err
+                return "-"
+            })
+        }
+
+        // dbo.collection("users").updateOne({ name: userId}, { $set: {date: date}}, function(err, res)
+
+        else if(result.prefix === null || result.prefix === undefined)
+        {
+            dbo.collection("servers").updateOne({id: message.guild.id}, { $set: {prefix: "-"}}, (err, res) =>
+            {
+                if(err) throw err
+                return "-"
+            })
+        }
+
+        else
+            return result.prefix
+    },
+
+    prefix: (message, content) =>
+    {
+        var ascii = /^[ -~]+$/;
+        if(!ascii.test(content.substr(6,content.length).trim()))
+        {
+            message.channel.send("That prefix is not allowed")
+        }
+        else
+        {
+            prefix = content.substr(6, content.length).trim()
+
+            message.channel.send(`The command prefix has been changed to ${prefix}`)
         }
     }
 }
