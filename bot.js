@@ -7,13 +7,9 @@ const config = require('./config.json')
 const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
 
-
-
 mongoUtil.connectToServer(() =>
 {
 })
-
-slotSize = 5
 
 client.on('ready', () => 
 {
@@ -85,7 +81,7 @@ client.on('message', async message =>
                 economy.leaderboard(message, client)
                 break
             case "slotsize":
-                slotSize = economy.slotSize(content, message, slotSize)
+                economy.setSlotSize(content, message)
                 break
             case "getslotsize":
                 message.channel.send("The slot size is: " + slotSize)

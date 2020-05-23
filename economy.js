@@ -210,8 +210,9 @@ module.exports =
             return ":moneybag:"
     },
 
-    slotSize : function(content, message, slotSize)
+    setSlotSize : function(content, message)
     {
+        dbo = mongoUtil.getDb()
         newSize = parseInt(content.substr(8, content.length))
         if(!isNaN(newSize))
         {
@@ -219,15 +220,15 @@ module.exports =
                 message.channel.send("The slot size must be from 3-12")
             else
             {
-                message.channel.send("The new slot size is: " + newSize)
-                return newSize
-            }
-                
+                dbo.collection("servers").updateOne({id: message.guild.id}, {$set: {slotsize: newSize}}, (err, value) =>
+                {
+                    message.channel.send("The new slot size is: " + newSize)
+                })
+            }   
         }
         else
         {
             message.channel.send("You must enter a valid number for slot size")
-            return slotSize
         }
     },
 
@@ -242,10 +243,8 @@ module.exports =
             {
                 if(err) throw err
 
-                setTimeout(() =>
-                {
-                    return 3
-                }, 100)
+                return 3
+                
                 
             })
         }
@@ -260,6 +259,9 @@ module.exports =
     slots : async function(content, message, userId)
     {
         slotSize = await module.exports.getSlotSize(message)
+        if(slotSize === undefined)
+            slotSize = 3
+
         console.log(`The slotsize is: ${slotSize}`)
         //parse the staked amount from the content string 
         amount = parseInt(content.substr(5, content.length).trim())
