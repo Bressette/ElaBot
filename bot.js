@@ -76,7 +76,7 @@ client.on('message', async message =>
                 economy.coinflip(content, message, userId)
                 break
             case "slots":
-                economy.slots(content, message, userId, slotSize)
+                economy.slots(content, message, userId)
                 break
             case "give":
                 economy.give(content, message, userId)

@@ -231,9 +231,36 @@ module.exports =
         }
     },
 
-    //method that gambles balance and displays a slot machine
-    slots : function(content, message, userId, slotSize)
+    getSlotSize : async(message) =>
     {
+        dbo = mongoUtil.getDb()
+        result = await dbo.collection("servers").findOne({id: message.guild.id})
+
+        if(result.slotsize === undefined || result.slotsize === null)
+        {
+            dbo.collection("servers").updateOne({id: message.guild.id}, {$set: {slotsize: "3"}}, (err, value) =>
+            {
+                if(err) throw err
+
+                setTimeout(() =>
+                {
+                    return 3
+                }, 100)
+                
+            })
+        }
+
+        else
+        {
+            return parseInt(result.slotsize)
+        }
+    },
+
+    //method that gambles balance and displays a slot machine
+    slots : async function(content, message, userId)
+    {
+        slotSize = await module.exports.getSlotSize(message)
+        console.log(`The slotsize is: ${slotSize}`)
         //parse the staked amount from the content string 
         amount = parseInt(content.substr(5, content.length).trim())
 
