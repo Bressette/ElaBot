@@ -407,8 +407,8 @@ module.exports =
         module.exports.getBalance(userId, (amount) => {
 
             //separates the mentioned user and the value
-            targetUserId = content.split(" ")[0]
-            targetValue = content.split(" ")[1]
+            targetUserId = content.substr(0, content.indexOf(" ")).trim()
+            targetValue = content.substr(targetUserId.length, content.length).trim()
 
             //gets the user id from the mention
             if(targetUserId.includes("!"))
@@ -420,11 +420,22 @@ module.exports =
                 targetUserId = targetUserId.split("@")[1].split(">")[0]
             }
 
-            if(message.guild.member(targetUserId))
+            if(targetUserId === message.member.id)
             {
-                targetValue = parseInt(targetValue)
+                message.channel.send("You cannot give yourself money that you already have!")
+            }
+
+            else if(message.guild.member(targetUserId))
+            {
+                console.log(targetValue)
+                targetValue = parseInt(targetValue.trim())
+                console.log(targetValue)
+                if(isNaN(targetValue) || !isFinite(targetValue))
+                {
+                    message.channel.send("You must enter a valid number to give money")
+                }
                 //checks if the user can give the specified value
-                if(targetValue > amount) 
+                else if(targetValue > amount) 
                 {
                     message.channel.send("You cannot give more than you have!")
                 }
@@ -432,6 +443,11 @@ module.exports =
                 else if(targetValue < 0) 
                 {
                     message.channel.send("You cannot steal money!")
+                }
+
+                else if(targetValue === 0)
+                {
+                    message.channel.send("You cannot give 0!")
                 }
 
                 else 
