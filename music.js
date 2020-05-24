@@ -38,7 +38,14 @@ module.exports =
 
         link = ""
         if(index === -1)
+        {
             link = results
+            if(link === "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+            {
+                message.channel.send("No results found")
+            }
+        }
+            
         else
         {
             link = results[index].link
@@ -87,10 +94,13 @@ module.exports =
       {
           if(!searchKeywords.includes("http"))
           {
-            console.log("Before search")
             search(searchKeywords, opts, function(err, results) 
             {
-                if(err) return console.log("This is an error\n" + err)
+                if(err) 
+                {
+                    returnFunction("https://www.youtube.com/watch?v=dQw4w9WgXcQ", -1)
+                    return 
+                }
                 i = 0
                 while(results[i].link.includes("channel") || results[i].link.includes("list="))
                 {
