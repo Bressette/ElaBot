@@ -279,114 +279,121 @@ module.exports =
         if(slotSize === undefined)
             slotSize = 3
 
-        console.log(`The slotsize is: ${slotSize}`)
         //parse the staked amount from the content string 
         amount = parseInt(content.substr(5, content.length).trim())
 
-        //call get balance to check if the user entered a value value to stake
-        module.exports.getBalance(userId, function(balance) {
-            if(amount > balance)
-            {
-                message.channel.send("You cannot gamble more than you have!")
-            }
-
-            //if amount is a number execute the coinflip
-            else if(!isNaN(amount)) 
-            {
-                let slotDisplay = ""
-                let slotArray = []
-                let results = []
-
-                //loop that computes the random values and adds the emoticons to slotDisplay
-                for(i = 1; i <= slotSize * slotSize; i++)
+        if(!isNaN(amount) && isFinite(amount) && amount > 0)
+        {
+            //call get balance to check if the user entered a value value to stake
+            module.exports.getBalance(userId, function(balance) {
+                if(amount > balance)
                 {
-                    rollSlots = Math.floor(Math.random() * 100)
-                    slotArray[i-1] = module.exports.getSlotEmoji(rollSlots)
-                    slotDisplay += slotArray[i-1]
-
-                    if(i % slotSize === 0)
-                        slotDisplay += "\n"
+                    message.channel.send("You cannot gamble more than you have!")
                 }
 
-                //loop that computes if the rows and columns are winning values
-                for(i = 0; i < slotSize; i++)
+                //if amount is a number execute the coinflip
+                else if(!isNaN(amount)) 
                 {
-                    rowCounter = 0
-                    columnCounter = 0
-                    for(j = 0; j < slotSize - 1; j++)
-                    {
-                        if(slotArray[i*slotSize + j] === slotArray[i*slotSize + j + 1])
-                            rowCounter++
-                        if(slotArray[j*slotSize + i] === slotArray[(j+1)*slotSize + i])
-                            columnCounter++
+                    let slotDisplay = ""
+                    let slotArray = []
+                    let results = []
 
-                        if(rowCounter === slotSize - 1)
-                            results.push(slotArray[i*slotSize])
-                        if(columnCounter === slotSize - 1)
-                            results.push(slotArray[i])
+                    //loop that computes the random values and adds the emoticons to slotDisplay
+                    for(i = 1; i <= slotSize * slotSize; i++)
+                    {
+                        rollSlots = Math.floor(Math.random() * 100)
+                        slotArray[i-1] = module.exports.getSlotEmoji(rollSlots)
+                        slotDisplay += slotArray[i-1]
+
+                        if(i % slotSize === 0)
+                            slotDisplay += "\n"
                     }
-                }
 
-                //loop that computes if the diagonals are winning values
-                counter = 0
-                secondCounter = 0
-                for(i = 0; i < slotSize - 1; i++)
-                {
-                    if(slotArray[i*slotSize + i] === slotArray[(i+1)*slotSize + i + 1])
-                        counter++
-                    if(slotArray[slotSize*slotSize - slotSize - i*slotSize + i] === slotArray[slotSize*slotSize - slotSize - (i+1)*slotSize + i + 1])
-                        secondCounter++
-                    if(counter === slotSize - 1)
-                        results.push(slotArray[0])
-                    if(secondCounter === slotSize - 1)
-                        results.push(slotArray[slotSize])
-                }
-
-                //displays the slot emoticons
-                message.channel.send(slotDisplay)
-
-                reward = 0
-                if(results.length === 0)
-                {
-                    message.channel.send("No rows won")
-                    module.exports.addBalance(userId, -Math.abs(amount))
-                }
-                    
-                else
-                {
-                    //iterates over the winning rows and adds the winning amount to reward 
-                    for(i of results)
+                    //loop that computes if the rows and columns are winning values
+                    for(i = 0; i < slotSize; i++)
                     {
-                        switch(i)
+                        rowCounter = 0
+                        columnCounter = 0
+                        for(j = 0; j < slotSize - 1; j++)
                         {
-                            case ":seven:":
-                                reward = (3 * amount + amount)
-                                break
-                            case ":game_die:":
-                                reward += 6 * amount + amount
-                                break
-                            case ":cherries:":
-                                reward += 7 * amount + amount
-                                break
-                            case ":sunglasses:":
-                                reward += 8 * amount + amount
-                                break
-                            case ":moneybag:":
-                                reward += 10 * amount + amount
-                                break
+                            if(slotArray[i*slotSize + j] === slotArray[i*slotSize + j + 1])
+                                rowCounter++
+                            if(slotArray[j*slotSize + i] === slotArray[(j+1)*slotSize + i])
+                                columnCounter++
+
+                            if(rowCounter === slotSize - 1)
+                                results.push(slotArray[i*slotSize])
+                            if(columnCounter === slotSize - 1)
+                                results.push(slotArray[i])
                         }
                     }
-                    module.exports.addBalance(userId, Math.abs(reward))
-                    message.channel.send("You won " + results.length + " rows")
-                }
 
-                //tell the user their new balance after waiting for db to finish
-                setTimeout(function() 
-                {
-                    module.exports.messageCurrentBalance(userId, message)
-                }, 100)
-            }
-        })
+                    //loop that computes if the diagonals are winning values
+                    counter = 0
+                    secondCounter = 0
+                    for(i = 0; i < slotSize - 1; i++)
+                    {
+                        if(slotArray[i*slotSize + i] === slotArray[(i+1)*slotSize + i + 1])
+                            counter++
+                        if(slotArray[slotSize*slotSize - slotSize - i*slotSize + i] === slotArray[slotSize*slotSize - slotSize - (i+1)*slotSize + i + 1])
+                            secondCounter++
+                        if(counter === slotSize - 1)
+                            results.push(slotArray[0])
+                        if(secondCounter === slotSize - 1)
+                            results.push(slotArray[slotSize])
+                    }
+
+                    //displays the slot emoticons
+                    message.channel.send(slotDisplay)
+
+                    reward = 0
+                    if(results.length === 0)
+                    {
+                        message.channel.send("No rows won")
+                        module.exports.addBalance(userId, -Math.abs(amount))
+                    }
+                        
+                    else
+                    {
+                        //iterates over the winning rows and adds the winning amount to reward 
+                        for(i of results)
+                        {
+                            switch(i)
+                            {
+                                case ":seven:":
+                                    reward = (3 * amount + amount)
+                                    break
+                                case ":game_die:":
+                                    reward += 6 * amount + amount
+                                    break
+                                case ":cherries:":
+                                    reward += 7 * amount + amount
+                                    break
+                                case ":sunglasses:":
+                                    reward += 8 * amount + amount
+                                    break
+                                case ":moneybag:":
+                                    reward += 10 * amount + amount
+                                    break
+                            }
+                        }
+                        module.exports.addBalance(userId, Math.abs(reward))
+                        message.channel.send("You won " + results.length + " rows")
+                    }
+
+                    //tell the user their new balance after waiting for db to finish
+                    setTimeout(function() 
+                    {
+                        module.exports.messageCurrentBalance(userId, message)
+                    }, 100)
+                }
+            })
+        }
+
+        else
+        {
+            message.channel.send("Enter a valid amount to gamble")
+        }
     },
 
     //function that lets a user give some of their balance to another user
