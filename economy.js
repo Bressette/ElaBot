@@ -217,15 +217,15 @@ module.exports =
     //method that returns the emoticon to display given a random value
     getSlotEmoji : function(value)
     {
-        if(value < 50)
+        if(value < 30)
             return ":seven:"
-        else if(value >= 50 && value < 70)
+        else if(value >= 30 && value < 55)
             return ":game_die:"
-        else if(value >= 70 && value < 85)
+        else if(value >= 55 && value < 70)
             return ":cherries:"
-        else if(value >= 85 && value < 95)
-            return ":sunglasses:"
-        else if(value >= 95 && value < 100)
+        else if(value >= 70 && value < 85)
+            return ":crown:"
+        else if(value >= 85 && value < 100)
             return ":moneybag:"
     },
 
@@ -292,7 +292,7 @@ module.exports =
                 }
 
                 //if amount is a number execute the coinflip
-                else if(!isNaN(amount)) 
+                else 
                 {
                     let slotDisplay = ""
                     let slotArray = []
@@ -361,19 +361,19 @@ module.exports =
                             switch(i)
                             {
                                 case ":seven:":
-                                    reward = (3 * amount + amount)
+                                    reward += Math.ceil((1)*(slotSize / 3) * amount + amount)
                                     break
                                 case ":game_die:":
-                                    reward += 6 * amount + amount
+                                    reward += Math.ceil((3/2)*(slotSize / 3) * amount + amount)
                                     break
                                 case ":cherries:":
-                                    reward += 7 * amount + amount
+                                    reward += Math.ceil((2)*(slotSize / 3) * amount + amount)
                                     break
-                                case ":sunglasses:":
-                                    reward += 8 * amount + amount
+                                case ":crown:":
+                                    reward += Math.ceil((5/2)*(slotSize / 3) * amount + amount)
                                     break
                                 case ":moneybag:":
-                                    reward += 10 * amount + amount
+                                    reward += Math.ceil((5/2)*(slotSize / 3) * amount + amount)
                                     break
                             }
                         }
@@ -392,7 +392,30 @@ module.exports =
 
         else
         {
-            message.channel.send("Enter a valid amount to gamble")
+            if(isNaN(amount))
+            {
+                message.channel.send("You must enter a number to gamble!")
+            }
+
+            else if(!isFinite(amount))
+            {
+                message.channel.send("You cannot gamble an infinite amount of money!")
+            }
+
+            else if(amount < 0)
+            {
+                message.channel.send("You cannot gamble negative money!")
+            }
+
+            else if(amount === 0)
+            {
+                message.channel.send("You cannot gamble 0!")
+            }
+
+            else
+            {
+                message.channel.send("You must enter a valid number to gamble!")
+            }
         }
     },
 
@@ -427,9 +450,7 @@ module.exports =
 
             else if(message.guild.member(targetUserId))
             {
-                console.log(targetValue)
                 targetValue = parseInt(targetValue.trim())
-                console.log(targetValue)
                 if(isNaN(targetValue) || !isFinite(targetValue))
                 {
                     message.channel.send("You must enter a valid number to give money")

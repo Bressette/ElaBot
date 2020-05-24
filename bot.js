@@ -22,6 +22,7 @@ client.on('ready', () =>
     .catch(console.error)
 })
 
+
 client.on('message', async message => 
 {
     prefix = await admin.getPrefix(message)
