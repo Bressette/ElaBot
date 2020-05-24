@@ -47,6 +47,12 @@ client.on('message', async message =>
     {
         message.channel.send(`The current prefix is ${prefix}`)
     }
+
+    if(message.content.includes("resetprefix"))
+    {
+        reset = "prefix -"
+        admin.setPrefix(message, reset)
+    }
     
 
     //check if content starts with the command prefix
