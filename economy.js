@@ -165,32 +165,51 @@ module.exports =
         amount = parseInt(content.substr(8, content.length).trim())
 
         //call get balance to check if the user entered a value value to stake
-        module.exports.getBalance(userId, function(balance) {
-            if(amount > balance)
+        module.exports.getBalance(userId, function(balance) 
+        {
+            if(!isNaN(amount) && isFinite(amount))
             {
-                message.channel.send("You cannot coinflip more than you have!")
+                if(amount > balance)
+                {
+                    message.channel.send("You cannot coinflip more than you have!")
+                }
+
+                else if(amount < 0)
+                {
+                    message.channel.send("You cannot coinflip a negative number!")
+                }
+
+                else if(amount === 0)
+                {
+                    message.channel.send("You cannot coinflip 0!")
+                }
+
+                //execute the coinflip otherwise
+                else
+                {
+                    if(Math.floor(Math.random() * 2) === 1) 
+                    {
+                        module.exports.addBalance(userId, amount)
+                        message.channel.send("You won the coinflip and " + amount)
+                    }
+
+                    else 
+                    {
+                        module.exports.addBalance(userId, -Math.abs(amount))
+                        message.channel.send("You lost the coinflip and " + amount)
+                    }
+
+                    //tell the user their new balance after waiting for db to finish
+                    setTimeout(function() 
+                    {
+                        module.exports.messageCurrentBalance(userId, message)
+                    }, 100)
+                }
             }
 
-            //if amount is a number execute the coinflip
-            else if(!isNaN(amount)) 
+            else
             {
-                if(Math.floor(Math.random() * 2) === 1) 
-                {
-                    module.exports.addBalance(userId, amount)
-                    message.channel.send("You won the coinflip and " + amount)
-                }
-
-                else 
-                {
-                    module.exports.addBalance(userId, -Math.abs(amount))
-                    message.channel.send("You lost the coinflip and " + amount)
-                }
-
-                //tell the user their new balance after waiting for db to finish
-                setTimeout(function() 
-                {
-                    module.exports.messageCurrentBalance(userId, message)
-                }, 100)
+                message.channel.send("You must enter a valid number to coinflip")
             }
         })
     },
@@ -244,8 +263,6 @@ module.exports =
                 if(err) throw err
 
                 return 3
-                
-                
             })
         }
 
