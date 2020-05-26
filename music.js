@@ -129,6 +129,9 @@ module.exports =
       
       stop : function(message) {
         serverQueue = queue.get(message.guild.id)
+
+        if(serverQueue.connection.dispatcher.paused)
+            serverQueue.connection.dispatcher.resume()
         if (!message.member.voice.channel)
           return message.channel.send(
             "You have to be in a voice channel to stop the music!"
@@ -154,5 +157,17 @@ module.exports =
           .on("error", error => console.error(error));
         dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
         serverQueue.textChannel.send(`Start playing: **${song.title}**`);
+      },
+
+      pause : function(message)
+      {
+          serverQueue = queue.get(message.guild.id)
+          serverQueue.connection.dispatcher.pause()
+      },
+
+      resume : function(message)
+      {
+          serverQueue = queue.get(message.guild.id)
+          serverQueue.connection.dispatcher.resume()
       }
 }

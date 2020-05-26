@@ -132,6 +132,15 @@ client.on('message', async message =>
             case "reset":
                 music.stop(message)
                 break
+            case "stop":
+                music.stop(message)
+                break
+            case "pause":
+                music.pause(message)
+                break
+            case "resume":
+                music.resume(message)
+                break
             case "prefix":
                 admin.setPrefix(message, content)
                 break
