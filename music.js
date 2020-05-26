@@ -14,6 +14,13 @@ module.exports =
 {
     execute : async function(message, content) {
       let results
+      serverQueue = queue.get(message.guild.id)
+
+      if((content === "play" || content === "p") && serverQueue.connection.dispatcher.paused)
+      {
+          return serverQueue.connection.dispatcher.resume()
+      }
+
       if(content.startsWith("play"))
           searchKeywords = content.substr(4, content.length).trim()
       else
@@ -21,8 +28,6 @@ module.exports =
 
       module.exports.search(searchKeywords, async function(results, index)
       {
-
-        serverQueue = queue.get(message.guild.id)
       
         const voiceChannel = message.member.voice.channel;
         if (!voiceChannel)
