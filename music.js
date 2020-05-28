@@ -1,6 +1,7 @@
 const ytdl = require('ytdl-core')
 const search = require('youtube-search')
 const config = require('./config.json')
+const admin = require('./admin.js')
 
 var opts = 
 {
@@ -97,7 +98,7 @@ module.exports =
 
       search : async function(searchKeywords, returnFunction)
       {
-          if(!searchKeywords.includes("http"))
+          if(!admin.isUrl(searchKeywords))
           {
             search(searchKeywords, opts, function(err, results) 
             {
