@@ -6,6 +6,7 @@ const admin = require('./admin')
 const config = require('./config.json')
 const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
+const googleSearch = require('./googleSearch.js')
 
 mongoUtil.connectToServer(() =>
 {
@@ -146,6 +147,9 @@ client.on('message', async message =>
                 break
             case "link":
                 message.channel.send("The bot authorization link is: https://discord.com/api/oauth2/authorize?client_id=703427817009840188&permissions=8&scope=bot")
+                break
+            case "imagesearch":
+                googleSearch.search(message, content)
                 break
         }
     }
