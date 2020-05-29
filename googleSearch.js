@@ -73,17 +73,24 @@ module.exports =
         {
             if(isFullResults)
             {
-                results = ["",""]
+                results = [""]
+                j = 0
+                k = 1
                 for(i in images)
                 {
-                    if(i < 5)
-                        results[0] += (images[i].url + "\n")
-                    else if(i < 10)
-                        results[1] += (images[i].url + "\n")
+                    if(k % 6 === 0)
+                        j++
+                    if(results[j] === undefined)
+                    {
+                        results[j] = ""
+                    }
+                    
+                    results[j] += (images[i].url + "\n")
+                    k++
                 }
 
-                message.channel.send(results[0])
-                message.channel.send(results[1])
+                for(i in results)
+                    message.channel.send(results[i])
             }
 
             else
