@@ -28,15 +28,23 @@ client.on('message', async message =>
 {
     prefix = await admin.getPrefix(message)
 
-    if(message.author.id != 712443987801145355)
+    if(message.author.id === "712443987801145355")
     {
-        if(message.author.bot)
-        return
+        message.react("713172523424153610")
+    }
+
+    else if(message.author.id === "119482224713269248")
+    {
+        setTimeout(()=>
+        {
+            message.delete()
+        }, 3000)
     }
 
     else
     {
-        message.react("713172523424153610")
+        if(message.author.bot)
+            return
     }
   
     userId = message.member.user.id
