@@ -88,7 +88,12 @@ module.exports =
 
             else
             {
-                message.channel.send(images[0].url)
+                i = 0
+                while(images[i].url.includes("fbsbx.com"))
+                {
+                    i++
+                }
+                message.channel.send(images[i].url)
             }
 
             
