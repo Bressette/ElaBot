@@ -31,21 +31,35 @@ module.exports =
           );
         }
 
-        let link
+        link = ""
         if(ytdl.validateURL(searchKeywords))
             link = searchKeywords
         else
         {
             options = {limit: 5}
             values = await search(searchKeywords, options)
-            i = 0
-            while(values.items[i].link.includes("list=") || values.items[i].link.includes("/channel/"))
+
+
+            if(values.items.length != 0)
             {
-                i++
+                i = 0
+                while(values.items[i].link.includes("list=") || values.items[i].link.includes("/channel/"))
+                {
+                    i++
+                }
+        
+                link = values.items[i].link
+            
             }
-    
-            link = values.items[i].link
+
+            else
+            {
+                message.channel.send("That video does not exist!")
+                link = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            }
         }
+
+        
         
       
        
