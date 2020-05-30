@@ -31,18 +31,24 @@ module.exports =
           );
         }
 
-        
-
-        options = {limit: 5}
-        values = await search(searchKeywords, options)
-      
-        i = 0
-        while(values.items[i].link.includes("list=") || values.items[i].link.includes("/channel/"))
+        let link
+        if(ytdl.validateURL(searchKeywords))
+            link = searchKeywords
+        else
         {
-            i++
+            options = {limit: 5}
+            values = await search(searchKeywords, options)
+            i = 0
+            while(values.items[i].link.includes("list=") || values.items[i].link.includes("/channel/"))
+            {
+                i++
+            }
+    
+            link = values.items[i].link
         }
-
-        link = values.items[i].link
+        
+      
+       
         const songInfo = await ytdl.getInfo(link);
         
 
