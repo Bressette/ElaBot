@@ -1,13 +1,5 @@
 const ytdl = require('ytdl-core')
-const search = require('youtube-search')
-const config = require('./config.json')
-const admin = require('./admin.js')
-
-var opts = 
-{
-    maxResults: 10,
-    key: config.googlekey
-}
+const search = require('ytsr')
 
 const queue = new Map()
 
@@ -27,9 +19,6 @@ module.exports =
       else
           searchKeywords = content.substr(1, content.length).trim()
 
-      module.exports.search(searchKeywords, async function(results, index)
-      {
-      
         const voiceChannel = message.member.voice.channel;
         if (!voiceChannel)
           return message.channel.send(
@@ -42,24 +31,20 @@ module.exports =
           );
         }
 
-        link = ""
-        if(index === -1)
+        
+
+        options = {limit: 5}
+        values = await search(searchKeywords, options)
+      
+        i = 0
+        while(values.items[i].link.includes("list=") || values.items[i].link.includes("/channel/"))
         {
-            link = results
-            if(link === "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-            {
-                message.channel.send("No results found")
-            }
-        }
-            
-        else
-        {
-            link = results[index].link
+            i++
         }
 
-        console.log(`The value of link is ${link}`)
+        link = values.items[i].link
         const songInfo = await ytdl.getInfo(link);
-
+        
 
         const song = {
           title: songInfo.title,
@@ -93,34 +78,8 @@ module.exports =
           serverQueue.songs.push(song);
           return message.channel.send(`${song.title} has been added to the queue!`);
         }
-      })
+     
     },
-
-      search : async function(searchKeywords, returnFunction)
-      {
-          if(!admin.isUrl(searchKeywords))
-          {
-            search(searchKeywords, opts, function(err, results) 
-            {
-                if(err) 
-                {
-                    returnFunction("https://www.youtube.com/watch?v=dQw4w9WgXcQ", -1)
-                    return 
-                }
-                i = 0
-                while(results[i].link.includes("channel") || results[i].link.includes("list="))
-                {
-                    i++
-                }
-
-                returnFunction(results, i)
-            })
-          }
-          else
-          {
-              returnFunction(searchKeywords, -1)
-          }
-      },
       
       skip : function(message) {
         serverQueue = queue.get(message.guild.id)
@@ -160,7 +119,7 @@ module.exports =
             serverQueue.songs.shift();
             module.exports.play(guild, serverQueue.songs[0]);
           })
-          .on("error", error => console.error(error));
+          .on("error", error => console.log("In Error"));
         dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
         serverQueue.textChannel.send(`Start playing: **${song.title}**`);
       },
