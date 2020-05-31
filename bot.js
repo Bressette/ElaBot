@@ -159,6 +159,9 @@ client.on('message', async message =>
             case "imagesearch":
                 googleSearch.search(message, content)
                 break
+            case "loop":
+                music.loop()
+                break
         }
     }
 })

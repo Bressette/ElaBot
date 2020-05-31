@@ -2,6 +2,7 @@ const ytdl = require('ytdl-core')
 const search = require('ytsr')
 
 const queue = new Map()
+isLoop = false
 
 module.exports =
 {
@@ -47,9 +48,7 @@ module.exports =
                 {
                     i++
                 }
-        
                 link = values.items[i].link
-            
             }
 
             else
@@ -136,12 +135,14 @@ module.exports =
         const dispatcher = serverQueue.connection
           .play(ytdl(song.url))
           .on("finish", () => {
-            serverQueue.songs.shift();
+            if(!isLoop)
+              serverQueue.songs.shift();
             module.exports.play(guild, serverQueue.songs[0]);
           })
           .on("error", error => console.log("In Error"));
         dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-        serverQueue.textChannel.send(`Start playing: **${song.title}**`);
+        if(!isLoop)
+          serverQueue.textChannel.send(`Start playing: **${song.title}**`);
       },
 
       pause : function(message)
@@ -154,5 +155,14 @@ module.exports =
       {
           serverQueue = queue.get(message.guild.id)
           serverQueue.connection.dispatcher.resume()
+      },
+
+      loop : () =>
+      {
+          if(isLoop)
+            isLoop = false
+          else 
+            isLoop = true
+          console.log("The value of loop is: " + isLoop)
       }
 }
