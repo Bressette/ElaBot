@@ -160,7 +160,7 @@ client.on('message', async message =>
                 googleSearch.search(message, content)
                 break
             case "loop":
-                music.loop()
+                music.setLoop(message)
                 break
         }
     }

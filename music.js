@@ -133,13 +133,16 @@ module.exports =
           return;
         }
 
-        loop = await module.exports.getLoop(guild)
-        if(loop === undefined)
-            loop = false
+        
         
         const dispatcher = serverQueue.connection
           .play(ytdl(song.url))
-          .on("finish", () => {
+          .on("finish", async() => {
+
+            loop = await module.exports.getLoop(guild)
+            if(loop === undefined)
+                loop = false
+
             if(!loop)
               serverQueue.songs.shift();
 
@@ -147,6 +150,10 @@ module.exports =
           })
           .on("error", error => console.log("In Error"));
         dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+
+        loop = await module.exports.getLoop(guild)
+        if(loop === undefined)
+            loop = false
         if(!loop)
           serverQueue.textChannel.send(`Start playing: **${song.title}**`);
       },
@@ -163,13 +170,21 @@ module.exports =
           serverQueue.connection.dispatcher.resume()
       },
 
-      loop : () =>
+      setLoop : async (message) =>
       {
-          if(isLoop)
-            isLoop = false
+          dbo = db.getDb()
+          loop = await module.exports.getLoop(message.guild)
+          if(!loop)
+          {
+              dbo.collection("servers").updateOne({id: message.guild.id}, {$set:{"loop":true}})
+              message.channel.send("Loop is enabled")
+          }
           else 
-            isLoop = true
-          console.log("The value of loop is: " + isLoop)
+          {
+              dbo.collection("servers").updateOne({id: message.guild.id}, {$set: {"loop":false}})
+              message.channel.send("Loop is disabled")
+          }
+
       },
 
       getLoop : async function(guild) 
@@ -181,6 +196,6 @@ module.exports =
               dbo.collection("servers").updateOne({id: guild.id}, {$set: {loop:false}})
           }
 
-          return result
+          return result.loop
       }
 }
