@@ -174,7 +174,7 @@ module.exports =
         result = await dbo.collection("servers").findOne({id: message.guild.id})
         if(result === null || result === undefined)
         {
-            dbo.collection("servers").insertOne({id: message.guild.id, prefix: "-"}, (err, res) =>
+            dbo.collection("servers").insertOne({id: message.guild.id, prefix: "-", loop: false}, (err, res) =>
             {
                 if(err) throw err
                 return "-"

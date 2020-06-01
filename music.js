@@ -1,8 +1,9 @@
 const ytdl = require('ytdl-core')
 const search = require('ytsr')
+const db = require("./mongoUtil.js")
 
 const queue = new Map()
-isLoop = false
+
 
 module.exports =
 {
@@ -124,24 +125,29 @@ module.exports =
         serverQueue.connection.dispatcher.end();
       },
       
-      play : function(guild, song) {
+      play : async function(guild, song) {
         const serverQueue = queue.get(guild.id);
         if (!song) {
           serverQueue.voiceChannel.leave();
           queue.delete(guild.id);
           return;
         }
-      
+
+        loop = await module.exports.getLoop(guild)
+        if(loop === undefined)
+            loop = false
+        
         const dispatcher = serverQueue.connection
           .play(ytdl(song.url))
           .on("finish", () => {
-            if(!isLoop)
+            if(!loop)
               serverQueue.songs.shift();
+
             module.exports.play(guild, serverQueue.songs[0]);
           })
           .on("error", error => console.log("In Error"));
         dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-        if(!isLoop)
+        if(!loop)
           serverQueue.textChannel.send(`Start playing: **${song.title}**`);
       },
 
@@ -164,5 +170,17 @@ module.exports =
           else 
             isLoop = true
           console.log("The value of loop is: " + isLoop)
+      },
+
+      getLoop : async function(guild) 
+      {
+          dbo = db.getDb()
+          result = await dbo.collection("servers").findOne({id: guild.id})
+          if(result.loop === undefined)
+          {
+              dbo.collection("servers").updateOne({id: guild.id}, {$set: {loop:false}})
+          }
+
+          return result
       }
 }
