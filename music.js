@@ -41,15 +41,23 @@ module.exports =
             options = {limit: 5}
             values = await search(searchKeywords, options)
 
-
+            console.log(values)
             if(values.items.length != 0)
             {
                 i = 0
+                while(values.items[i].link === undefined)
+                {
+                    i++
+                }
                 while(values.items[i].link.includes("list=") || values.items[i].link.includes("/channel/"))
                 {
                     i++
                 }
-                link = values.items[i].link
+
+                if(values.items[i].link === undefined)
+                    link = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                else
+                    link = values.items[i].link
             }
 
             else
