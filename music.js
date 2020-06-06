@@ -168,14 +168,28 @@ module.exports =
 
       pause : function(message)
       {
-          serverQueue = queue.get(message.guild.id)
-          serverQueue.connection.dispatcher.pause()
+          try
+          {
+            serverQueue = queue.get(message.guild.id)
+            serverQueue.connection.dispatcher.pause()
+          } catch(err)
+          {
+              message.channel.send(err)
+          }
+          
       },
 
       resume : function(message)
       {
-          serverQueue = queue.get(message.guild.id)
-          serverQueue.connection.dispatcher.resume()
+          try
+          {
+            serverQueue = queue.get(message.guild.id)
+            serverQueue.connection.dispatcher.resume()
+          } catch(err)
+          {
+              message.channel.send(err)
+          }
+          
       },
 
       setLoop : async (message) =>
