@@ -252,5 +252,27 @@ module.exports =
             }
             message.channel.send(temp)
         }
+    },
+
+    skipTo : (message) =>
+    {
+        serverQueue = queue.get(message.guild.id)
+        message.content = message.content.substr(7, content.length)
+        position = parseInt(message.content)
+        if(!isNaN(position) && isFinite(position) && position <= serverQueue.songs.length + 1 && position > 0)
+        {
+            for(i = 0; i < position - 2; i++)
+            {
+                console.log("In for loop")
+                serverQueue.songs.shift()
+            }
+
+            serverQueue.connection.dispatcher.end()
+        }
+
+        else
+        {
+            message.channel.send("Enter a valid number to skip to")
+        }
     }
 }

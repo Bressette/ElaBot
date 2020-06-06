@@ -168,6 +168,9 @@ client.on('message', async message =>
             case "queue":
                 music.queue(message)
                 break
+            case "skipto":
+                music.skipTo(message)
+                break
         }
     }
 })
