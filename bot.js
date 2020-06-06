@@ -162,6 +162,9 @@ client.on('message', async message =>
             case "loop":
                 music.setLoop(message)
                 break
+            case "restart":
+                music.restart(message)
+                break
         }
     }
 })

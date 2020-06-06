@@ -102,9 +102,17 @@ module.exports =
             queue.delete(message.guild.id);
             return message.channel.send(err);
           }
-        } else {
-          serverQueue.songs.push(song);
-          return message.channel.send(`${song.title} has been added to the queue!`);
+        } else 
+        {
+            console.log(message)
+            if(message.content.startsWith("-restart"))
+                serverQueue.songs.unshift(song)
+            else
+            {
+                serverQueue.songs.push(song);
+                return message.channel.send(`${song.title} has been added to the queue!`);
+            }
+          
         }
      
     },
@@ -219,5 +227,21 @@ module.exports =
           }
 
           return result.loop
+      },
+
+      restart : (message) =>
+      {
+          try
+          {
+              serverQueue = queue.get(message.guild.id)
+              module.exports.execute(message, serverQueue.songs[0].url).then(() =>
+              {
+                  serverQueue.connection.dispatcher.end()
+              })
+          } catch(err)
+          {
+              message.channel.send(err)
+          }
+          
       }
 }
