@@ -102,10 +102,8 @@ module.exports =
             else
             {
                 serverQueue.songs.push(song);
-                temp = `${song.title} has been added to the queue!\n**Queue**\n`
-                for(i in serverQueue.songs)
-                    temp += "**" + (parseInt(i) + parseInt(1)) + "** " + " " + serverQueue.songs[i].title + "\n"
-                return message.channel.send(temp);
+                message.channel.send(`${song.title} has been added to the queue!`);
+                module.exports.queue(message)
             }
           
         }
@@ -247,7 +245,7 @@ module.exports =
             message.channel.send("The queue is empty")
         else
         {
-            temp = ""
+            temp = "**Queue**\n"
             for(i in serverQueue.songs)
             {
                 position = parseInt(i) + parseInt(1)
