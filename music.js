@@ -102,7 +102,10 @@ module.exports =
             else
             {
                 serverQueue.songs.push(song);
-                return message.channel.send(`${song.title} has been added to the queue!`);
+                temp = `${song.title} has been added to the queue!\n**Queue**\n`
+                for(i in serverQueue.songs)
+                    temp += "**" + (parseInt(i) + parseInt(1)) + "** " + " " + serverQueue.songs[i].title + "\n"
+                return message.channel.send(temp);
             }
           
         }
