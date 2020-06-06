@@ -45,11 +45,7 @@ module.exports =
             if(values.items.length != 0)
             {
                 i = 0
-                while(values.items[i].link === undefined)
-                {
-                    i++
-                }
-                while(values.items[i].link.includes("list=") || values.items[i].link.includes("/channel/"))
+                while(values.items[i].type === "playlist" || values.items[i].type === "channel" || values.items[i].link === undefined)
                 {
                     i++
                 }
@@ -66,10 +62,6 @@ module.exports =
                 link = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
             }
         }
-
-        
-        
-      
        
         const songInfo = await ytdl.getInfo(link);
         
@@ -243,5 +235,22 @@ module.exports =
               message.channel.send(err)
           }
           
-      }
+      },
+
+    queue : (message) =>
+    {
+        serverQueue = queue.get(message.guild.id)
+        if(!serverQueue)
+            message.channel.send("The queue is empty")
+        else
+        {
+            temp = ""
+            for(i in serverQueue.songs)
+            {
+                position = parseInt(i) + parseInt(1)
+                temp += "**" + position + "** " + serverQueue.songs[i].title + "\n"
+            }
+            message.channel.send(temp)
+        }
+    }
 }

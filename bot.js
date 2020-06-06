@@ -165,6 +165,9 @@ client.on('message', async message =>
             case "restart":
                 music.restart(message)
                 break
+            case "queue":
+                music.queue(message)
+                break
         }
     }
 })
