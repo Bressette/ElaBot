@@ -171,6 +171,8 @@ client.on('message', async message =>
             case "skipto":
                 music.skipTo(message)
                 break
+            case "ytsr":
+                music.ytSearch(message)
         }
     }
 })

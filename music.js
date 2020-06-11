@@ -38,14 +38,13 @@ module.exports =
             link = searchKeywords
         else
         {
-            options = {limit: 5}
+            options = {limit: 10}
             values = await search(searchKeywords, options)
-
-            console.log(values)
+            
             if(values.items.length != 0)
             {
                 i = 0
-                while(values.items[i].type === "playlist" || values.items[i].type === "channel" || values.items[i].link === undefined)
+                while(values.items[i].type === "playlist" || values.items[i].type === "channel" || values.items[i].link === undefined || values.items[i].type === "movie")
                 {
                     i++
                 }
@@ -275,5 +274,22 @@ module.exports =
         {
             message.channel.send("Enter a valid number to skip to")
         }
+    },
+
+    ytSearch : (message, content) =>
+    {
+        options = {limit: 10}
+        values = await search(searchKeywords, options)
+        message.content = message.content.substr(4, content.length)
+        returnStr = ""
+        for(i in values)
+        {
+            if(values.items[i].title != undefined)
+            {
+                returnStr += values.items[i].title + "\n"
+            }
+        }
+
+        message.channel.send(returnStr)
     }
 }
