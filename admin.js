@@ -158,6 +158,15 @@ module.exports =
                 }).catch((error) => {message.channel.send(error)})
             }
         }
+
+        else
+        {
+            if(module.exports.isUrl(message.content))
+            {
+                temp = message.author + " Links should be in links-here-nerds!!!"
+                message.channel.send(temp)
+            }
+        }
     },
 
     isUrl: (linkString) => 
