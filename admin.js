@@ -161,7 +161,7 @@ module.exports =
 
         else
         {
-            if(module.exports.isUrl(message.content))
+            if(module.exports.isUrl(message.content) && message.channel.id != config.videoid)
             {
                 temp = message.author + " Links should be in links-here-nerds!!!"
                 message.channel.send(temp)
