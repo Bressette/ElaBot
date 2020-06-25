@@ -27,6 +27,7 @@ client.on('ready', () =>
 client.on('message', async message => 
 {
     prefix = await admin.getPrefix(message)
+    admin.linkManagement(message)
 
     if(message.author.id === "712443987801145355")
     {
@@ -50,7 +51,6 @@ client.on('message', async message =>
     userId = message.member.user.id
     content = message.content
 
-    admin.linkManagement(message)
 
     if(message.content.includes("printprefix"))
     {
