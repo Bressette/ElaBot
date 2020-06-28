@@ -174,10 +174,9 @@ module.exports =
 
         else
         {
-            if(module.exports.isUrl(message.content) && message.channel.id != config.videoid)
+            if(module.exports.isUrl(message.content) && message.channel.id != config.videoid && message.channel.id != config.memeid)
             {
-                temp = message.author.username + " Links should be in links-here-nerds!!!"
-                message.channel.send(temp)
+                message.reply("Links should be links-here-nerds!!!")
             }
         }
     },
