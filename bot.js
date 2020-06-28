@@ -8,6 +8,8 @@ const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
 const googleSearch = require('./googleSearch.js')
 
+let banList = []
+
 mongoUtil.connectToServer(() =>
 {
 })
@@ -27,7 +29,7 @@ client.on('ready', () =>
 client.on('message', async message => 
 {
     prefix = await admin.getPrefix(message)
-    admin.linkManagement(message)
+    admin.linkManagement(message, banList)
 
     if(message.author.id === "712443987801145355")
     {
@@ -173,6 +175,9 @@ client.on('message', async message =>
                 break
             case "ytsr":
                 music.ytSearch(message)
+            case "banword":
+                content = content.substr(7, content.length).trim()
+                banList.push(content)
         }
     }
 })
