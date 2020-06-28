@@ -187,6 +187,27 @@ client.on('message', async message =>
                 {
                     message.channel.send("You need admin privileges to ban words")
                 }
+                break
+            case "unbanword":
+                if(message.member.hasPermission("ADMINISTRATOR"))
+                {
+                    content = content.substr(9, content.length).trim()
+                    if(banList.indexOf(content) != -1)
+                    {
+                        banList = banList.splice(banList.indexOf(content), 1)
+                    }
+
+                    else
+                    {
+                        message.channel.send("That word is not banned!")
+                    }
+                }
+
+                else
+                {
+                    message.channel.send("You need admin privileges to unban words")
+                }
+                break
                 
         }
     }
