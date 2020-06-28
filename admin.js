@@ -159,16 +159,33 @@ module.exports =
         if(message.channel.id === config.linkid)
         {
             
+            try
+            {
             if(!module.exports.isUrl(message.content))
             {
-                message.channel.send("That isn't a link!").then(msg =>
+                if(message.author.bot)
                 {
                     setTimeout(() =>
                     {
-                        message.delete()
-                        msg.delete()
-                    }, 2000)
-                }).catch((error) => {message.channel.send(error)})
+                            message.delete().catch((error) => {
+                            console.log(`Error at bot delete ${error}`)
+                        })
+                    }, 3000)
+                    return
+                }
+                
+                setTimeout(() =>
+                {
+                    message.channel.send("That isn't a link")
+                    message.delete().catch((error) => {
+                        console.log(`Error at normal delete ${error}`)
+                    })
+                }, 3000)
+            }
+
+            } catch(err)
+            {
+                console.log(err)
             }
         }
 
@@ -176,7 +193,7 @@ module.exports =
         {
             if(module.exports.isUrl(message.content) && message.channel.id != config.videoid && message.channel.id != config.memeid)
             {
-                message.reply("Links should be links-here-nerds!!!")
+                message.reply("Links should be in links-here-nerds!!!")
             }
         }
     },
