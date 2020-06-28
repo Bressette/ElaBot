@@ -176,8 +176,18 @@ client.on('message', async message =>
             case "ytsr":
                 music.ytSearch(message)
             case "banword":
-                content = content.substr(7, content.length).trim()
-                banList.push(content)
+                if(message.member.hasPermission("ADMINISTRATOR"))
+                {
+                    content = content.substr(7, content.length).trim()
+                    banList.push(content)
+                    message.channel.send(`${message.content} has been banned`)
+                }
+
+                else
+                {
+                    message.channel.send("You need admin privileges to ban words")
+                }
+                
         }
     }
 })
