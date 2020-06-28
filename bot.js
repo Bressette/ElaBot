@@ -208,6 +208,23 @@ client.on('message', async message =>
                     message.channel.send("You need admin privileges to unban words")
                 }
                 break
+            case "showbanlist":
+                results = ""
+                if(banList)
+                {
+                    for(i of banList)
+                    {
+                        results += i + "\n"
+                    }
+
+                    message.channel.send(results)
+                }
+
+                else
+                {
+                    message.channel.send("The banlist is empty")
+                }
+                break
                 
         }
     }
