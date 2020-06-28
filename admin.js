@@ -141,8 +141,14 @@ module.exports =
     },
 
     //method that deletes any messages that are not a link in the channel defined in the config file
-    linkManagement: (message) =>
+    linkManagement: (message, banList) =>
     {
+        if(message.content.toLowerCase().includes("gay"))
+        {
+            message.delete()
+            return
+        }
+
         if(message.channel.id === config.linkid)
         {
             
@@ -163,7 +169,7 @@ module.exports =
         {
             if(module.exports.isUrl(message.content) && message.channel.id != config.videoid)
             {
-                temp = message.author + " Links should be in links-here-nerds!!!"
+                temp = message.author.username + " Links should be in links-here-nerds!!!"
                 message.channel.send(temp)
             }
         }
