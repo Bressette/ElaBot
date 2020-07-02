@@ -143,14 +143,17 @@ module.exports =
     //method that deletes any messages that are not a link in the channel defined in the config file
     linkManagement: (message, banList) =>
     {
-        if(banList)
+        if(!message.author.bot && !message.content.includes("unbanword"))
         {
-            for(i of banList)
+            if(banList)
             {
-                if(message.content.toLowerCase().includes(i))
+                for(i of banList)
                 {
-                    message.delete()
-                    return
+                    if(message.content.toLowerCase().includes(i))
+                    {
+                        message.delete()
+                        return
+                    }
                 }
             }
         }
@@ -189,13 +192,7 @@ module.exports =
             }
         }
 
-        else
-        {
-            if(module.exports.isUrl(message.content) && message.channel.id != config.videoid && message.channel.id != config.memeid)
-            {
-                message.reply("Links should be in links-here-nerds!!!")
-            }
-        }
+
     },
 
     isUrl: (linkString) => 

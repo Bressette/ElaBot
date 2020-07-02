@@ -180,7 +180,7 @@ client.on('message', async message =>
                 {
                     content = content.substr(7, content.length).trim()
                     banList.push(content)
-                    message.channel.send(`${message.content} has been banned`)
+                    message.channel.send(`The string "${content}" has been banned`)
                 }
 
                 else
