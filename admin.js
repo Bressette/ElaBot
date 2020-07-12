@@ -206,6 +206,8 @@ module.exports =
         images = await client.channels.fetch(config.images)
         gifs = await client.channels.fetch(config.gifs)
 
+        console.log("In archive messages")
+
         if(!message.author.bot && message.guild.id === "502575389550575636")
         {
             if(message.content.includes("https://www.youtube.com") || (message.content.includes("https://twitter.com") && message.content.includes("?s="))
@@ -215,16 +217,11 @@ module.exports =
                 if(message.content.includes("https://twitter.com"))
                     twitterLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
-
             else if(message.content.includes("https://store.steampowered.com"))
                 steamLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             
             else if(message.content.includes("https://www.amazon.com"))
                 amazonLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
-
-            else if(message.attachments.size > 0)
-                images.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
-            
             else if(message.content.includes("https://tenor.com"))
                 gifs.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             
@@ -235,7 +232,6 @@ module.exports =
                 picture = message.attachments.array()
                 images.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content} ${picture[0].url}`)
             }
-                
         }
     },
 
@@ -311,7 +307,7 @@ module.exports =
     },
 
 
-    getMessages: async (channel, limit = 500) => 
+    getMessages: async (channel, limit) => 
     {
         const sum_messages = [];
         let last_id;
