@@ -225,6 +225,9 @@ client.on('message', async message =>
                     message.channel.send("The banlist is empty")
                 }
                 break
+            case "getinvite":
+                message.channel.createInvite().then(invite => message.channel.send(invite.url))
+                .catch(console.error)
                 
         }
     }
