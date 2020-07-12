@@ -141,7 +141,7 @@ module.exports =
     },
 
     //method that deletes any messages that are not a link in the channel defined in the config file
-    linkManagement: (message, banList) =>
+    linkManagement: async (message, banList, client) =>
     {
         if(!message.author.bot && !message.content.includes("unbanword"))
         {
@@ -157,7 +157,54 @@ module.exports =
                 }
             }
         }
+
+        generalLinksId = config.generallinks
+        videoLinksId = config.videolinks
+        steamLinksId = config.steamlinks
+        twitterLinksId = config.twitterlinks
+        amazonLinksId = config.amazonlinks
+        imagesId = config.images
+        gifsId = config.gifs
+
+        generalLinks = await client.channels.fetch(config.generallinks)
+        videoLinks = await client.channels.fetch(config.videolinks)
+        steamLinks = await client.channels.fetch(config.steamlinks)
+        twitterLinks = await client.channels.fetch(config.twitterlinks)
+        amazonLinks = await client.channels.fetch(config.amazonlinks)
+        images = await client.channels.fetch(config.images)
+        gifs = await client.channels.fetch(config.gifs)
+
+
         
+        
+        if(!message.author.bot && message.guild.id === "502575389550575636")
+        {
+            if(message.content.includes("https://www.youtube.com") || (message.content.includes("https://twitter.com") && message.content.includes("?s=")))
+            {
+                videoLinks.send(message.content)
+                if(message.content.includes("https://twitter.com"))
+                    twitterLinks.send(message.content)
+            }
+
+            else if(message.content.includes("https://store.steampowered.com"))
+                steamLinks.send(message.content)
+            
+            else if(message.content.includes("https://www.amazon.com"))
+                amazonLinks.send(message.content)
+
+            else if(message.attachments.size > 0)
+                images.send(message.content)
+            
+            else if(message.content.includes("https://tenor.com"))
+                gifs.send(message.content)
+            
+            else if(module.exports.isUrl(message.content))
+                generalLinks.send(message.content)
+        }
+
+        
+
+
 
         if(message.channel.id === config.linkid)
         {

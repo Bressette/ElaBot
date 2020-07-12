@@ -29,7 +29,7 @@ client.on('ready', () =>
 client.on('message', async message => 
 {
     prefix = await admin.getPrefix(message)
-    admin.linkManagement(message, banList)
+    admin.linkManagement(message, banList, client)
 
     if(message.author.id === "712443987801145355")
     {
@@ -229,5 +229,4 @@ client.on('message', async message =>
         }
     }
 })
-
 client.login(config.token)
