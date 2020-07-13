@@ -160,6 +160,20 @@ module.exports =
 
         module.exports.archiveMessages(message, client)
 
+        if(!message.author.bot)
+        {
+            if(message.channel.id === config.generallinks || message.channel.id == config.videolinks
+                || message.channel.id === config.steamlinks || message.channel.id === config.twitterlinks
+                || message.channel.id === config.amazonlinks || message.channel.id === config.images
+                || message.channel.id === config.gifs)
+            {
+                message.delete().catch((error) =>
+                {
+                    console.log(`Error deleting from the archives ${error}`)
+                })
+            }
+        }
+
         if(message.channel.id === config.linkid)
         {
             
