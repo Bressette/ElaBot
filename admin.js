@@ -210,6 +210,19 @@ module.exports =
 
     },
 
+    getMention: (content) =>
+    {
+        if(content.startsWith("<@") && content.endsWith(">"))
+        {
+            return content
+        }
+
+        else
+        {
+            return null
+        }
+    },
+
     archiveMessages: async(message, client) =>
     {
         generalLinks = await client.channels.fetch(config.generallinks)
@@ -221,7 +234,21 @@ module.exports =
         gifs = await client.channels.fetch(config.gifs)
         other = await client.channels.fetch(config.other)
 
-        console.log("In archive messages")
+        for(i = 0; i < message.content.length; i++)
+        {
+            for(j = i; j < message.content.length; j++)
+            {
+                tempString = message.content.substring(i, j+1)
+                mention = module.exports.getMention(tempString)
+                if(mention)
+                {
+                    message.content = message.content.replace(mention, "")
+                }
+            }
+        }
+
+
+        console.log(message.content)
 
         if(!message.author.bot && message.guild.id === "502575389550575636")
         {
