@@ -165,7 +165,7 @@ module.exports =
             if(message.channel.id === config.generallinks || message.channel.id == config.videolinks
                 || message.channel.id === config.steamlinks || message.channel.id === config.twitterlinks
                 || message.channel.id === config.amazonlinks || message.channel.id === config.images
-                || message.channel.id === config.gifs)
+                || message.channel.id === config.gifs || message.channel.id === config.other)
             {
                 message.delete().catch((error) =>
                 {
@@ -219,6 +219,7 @@ module.exports =
         amazonLinks = await client.channels.fetch(config.amazonlinks)
         images = await client.channels.fetch(config.images)
         gifs = await client.channels.fetch(config.gifs)
+        other = await client.channels.fetch(config.other)
 
         console.log("In archive messages")
 
@@ -232,20 +233,34 @@ module.exports =
                     twitterLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
             else if(message.content.includes("https://store.steampowered.com"))
+            {
                 steamLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
-            
+            }
+                
             else if(message.content.includes("https://www.amazon.com"))
+            {
                 amazonLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+            }
+                
             else if(message.content.includes("https://tenor.com"))
+            {
                 gifs.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
-            
+            }
+                
             else if(module.exports.isUrl(message.content))
+            {
                 generalLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+            }
+                
             else if(message.attachments.size > 0)
             {
                 picture = message.attachments.array()
                 images.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content} ${picture[0].url}`)
             }
+
+            else
+                other.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+
         }
     },
 

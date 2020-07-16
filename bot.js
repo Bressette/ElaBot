@@ -228,6 +228,7 @@ client.on('message', async message =>
             case "getinvite":
                 message.channel.createInvite().then(invite => message.channel.send(invite.url))
                 .catch(console.error)
+                break
                 
         }
     }
