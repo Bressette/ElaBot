@@ -1,5 +1,8 @@
 const mongoUtil = require('./mongoUtil.js')
 const config = require('./config.json')
+const util = require('util')
+const fs = require('fs')
+const readFile = util.promisify(fs.readFile)
 
 module.exports = 
 {
@@ -234,11 +237,18 @@ module.exports =
         gifs = await client.channels.fetch(config.gifs)
         other = await client.channels.fetch(config.other)
 
+        includesLink = false
+
         for(i = 0; i < message.content.length; i++)
         {
             for(j = i; j < message.content.length; j++)
             {
                 tempString = message.content.substring(i, j+1)
+                if(module.exports.isUrl(tempString))
+                {
+                    includesLink = true
+                }
+                    
                 mention = module.exports.getMention(tempString)
                 if(mention)
                 {
@@ -246,49 +256,68 @@ module.exports =
                 }
             }
         }
-
-
-        console.log(message.content)
+        
 
         if(!message.author.bot && message.guild.id === "502575389550575636")
         {
             if(message.content.includes("https://www.youtube.com") || (message.content.includes("https://twitter.com") && message.content.includes("?s="))
                || message.content.includes("https://youtu.be"))
             {
-                videoLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
-                if(message.content.includes("https://twitter.com"))
-                    twitterLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                // videoLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                // if(message.content.includes("https://twitter.com"))
+                //     twitterLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
             else if(message.content.includes("https://store.steampowered.com"))
             {
-                steamLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                // steamLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
                 
             else if(message.content.includes("https://www.amazon.com"))
             {
-                amazonLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                // amazonLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
                 
             else if(message.content.includes("https://tenor.com"))
             {
-                gifs.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                // gifs.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
                 
-            else if(module.exports.isUrl(message.content))
+            else if(includesLink)
             {
-                generalLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                await generalLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} | ${message.content}`)
             }
                 
             else if(message.attachments.size > 0)
             {
-                picture = message.attachments.array()
-                images.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content} ${picture[0].url}`)
+                // picture = message.attachments.array()
+                // images.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content} ${picture[0].url}`)
             }
 
             else
-                other.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
-
+            {
+                // other.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+            }
         }
+
+    },
+
+    messageUrlCheck: (content) =>
+    {
+        status = false
+
+        for(i = 0; i < content.length; i++)
+        {
+            for(j = i; j < content.length; j++)
+            {
+                tempString = content.substring(i, j+1)
+                if(module.exports.isUrl(tempString))
+                {
+                    return true
+                }
+            }
+        }
+
+        return status
     },
 
     importLinks: async (client) =>
@@ -345,11 +374,14 @@ module.exports =
         })
         console.log("After getting messages")
 
+        
 
         for(i of allMessages)
         {
-            module.exports.archiveMessages(i, client)
+           await module.exports.archiveMessages(i, client)
         }
+
+    
     },
 
     pushMessages: (messages, destination) =>

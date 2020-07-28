@@ -7,6 +7,8 @@ const config = require('./config.json')
 const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
 const googleSearch = require('./googleSearch.js')
+const fs = require('fs')
+
 
 let banList = []
 
@@ -229,7 +231,21 @@ client.on('message', async message =>
                 message.channel.createInvite().then(invite => message.channel.send(invite.url))
                 .catch(console.error)
                 break
-                
+            case "importlinks":
+                admin.importLinks(client)
+                console.log("After importlinks")
+                break
+            case "filewrite":
+                testContent = "all messages goes here"
+                fs.writeFile("randomFileName2.txt", testContent, (err) => {
+                    if(err)
+                        console.log(err)
+                })
+                break
+            case "importfromfile":
+                admin.importFromFile(client)
+                break
+                        
         }
     }
 })
