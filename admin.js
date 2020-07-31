@@ -177,39 +177,6 @@ module.exports =
             }
         }
 
-        if(message.channel.id === config.linkid)
-        {
-            
-            try
-            {
-            if(!module.exports.isUrl(message.content))
-            {
-                if(message.author.bot)
-                {
-                    setTimeout(() =>
-                    {
-                            message.delete().catch((error) => {
-                            console.log(`Error at bot delete ${error}`)
-                        })
-                    }, 3000)
-                    return
-                }
-                
-                setTimeout(() =>
-                {
-                    message.channel.send("That isn't a link")
-                    message.delete().catch((error) => {
-                        console.log(`Error at normal delete ${error}`)
-                    })
-                }, 3000)
-            }
-
-            } catch(err)
-            {
-                console.log(err)
-            }
-        }
-
 
     },
 
@@ -228,6 +195,7 @@ module.exports =
 
     archiveMessages: async(message, client) =>
     {
+
         generalLinks = await client.channels.fetch(config.generallinks)
         videoLinks = await client.channels.fetch(config.videolinks)
         steamLinks = await client.channels.fetch(config.steamlinks)
@@ -263,39 +231,52 @@ module.exports =
             if(message.content.includes("https://www.youtube.com") || (message.content.includes("https://twitter.com") && message.content.includes("?s="))
                || message.content.includes("https://youtu.be"))
             {
-                // videoLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
-                // if(message.content.includes("https://twitter.com"))
-                //     twitterLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                videoLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                if(message.content.includes("https://twitter.com"))
+                    twitterLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
+            else if(message.content.includes("https://twitter.com"))
+            {
+                twitterLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+            }
+                
             else if(message.content.includes("https://store.steampowered.com"))
             {
-                // steamLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                steamLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
                 
             else if(message.content.includes("https://www.amazon.com"))
             {
-                // amazonLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                amazonLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
                 
             else if(message.content.includes("https://tenor.com"))
             {
-                // gifs.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                gifs.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+            }
+
+            else if(message.attachments.size > 0)
+            {
+                picture = message.attachments.array()
+                images.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content} ${picture[0].url}`)
             }
                 
             else if(includesLink)
             {
-                await generalLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} | ${message.content}`)
+                try
+                {
+                    await generalLinks.send(`${message.author.tag} on ${message.createdAt.toDateString()} | ${message.content}`)
+                } catch(error)
+                {
+                    console.log(error)
+                }
+                
+                
             }
                 
-            else if(message.attachments.size > 0)
-            {
-                // picture = message.attachments.array()
-                // images.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content} ${picture[0].url}`)
-            }
-
             else
             {
-                // other.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
+                other.send(`${message.author.tag} on ${message.createdAt.toDateString()} - ${message.content}`)
             }
         }
 
@@ -378,7 +359,13 @@ module.exports =
 
         for(i of allMessages)
         {
-           await module.exports.archiveMessages(i, client)
+           try
+           {
+                await module.exports.archiveMessages(i, client)
+           } catch(error) {
+               console.log(error)
+           }
+           
         }
 
     

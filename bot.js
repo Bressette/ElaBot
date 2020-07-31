@@ -27,6 +27,26 @@ client.on('ready', () =>
     .catch(console.error)
 })
 
+client.on("channelUpdate", async function(oldChannel, newChannel)
+{
+    console.log("There is a channel update")
+    if(oldChannel.type === "voice")
+    {
+        console.log(oldChannel.name)
+        if(oldChannel.name === "Bryce Channel" || oldChannel.name === "General" || oldChannel.name === "Syria Bad" || oldChannel.name === "Blackout - Videogames")
+        {
+            console.log("Setting name")
+            newChannel = await newChannel.setName(oldChannel.name)
+        }
+    }
+})
+
+client.on("channelCreate", async (newChannel) =>
+{
+    if(newChannel.type === "voice")
+        newChannel.delete()
+})
+
 
 client.on('message', async message => 
 {
@@ -230,20 +250,6 @@ client.on('message', async message =>
             case "getinvite":
                 message.channel.createInvite().then(invite => message.channel.send(invite.url))
                 .catch(console.error)
-                break
-            case "importlinks":
-                admin.importLinks(client)
-                console.log("After importlinks")
-                break
-            case "filewrite":
-                testContent = "all messages goes here"
-                fs.writeFile("randomFileName2.txt", testContent, (err) => {
-                    if(err)
-                        console.log(err)
-                })
-                break
-            case "importfromfile":
-                admin.importFromFile(client)
                 break
                         
         }
