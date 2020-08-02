@@ -10,6 +10,12 @@ const googleSearch = require('./googleSearch.js')
 const fs = require('fs')
 
 
+setInterval(() =>
+{
+    date = new Date()
+    console.log(date.getTime())
+}, 1000)
+
 let banList = []
 
 mongoUtil.connectToServer(() =>
@@ -250,6 +256,9 @@ client.on('message', async message =>
             case "getinvite":
                 message.channel.createInvite().then(invite => message.channel.send(invite.url))
                 .catch(console.error)
+                break
+            case "ytsearch":
+                music.ytSearch(message, content)
                 break
                         
         }

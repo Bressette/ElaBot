@@ -277,13 +277,14 @@ module.exports =
         }
     },
 
-    ytSearch : (message, content) =>
+    ytSearch : async(message, content) =>
     {
+        searchKeywords = message.content.substr(8, content.length).trim()
         options = {limit: 10}
         values = await search(searchKeywords, options)
-        message.content = message.content.substr(4, content.length)
+        console.log(values)
         returnStr = ""
-        for(i in values)
+        for(i in values.items)
         {
             if(values.items[i].title != undefined)
             {
