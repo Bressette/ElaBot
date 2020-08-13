@@ -187,6 +187,11 @@ module.exports =
             return content
         }
 
+        else if(content.includes("@here") || content.includes("@everyone"))
+        {
+            return content
+        }
+
         else
         {
             return null

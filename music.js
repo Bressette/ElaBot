@@ -62,8 +62,19 @@ module.exports =
                 link = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
             }
         }
-       
-        const songInfo = await ytdl.getInfo(link);
+
+        // console.log(i)
+        console.log(link)
+        console.log(values)
+        try
+        {
+            songInfo = await ytdl.getInfo(link)
+        } catch(err) {
+            console.log(err)
+            i++
+            songInfo = await ytdl.getInfo(values.items[i].link)
+        } 
+        
         
 
         const song = {
