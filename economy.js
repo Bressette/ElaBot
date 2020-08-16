@@ -66,17 +66,22 @@ module.exports =
     },
     
     //function that sends a message after getting the balance from a userId that is passed into the function
-    messageCurrentBalance : function(userTag, message) 
+    messageCurrentBalance : function(message) 
     {
-        module.exports.getBalance(userTag, function(amount) 
+
+        module.exports.getBalance(message.author.id, function(amount) 
         {
             message.channel.send("Your current balance is: " + amount)
         })
     },
 
     //function that adds the daily reward to a user if it has been less than 24 hours since previously claiming it (Date functionality currently WIP)
-    daily : async function(userId, message, dailyAmount) 
+    daily : async function(message) 
     {
+        userId = message.author.id
+        console.log(userId)
+        dailyAmount = 5000
+
         dbo = mongoUtil.getDb()
         date = new Date()
         userData = await dbo.collection("users").findOne({name: userId})
@@ -100,7 +105,7 @@ module.exports =
                 message.channel.send("You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again")
                 setTimeout(function() 
                 {
-                    module.exports.messageCurrentBalance(userId, message)
+                    module.exports.messageCurrentBalance(message)
                 }, 100)
             }
 
@@ -119,7 +124,7 @@ module.exports =
                     message.channel.send(`You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again`)
                     setTimeout(function() 
                     {
-                        module.exports.messageCurrentBalance(userId, message)
+                        module.exports.messageCurrentBalance(message)
                     }, 100)
                 }
 
@@ -159,10 +164,13 @@ module.exports =
 
 
     //function that lets the user coinflip a certain value with a 50% chance that they double the staked money
-    coinflip : function(content, message, userId)
+    coinflip : function(message)
     {
+        console.log("In coinflip")
+        userId = message.author.id
+        console.log(userId)
         //parse the staked amount from the content string 
-        amount = parseInt(content.substr(8, content.length).trim())
+        amount = parseInt(message.content)
 
         //call get balance to check if the user entered a value value to stake
         module.exports.getBalance(userId, function(balance) 
@@ -202,7 +210,7 @@ module.exports =
                     //tell the user their new balance after waiting for db to finish
                     setTimeout(function() 
                     {
-                        module.exports.messageCurrentBalance(userId, message)
+                        module.exports.messageCurrentBalance(message)
                     }, 100)
                 }
             }
@@ -384,7 +392,7 @@ module.exports =
                     //tell the user their new balance after waiting for db to finish
                     setTimeout(function() 
                     {
-                        module.exports.messageCurrentBalance(userId, message)
+                        module.exports.messageCurrentBalance(message)
                     }, 100)
                 }
             })

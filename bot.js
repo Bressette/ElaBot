@@ -7,14 +7,8 @@ const config = require('./config.json')
 const copyPastas = require('./copy-pastas.json')
 const music = require('./music.js')
 const googleSearch = require('./googleSearch.js')
-const fs = require('fs')
 
 
-setInterval(() =>
-{
-    date = new Date()
-    console.log(date.getTime())
-}, 1000)
 
 let banList = []
 
@@ -33,27 +27,8 @@ client.on('ready', () =>
     .catch(console.error)
 })
 
-client.on("channelUpdate", async function(oldChannel, newChannel)
-{
-    console.log("There is a channel update")
-    if(oldChannel.type === "voice")
-    {
-        console.log(oldChannel.name)
-        if(oldChannel.name === "Bryce Channel" || oldChannel.name === "General" || oldChannel.name === "Syria Bad" || oldChannel.name === "Blackout - Videogames")
-        {
-            console.log("Setting name")
-            newChannel = await newChannel.setName(oldChannel.name)
-        }
-    }
-})
 
-client.on("channelCreate", async (newChannel) =>
-{
-    if(newChannel.type === "voice")
-        newChannel.delete()
-})
-
-
+//event that is ran when a new message is received
 client.on('message', async message => 
 {
     prefix = await admin.getPrefix(message)
@@ -94,28 +69,31 @@ client.on('message', async message =>
     }
     
 
-    //check if content starts with the command prefix
-    if(content.trim().startsWith(prefix, 0)) 
+    //check if message starts with the command prefix
+    if(message.content.trim().startsWith(prefix, 0)) 
     {
-        content = content.substr(prefix.length, content.length).trim()
+        message.content = message.content.substr(prefix.length, message.content.length).trim().toLowerCase()
+        command = message.content
 
-        //create a command string to hold the command keyword
-        command = content.toLowerCase()
+        //separates the command from the rest of the string using space as a separator
         if(command.includes(" ")) 
         {
-            command = command.substr(0, content.indexOf(" "))
+            command = command.substr(0, content.indexOf(" ")).trim()
         }
+
+        console.log(command)
         //switch statement to determine what command the user used
         switch(command) 
         {
             case "daily":
-                economy.daily(userId, message, 5000)
+                economy.daily(message)
                 break
             case "balance":
-                economy.messageCurrentBalance(userId, message)
+                economy.messageCurrentBalance(message)
                 break
             case "coinflip":
-                economy.coinflip(content, message, userId)
+                message.content = message.content.substr(8, message.content.length).trim()
+                economy.coinflip(message)
                 break
             case "slots":
                 economy.slots(content, message, userId)
@@ -157,10 +135,16 @@ client.on('message', async message =>
                 message.channel.send(copyPastas.sekiro)
                 break
             case "play":
-                music.execute(message, content)
+                if(message.content === "play")
+                    music.resume(message)
+                else
+                    music.execute(message, content)
                 break
             case "p":
-                music.execute(message, content)
+                if(message.content === "p")
+                    music.resume(message)
+                else
+                    music.execute(message, content)
                 break
             case "r":
                 music.stop(message)
