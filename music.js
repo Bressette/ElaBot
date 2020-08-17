@@ -8,9 +8,11 @@ const queue = new Map()
 
 module.exports =
 {
-    execute : async function(message, content) {
+    execute : async function(message) {
       let results
       serverQueue = queue.get(message.guild.id)
+
+      content = message.content
 
       if((content === "play" || content === "p") && serverQueue.connection.dispatcher.paused)
       {
@@ -288,9 +290,9 @@ module.exports =
         }
     },
 
-    ytSearch : async(message, content) =>
+    ytSearch : async(message) =>
     {
-        searchKeywords = message.content.substr(8, content.length).trim()
+        searchKeywords = message.content
         options = {limit: 10}
         values = await search(searchKeywords, options)
         console.log(values)

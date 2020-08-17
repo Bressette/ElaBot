@@ -9,9 +9,9 @@ let isFullResults
 
 module.exports =
 {
-    search : (message, content) =>
+    search : (message) =>
     {
-        content = content.substr(11, content.length).trim().toLowerCase()
+        content = message.content
         if(content.includes("-full"))
         {
             isFullResults = true

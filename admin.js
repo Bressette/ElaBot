@@ -115,12 +115,12 @@ module.exports =
     },
 
 
-    purge : async (message, content) =>
+    purge : async (message) =>
     {
         if(message.member.hasPermission("ADMINISTRATOR"))
         {
-            content = content.substr(5, content.length)
-            deleteCount = parseInt(content)
+            
+            deleteCount = parseInt(message.content)
             if(!isNaN(deleteCount))
             {
                 if(deleteCount + 1 > 99 || deleteCount + 1 < 2)
@@ -450,21 +450,21 @@ module.exports =
             return result.prefix
     },
 
-    setPrefix: (message, content) =>
+    setPrefix: (message) =>
     {
         dbo = mongoUtil.getDb()
         var ascii = /^[ -~]+$/;
-        if(!ascii.test(content.substr(6,content.length).trim()))
+        if(!ascii.test(message.content))
         {
             message.channel.send("That prefix is not allowed")
         }
         else
         {
-            dbo.collection("servers").updateOne({id: message.guild.id}, {$set: {prefix: content.substr(6, content.length).trim()}}, (err, res) =>
+            dbo.collection("servers").updateOne({id: message.guild.id}, {$set: {prefix: message.content}}, (err, res) =>
             {
                 if(err) throw err
 
-                message.channel.send(`The command prefix has been changed to ${content.substr(6, content.length).trim()}`)
+                message.channel.send(`The command prefix has been changed to ${message.content}`)
             })
         }
     }

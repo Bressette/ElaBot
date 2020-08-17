@@ -237,10 +237,10 @@ module.exports =
             return ":moneybag:"
     },
 
-    setSlotSize : function(content, message)
+    setSlotSize : function(message)
     {
         dbo = mongoUtil.getDb()
-        newSize = parseInt(content.substr(8, content.length))
+        newSize = parseInt(message.content)
         if(!isNaN(newSize))
         {
             if(newSize < 3 || newSize > 12)
@@ -281,14 +281,15 @@ module.exports =
     },
 
     //method that gambles balance and displays a slot machine
-    slots : async function(content, message, userId)
+    slots : async function(message)
     {
+        userId = message.author.id
         slotSize = await module.exports.getSlotSize(message)
         if(slotSize === undefined)
             slotSize = 3
 
         //parse the staked amount from the content string 
-        amount = parseInt(content.substr(5, content.length).trim())
+        amount = parseInt(message.content.substr(5, message.content.length).trim())
 
         if(!isNaN(amount) && isFinite(amount) && amount > 0)
         {
@@ -429,17 +430,15 @@ module.exports =
 
     //function that lets a user give some of their balance to another user
     //The target user must be mentioned by the source user and 
-    give : function(content, message, userId) 
+    give : function(message) 
     {
-        //removes give from the content string
-        content = content.substr(4, content.length).trim()
-
+        userId = message.author.id
+        content = message.content
 
         module.exports.getBalance(userId, (amount) => {
-
             //separates the mentioned user and the value
-            targetUserId = content.substr(0, content.indexOf(" ")).trim()
-            targetValue = content.substr(targetUserId.length, content.length).trim()
+            targetUserId = content.substr(0, content.indexOf(" "))
+            targetValue = content.substr(targetUserId.length, content.length)
 
             //gets the user id from the mention
             if(targetUserId.includes("!"))
@@ -451,7 +450,7 @@ module.exports =
                 targetUserId = targetUserId.split("@")[1].split(">")[0]
             }
 
-            if(targetUserId === message.member.id)
+            if(targetUserId === message.author.id)
             {
                 message.channel.send("You cannot give yourself money that you already have!")
             }
