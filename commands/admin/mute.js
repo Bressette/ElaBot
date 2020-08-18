@@ -1,0 +1,17 @@
+module.exports = 
+{
+    name: "mute",
+    description: "Mutes the given user",
+    execute(message, args)
+    {
+        if(message.mentions.members.first() != null)
+        {
+            if(message.member.hasPermission("ADMINISTRATOR"))
+            {
+                member = message.mentions.members.first()
+
+                member.voice.setMute(true, "Muted").then(message.channel.send(member.displayName + " has been muted"))
+            }
+        }
+    }
+}
