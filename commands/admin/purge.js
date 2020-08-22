@@ -2,6 +2,7 @@ module.exports =
 {
     name: "purge",
     description: "Deletes a given number of messages from the channel the command is invoked in",
+    aliases: [],
     async execute(message, args)
     {
         if(message.member.hasPermission("ADMINISTRATOR"))

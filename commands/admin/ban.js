@@ -2,6 +2,7 @@ module.exports =
 {
     name: "ban",
     description: "Bans the provided user",
+    aliases: [],
     execute(message, args)
     {
         if(message.mentions.members.first() != null)

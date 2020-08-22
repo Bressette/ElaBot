@@ -2,6 +2,7 @@ module.exports =
 {
     name: "kick",
     description: "Kicks the provided user from the server",
+    aliases: [],
     execute(message, args)
     {
         if(message.mentions.members.first() != null)

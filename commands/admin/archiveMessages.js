@@ -7,6 +7,7 @@ module.exports =
 {
     name: "archiveMessages",
     description: "Posts messages into archive channels to collate a filtered history of messages",
+    aliases: [],
     async execute(message)
     {
         generalLinks = await message.client.channels.fetch(config.generallinks)

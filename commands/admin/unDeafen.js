@@ -2,6 +2,7 @@ module.exports =
 {
     name: "unDeafen",
     description: "Undeafens the specified user",
+    aliases: [],
     async execute(message, args)
     {
         if(message.mentions.members.first() != null)

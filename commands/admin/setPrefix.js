@@ -3,6 +3,7 @@ const mongoUtil = require('../../util/mongoUtil')
 module.exports = {
     name: "setprefix",
     description: "sets the prefix used to give the bots commands ex: -prefix !(Sets the new prefix to !)",
+    aliases: [],
     execute(message, args)
     {
         if(args[0] === undefined)

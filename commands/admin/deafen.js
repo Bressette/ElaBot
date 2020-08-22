@@ -2,6 +2,7 @@ module.exports =
 {
     name: "deafen",
     description: "Deafens the given user",
+    aliases: [],
     execute(message, args)
     {
         if(message.mentions.members.first() != null)

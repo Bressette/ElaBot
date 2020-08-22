@@ -4,6 +4,7 @@ module.exports =
 {
     name: "archiveDeletion",
     description: "Deletes messages from normal users in archive channels",
+    aliases: [],
     execute(message)
     {
         if(!message.author.bot)
