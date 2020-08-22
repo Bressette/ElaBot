@@ -1,12 +1,13 @@
 const isUrl = require('./../../util/isUrl')
 const getMention = require('./../../util/getMention')
+const config = require('./../../config.json')
 
 
 module.exports = 
 {
     name: "archiveMessages",
     description: "Posts messages into archive channels to collate a filtered history of messages",
-    execute(message, args)
+    async execute(message)
     {
         generalLinks = await message.client.channels.fetch(config.generallinks)
         videoLinks = await message.client.channels.fetch(config.videolinks)

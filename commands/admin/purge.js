@@ -2,12 +2,12 @@ module.exports =
 {
     name: "purge",
     description: "Deletes a given number of messages from the channel the command is invoked in",
-    execute(message, args)
+    async execute(message, args)
     {
         if(message.member.hasPermission("ADMINISTRATOR"))
         {
             
-            deleteCount = parseInt(message.content)
+            deleteCount = parseInt(args[0])
             if(!isNaN(deleteCount))
             {
                 if(deleteCount + 1 > 99 || deleteCount + 1 < 2)
