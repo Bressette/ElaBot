@@ -51,6 +51,14 @@ client.on('ready', () =>
     .catch(console.error)
 })
 
+client.on("voiceStateUpdate", (oldState, newState) =>
+{
+    if(newState.channel === null && newState.member.id === "703427817009840188") 
+    {
+        client.queue.delete(oldState.guild.id)
+    }
+})
+
 
 //event that is ran when a new message is received
 client.on('message', async message => 
