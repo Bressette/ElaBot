@@ -67,14 +67,22 @@ module.exports =
         // console.log(i)
         console.log(link)
         console.log(values)
-        try
-        {
-            songInfo = await ytdl.getInfo(link)
-        } catch(err) {
-            console.log(err)
-            i++
-            songInfo = await ytdl.getInfo(values.items[i].link)
-        } 
+        let songInfo
+          while(true)
+          {
+            try {
+              songInfo = await ytdl.getInfo(values.items[i].link)
+              break
+            } catch(err) {
+              console.log(err)
+              if(i > 9)
+                songInfo = await ytdl.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+              else
+                i++
+            }
+          }
+            
+       
         
         
 
