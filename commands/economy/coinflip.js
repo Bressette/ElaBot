@@ -48,11 +48,6 @@ module.exports =
                         message.channel.send("You lost the coinflip and " + amount)
                     }
 
-                    //tell the user their new balance after waiting for db to finish
-                    setTimeout(function() 
-                    {
-                        balance.execute(message, [])
-                    }, 100)
                 }
             }
 
