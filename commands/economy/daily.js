@@ -1,18 +1,18 @@
 const addBalance = require('./util/addbalance')
 const balance = require('./balance')
-
+const mongoUtil = require('./../../util/mongoUtil')
 
 module.exports = 
 {
     name: "daily",
     description: "Claims the daily balance",
     aliases: [],
-    async execute(message)
+    async execute(message, args)
     {
         userId = message.author.id
         console.log(userId)
         dailyAmount = 5000
-
+        console.log("In daily")
         dbo = mongoUtil.getDb()
         date = new Date()
         userData = await dbo.collection("users").findOne({name: userId})
