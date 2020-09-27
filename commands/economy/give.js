@@ -8,13 +8,14 @@ module.exports =
     aliases: [],
     execute(message, args)
     {
+        if(message.mentions.members.first() === null)
+            return message.content.send("That is not a valid user mention")
         userId = message.author.id
-        content = message.content
-
         getBalance.execute(userId, (amount) => {
             //separates the mentioned user and the value
-            targetUserId = args[0]
-            targetValue = args[1]
+            targetUserId = message.mentions.members.first().id
+            targetValue = args[0]
+            console.log(`The target user id is ${targetUserId} and teh target value is: ${targetValue}`)
 
             //gets the user id from the mention
             if(targetUserId.includes("!"))
