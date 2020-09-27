@@ -11,6 +11,7 @@ const getPrefix = require('./util/getPrefix')
 const setPrefix = require('./commands/admin/setPrefix')
 client.commands = new discord.Collection()
 client.queue = new Map()
+client.prefix = new Map()
 
 
 
@@ -63,8 +64,17 @@ client.on("voiceStateUpdate", (oldState, newState) =>
 //event that is ran when a new message is received
 client.on('message', async message => 
 {
-    temp = ['']
-    prefix = await getPrefix.execute(message, temp)
+    if(!message.client.prefix.get(message.guild.id))
+    {
+        prefix = await getPrefix.execute(message)
+        message.client.prefix.set(message.guild.id, prefix)
+    }
+        
+    else
+    {
+        prefix = message.client.prefix.get(message.guild.id)
+    }
+        
     await client.commands.get("archiveMessages").execute(message)
     client.commands.get("archiveDeletion").execute(message)
 

@@ -4,7 +4,7 @@ module.exports =
 {
     name: 'getPrefix',
     description: 'Returns the current prefix for the guild that the message is from',
-    async execute(message, args)
+    async execute(message)
     {
         dbo = mongoUtil.getDb()
         result = await dbo.collection("servers").findOne({id: message.guild.id})
