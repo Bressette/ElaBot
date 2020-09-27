@@ -1,11 +1,7 @@
 const discord = require('discord.js')
 const client = new discord.Client
 const mongoUtil = require('./util/mongoUtil')
-const economy = require('./economy')
-const admin = require('./admin')
 const config = require('./config.json')
-const music = require('./music.js')
-const googleSearch = require('./googleSearch.js')
 const fs = require('fs')
 const getPrefix = require('./util/getPrefix')
 const setPrefix = require('./commands/admin/setPrefix')
@@ -58,6 +54,22 @@ client.on("voiceStateUpdate", (oldState, newState) =>
     {
         client.queue.delete(oldState.guild.id)
     }
+    
+    let serverQueue
+    if(oldState.channel)
+        serverQueue = oldState.channel.client.queue.get(oldState.channel.guild.id)
+    if(serverQueue)
+    {
+        if(serverQueue.voiceChannel.members.array().length === 1 && serverQueue.voiceChannel.members.array()[0].id === "703427817009840188")
+        {
+            serverQueue = serverQueue.voiceChannel.client.queue.get(serverQueue.voiceChannel.guild.id)
+            if(serverQueue.connection.dispatcher.paused)
+                serverQueue.connection.dispatcher.resume()
+            serverQueue.songs = [];
+            serverQueue.connection.dispatcher.end();
+        }
+    }
+    
 })
 
 
