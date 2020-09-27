@@ -12,16 +12,14 @@ module.exports =
     async execute(message, args)
     {
         userId = message.author.id
-        slotSize = getSlotSize.execute(message)
+        slotSize = await getSlotSize.execute(message)
         if(slotSize === undefined)
             slotSize = 3
-
         //parse the staked amount from the content string 
         amount = parseInt(args[0])
-
         if(!isNaN(amount) && isFinite(amount) && amount > 0)
         {
-            //call get balance to check if the user entered a value value to stake
+            //call get balance to check if the user entered a value to stake
             getBalance.execute(userId, function(balance) {
                 if(amount > balance)
                 {
@@ -31,9 +29,9 @@ module.exports =
                 //if amount is a number execute the coinflip
                 else 
                 {
-                    let slotDisplay = ""
-                    let slotArray = []
-                    let results = []
+                    slotDisplay = ""
+                    slotArray = []
+                    results = []
 
                     //loop that computes the random values and adds the emoticons to slotDisplay
                     for(i = 1; i <= slotSize * slotSize; i++)
@@ -45,7 +43,6 @@ module.exports =
                         if(i % slotSize === 0)
                             slotDisplay += "\n"
                     }
-
                     //loop that computes if the rows and columns are winning values
                     for(i = 0; i < slotSize; i++)
                     {
@@ -81,8 +78,8 @@ module.exports =
                     }
 
                     //displays the slot emoticons
-                    message.channel.send(slotDisplay)
-
+                    if(slotDisplay)
+                        message.channel.send(slotDisplay)
                     reward = 0
                     if(results.length === 0)
                     {
@@ -168,5 +165,7 @@ module.exports =
             return ":crown:"
         else if(value >= 85 && value < 100)
             return ":moneybag:"
+        else
+            return ":seven:"
     }
 }
