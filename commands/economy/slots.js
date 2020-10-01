@@ -1,4 +1,3 @@
-const { getSlotEmoji } = require("../../economy");
 const getSlotSize = require('./util/getslotsize')
 const getBalance = require('./util/getbalance')
 const printBalance = require('./balance')
@@ -54,12 +53,11 @@ module.exports =
                                 rowCounter++
                             if(slotArray[j*slotSize + i] === slotArray[(j+1)*slotSize + i])
                                 columnCounter++
-
-                            if(rowCounter === slotSize - 1)
-                                results.push(slotArray[i*slotSize])
-                            if(columnCounter === slotSize - 1)
-                                results.push(slotArray[i])
                         }
+                        if(rowCounter === slotSize - 1)
+                            results.push(slotArray[i*slotSize])
+                        if(columnCounter === slotSize - 1)
+                            results.push(slotArray[i])
                     }
 
                     //loop that computes if the diagonals are winning values
@@ -71,11 +69,13 @@ module.exports =
                             counter++
                         if(slotArray[slotSize*slotSize - slotSize - i*slotSize + i] === slotArray[slotSize*slotSize - slotSize - (i+1)*slotSize + i + 1])
                             secondCounter++
-                        if(counter === slotSize - 1)
-                            results.push(slotArray[0])
-                        if(secondCounter === slotSize - 1)
-                            results.push(slotArray[slotSize])
+                        
                     }
+
+                    if(counter === slotSize - 1)
+                        results.push(slotArray[0])
+                    if(secondCounter === slotSize - 1)
+                        results.push(slotArray[slotSize])
 
                     //displays the slot emoticons
                     if(slotDisplay)

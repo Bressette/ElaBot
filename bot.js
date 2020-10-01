@@ -48,7 +48,7 @@ client.on('ready', () =>
     .catch(console.error)
 })
 
-client.on("voiceStateUpdate", (oldState, newState) =>
+client.on("voiceStateUpdate", async (oldState, newState) =>
 {
     if(newState.channel === null && newState.member.id === "703427817009840188") 
     {

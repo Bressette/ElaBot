@@ -1,7 +1,6 @@
 const ytdl = require('ytdl-core')
 const search = require('ytsr')
 const db = require('./../../util/mongoUtil')
-const { play } = require('../../music')
 const getLoop = require('./../../util/getLoop')
 const printQueue = require('./queue')
 
@@ -71,6 +70,7 @@ module.exports =
               module.exports.play(message, message.guild, queueContruct.songs[0]);
           } catch (err) {
               console.error(err);
+              voiceChannel.leave();
               message.client.queue.delete(message.guild.id);
               return message.channel.send(err);
           }

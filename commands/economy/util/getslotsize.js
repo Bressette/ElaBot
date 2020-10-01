@@ -2,7 +2,7 @@ const mongoUtil = require('./../../../util/mongoUtil')
 
 module.exports = 
 {
-    execute(message)
+    async execute(message)
     {
         dbo = mongoUtil.getDb()
         result = await dbo.collection("servers").findOne({id: message.guild.id})
