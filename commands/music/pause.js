@@ -2,13 +2,14 @@ module.exports =
 {
     name: "pause",
     description: "Pauses the audio being played by the bot",
-    aliases: [],
+    aliases: ['stop'],
     execute(message, args)
     {
         try
           {
             serverQueue = message.client.queue.get(message.guild.id)
             serverQueue.connection.dispatcher.pause()
+            message.channel.send("The audio has been paused. Use p, play, or resume to resume the audio.")
           } catch(err)
           {
               message.channel.send(err)

@@ -50,10 +50,19 @@ client.on('ready', () =>
 
 client.on("voiceStateUpdate", async (oldState, newState) =>
 {
+    general = await client.channels.fetch("760697529166987294")
     if(newState.channel === null && newState.member.id === "703427817009840188") 
     {
         client.queue.delete(oldState.guild.id)
     }
+
+    else if(newState.channel === null)
+    {
+        general.send(newState.member.user.tag + " has left the voice channel")
+    }
+
+    else if(oldState.channel === null)
+        general.send(newState.member.user.tag + " has joined the voice channel")
     
     let serverQueue
     if(oldState.channel)
@@ -126,4 +135,8 @@ client.on('message', async message =>
     }
 
 })
+
+process.on('uncaughtException', function(err) {
+    console.log('Caught exception: ' + err);
+  });
 client.login(config.token)

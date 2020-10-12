@@ -9,9 +9,9 @@ let isFullResults
 module.exports = 
 {
     name: "imagesearch",
-    description: "Searches for images using goole image search",
+    description: "Searches for images using google image search",
     aliases: [],
-    execute(message, args)
+    async execute(message, args)
     {
         content = message.content.substr(message.content.indexOf(args[0]), message.content.length)
         if(content.includes("-full"))
@@ -22,90 +22,50 @@ module.exports =
         else
             isFullResults = false
 
-        if(content.includes("-huge"))
-        {
-            content.substr(5, content.length)
-            options = {page:1, size: "huge"}
-        }
-            
-        else if(content.includes("-icon"))
-        {
-            content.substr(5, content.length)
-            options = {page:1, size: "icon"}
-        }
-            
-        else if(content.includes("-large"))
-        {
-            content.substr(6, content.length)
-            options = {page:1, size: "large"}
-        }
-            
-        else if(content.includes("-medium"))
-        {
-            content.substr(7, content.length)
-            options = {page:1, size: "medium"}
-        }
-            
-        else if(content.includes("-small"))
-        {
-            content.substr(6, content.length)
-            options = {page:1, size: "small"}
-        }
-            
-        else if(content.includes("-xlarge"))
-        {
-            content.substr(7, content.length)
-            options = {page:1, size: "xlarge"}
-        }
-            
-        else if(content.includes("-xxlarge"))
-        {
-            content.substr(8, content.length)
-            options = {page:1, size: "xxlarge"}
-        }
-        else
-        {
-            options = {page:1}
-        }
-            
-        
+        try {
 
-        client.search(content, options)
-        .then(images =>
-        {
-            if(isFullResults)
+            images = await client.search(content, options)
+            if(images)
             {
-                results = [""]
-                j = 0
-                k = 1
-                for(i in images)
+                if(isFullResults)
                 {
-                    if(k % 6 === 0)
-                        j++
-                    if(results[j] === undefined)
+                    results = [""]
+                    j = 0
+                    k = 1
+                    for(i in images)
                     {
-                        results[j] = ""
+                        if(images[i].url.includes("fbsbx.com"))
+                            continue
+                        console.log(i)
+                        if(k % 6 === 0)
+                            j++
+                        if(results[j] === undefined)
+                        {
+                            results[j] = ""
+                        }
+                        console.log("I in images")
+                        message.channel.send(images[i].url)
+                        k++
                     }
-                    
-                    results[j] += (images[i].url + "\n")
-                    k++
                 }
 
-                for(i in results)
-                    message.channel.send(results[i])
+                else
+                {
+                    i = 0
+                    while(images[i].url.includes("fbsbx.com"))
+                    {
+                        i++
+                    }
+                    message.channel.send(images[i].url)
+                }
             }
 
             else
-            {
-                i = 0
-                while(images[i].url.includes("fbsbx.com"))
-                {
-                    i++
-                }
-                message.channel.send(images[i].url)
-            }
+                message.channel.send("There are no images for that query")
 
-            
-        }).catch(error => console.log(error))
+        } catch(images) {
+            message.channel.send("Error fetching image")
+            console.log(images)
+        }
     }
 }

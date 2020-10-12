@@ -10,7 +10,6 @@ module.exports =
             if(message.member.hasPermission("ADMINISTRATOR"))
             {
                 member = message.mentions.members.first()
-                
                 member.kick().then((member) =>
                 {
                     message.channel.send(":wave: " + member.displayName + " has been kicked from the server :sunglasses: ")
