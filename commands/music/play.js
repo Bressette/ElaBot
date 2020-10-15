@@ -118,48 +118,40 @@ module.exports =
 
     //method that is used to get the song title and url 
     async getSongInfo(message, searchKeywords) {
-
-        //if the message contains a valid url return the associated info object
-        if(ytdl.validateURL(searchKeywords))
-            return await ytdl.getInfo(searchKeywords)
         
-        //if the user did not provide a valid url search for a video with the given string
+        options = {limit: 10} //limit the search results to 10 videos
+        values = await search(searchKeywords, options) //store the search results in values
+        
+        //if the search result is not empty remove results that cannot be played and return the song info for the link that can be played
+        if(values.items.length != 0)
+        {
+            i = 0
+            while(values.items[i].type === "playlist" || values.items[i].type === "channel" || values.items[i].link === undefined || values.items[i].type === "movie")
+            {
+                i++
+            }
+
+            //loop that iterates over the search results until a video that can be played is found.
+            while(true)
+            {
+                let songInfo
+                try {
+                    songInfo = await ytdl.getInfo(values.items[i].link)
+                    return songInfo
+                } catch(err) {
+                    console.error(err)
+                    console.log(i)
+                    if(i > 9)
+                        return await ytdl.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                    else
+                        i++
+                }
+            }
+        }
         else
         {
-            options = {limit: 10} //limit the search results to 10 videos
-            values = await search(searchKeywords, options) //store the search results in values
-            
-            //if the search result is not empty remove results that cannot be played and return the song info for the link that can be played
-            if(values.items.length != 0)
-            {
-                i = 0
-                while(values.items[i].type === "playlist" || values.items[i].type === "channel" || values.items[i].link === undefined || values.items[i].type === "movie")
-                {
-                    i++
-                }
-
-                //loop that iterates over the search results until a video that can be played is found.
-                while(true)
-                {
-                    let songInfo
-                    try {
-                        songInfo = await ytdl.getInfo(values.items[i].link)
-                        return songInfo
-                    } catch(err) {
-                        console.error(err)
-                        console.log(i)
-                        if(i > 9)
-                            return await ytdl.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-                        else
-                            i++
-                    }
-                }
-            }
-            else
-            {
-                message.channel.send("That video does not exist!")
-                return await ytdl.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-            }
+            message.channel.send("That video does not exist!")
+            return await ytdl.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
         }
     }
 }
