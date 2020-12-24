@@ -2,7 +2,7 @@ module.exports =
 {
     name: "resume",
     description: "Resumes music playing if it is paused",
-    aliases: [],
+    aliases: ['unpause'],
     execute(message, args)
     {
         try

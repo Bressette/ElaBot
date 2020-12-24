@@ -14,15 +14,12 @@ module.exports =
     async execute(message, args)
     {
         serverQueue = message.client.queue.get(message.guild.id)
-        content = message.content
-
-        if((content === "play" || content === "p") && serverQueue.connection.dispatcher.paused)
+        if(args.length === 0 && serverQueue.connection.dispatcher.paused)
         {
             return serverQueue.connection.dispatcher.resume()
         }
 
-        searchKeywords = content.substr(content.indexOf(args[0]), content.length)
-
+        searchKeywords = message.content.substr(message.content.indexOf(args[0]))
 
         const voiceChannel = message.member.voice.channel; //initialize a voiceChannel object to join the voice channel
 
@@ -40,11 +37,10 @@ module.exports =
 
         //gets the song info(title and video url) from the first applicable result
         songInfo = await module.exports.getSongInfo(message, searchKeywords)
-        
         //creates an object to store the song details
         const song = {
-          title: songInfo.title,
-          url: songInfo.video_url
+          title: songInfo.videoDetails.title,
+          url: songInfo.videoDetails.video_url
         };
       
         //if there are no songs in the queue create a new queue object
@@ -92,7 +88,6 @@ module.exports =
             message.client.queue.delete(guild.id);
             return;
         }
-
         //create the dispatcher to play the audio in the voice channel
         const dispatcher = serverQueue.connection
             .play(ytdl(song.url))
@@ -119,14 +114,21 @@ module.exports =
     //method that is used to get the song title and url 
     async getSongInfo(message, searchKeywords) {
         
-        options = {limit: 10} //limit the search results to 10 videos
-        values = await search(searchKeywords, options) //store the search results in values
+        options = {pages: 1} //limit the search results to 10 videos
+        let values
+
+        try {
+            values = await search(searchKeywords, options) //store the search results in values
+        } catch(error) {
+            console.log(error)
+            return await ytdl.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        }
         
         //if the search result is not empty remove results that cannot be played and return the song info for the link that can be played
         if(values.items.length != 0)
         {
             i = 0
-            while(values.items[i].type === "playlist" || values.items[i].type === "channel" || values.items[i].link === undefined || values.items[i].type === "movie")
+            while(values.items[i].url === undefined || values.items[i].type === "playlist" || values.items[i].type === "channel" || values.items[i].type === "movie")
             {
                 i++
             }
@@ -134,13 +136,10 @@ module.exports =
             //loop that iterates over the search results until a video that can be played is found.
             while(true)
             {
-                let songInfo
                 try {
-                    songInfo = await ytdl.getInfo(values.items[i].link)
-                    return songInfo
+                    return await ytdl.getInfo(values.items[i].url)
                 } catch(err) {
                     console.error(err)
-                    console.log(i)
                     if(i > 9)
                         return await ytdl.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
                     else

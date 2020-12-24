@@ -9,7 +9,7 @@ module.exports =
           {
             serverQueue = message.client.queue.get(message.guild.id)
             serverQueue.connection.dispatcher.pause()
-            message.channel.send("The audio has been paused. Use p, play, or resume to resume the audio.")
+            message.channel.send("The audio has been paused.")
           } catch(err)
           {
               message.channel.send(err)
