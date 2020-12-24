@@ -35,8 +35,15 @@ module.exports =
           );
         }
 
-        //gets the song info(title and video url) from the first applicable result
-        songInfo = await module.exports.getSongInfo(message, searchKeywords)
+        let songInfo
+        if(ytdl.validateURL(searchKeywords)) {
+            songInfo = await ytdl.getInfo(searchKeywords)
+        }
+        else {
+            //gets the song info(title and video url) from the first applicable result
+            songInfo = await module.exports.getSongInfo(message, searchKeywords)
+        }
+        
         //creates an object to store the song details
         const song = {
           title: songInfo.videoDetails.title,
@@ -105,7 +112,11 @@ module.exports =
                 //call play recursively to play the next song
                 module.exports.play(message, guild, serverQueue.songs[0]);
           })
-          .on("error", error => console.error(error));
+          .on("error", (error) => {
+              message.channel.send(error.message)
+              console.error(error)
+              dispatcher.end()
+          })
 
         dispatcher.setVolumeLogarithmic(serverQueue.volume / 5); //sets the volume to 1/5 of the max on the first execution
         serverQueue.textChannel.send(`Start playing: **${song.title}**`);
