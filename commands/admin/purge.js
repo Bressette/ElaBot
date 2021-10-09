@@ -5,7 +5,8 @@ module.exports =
     aliases: [],
     async execute(message, args)
     {
-        if(message.member.hasPermission("ADMINISTRATOR"))
+
+        if(message.member.permissions.has("ADMINISTRATOR"))
         {
             
             deleteCount = parseInt(args[0])

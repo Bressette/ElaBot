@@ -1,8 +1,16 @@
 const ytdl = require('ytdl-core')
+const ytpl = require('ytpl')
 const search = require('ytsr')
 const db = require('./../../util/mongoUtil')
 const getLoop = require('./../../util/getLoop')
 const printQueue = require('./queue')
+const {joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioResource, AudioPlayerStatus} = require("@discordjs/voice");
+
+const player = createAudioPlayer({
+    behaviors: {
+        noSubscriber: NoSubscriberBehavior.Pause
+    }
+});
 
 module.exports = 
 {
@@ -20,6 +28,11 @@ module.exports =
         }
 
         searchKeywords = message.content.substr(message.content.indexOf(args[0]))
+        if(args.length === 1 && searchKeywords.includes("playlist?list=")) {
+            playlistId = searchKeywords.split("list=")[1]
+            console.log(playlistId)
+            console.log(await ytpl(playlistId))
+        }
 
         const voiceChannel = message.member.voice.channel; //initialize a voiceChannel object to join the voice channel
 
@@ -38,6 +51,8 @@ module.exports =
         let songInfo
         if(ytdl.validateURL(searchKeywords)) {
             songInfo = await ytdl.getInfo(searchKeywords)
+            console.log(songInfo)
+            console.log(songInfo.videoDetails.video_url)
         }
         else {
             //gets the song info(title and video url) from the first applicable result
@@ -68,12 +83,17 @@ module.exports =
       
           //try to join the voiceChannel and play the song if an exception occurs the queue is deleted
           try {
-              var connection = await voiceChannel.join();
+              const connection = joinVoiceChannel({
+                  channelId: voiceChannel.id,
+                  guildId: voiceChannel.guild.id,
+                  adapterCreator: voiceChannel.guild.voiceAdapterCreator
+              });
+              connection.subscribe(player);
               queueContruct.connection = connection;
-              module.exports.play(message, message.guild, queueContruct.songs[0]);
+              await module.exports.play(message, message.guild, queueContruct.songs[0]);
           } catch (err) {
+              console.log(err);
               console.error(err);
-              voiceChannel.leave();
               message.client.queue.delete(message.guild.id);
               return message.channel.send(err);
           }
@@ -91,40 +111,38 @@ module.exports =
         const serverQueue = message.client.queue.get(guild.id);
         //if there is no song delete the queue and leave the voice channel
         if (!song) {
-            serverQueue.voiceChannel.leave();
+            console.log("In !song")
+            serverQueue.connection.destroy();
             message.client.queue.delete(guild.id);
             return;
         }
         //create the dispatcher to play the audio in the voice channel
-        const dispatcher = serverQueue.connection
-            .play(ytdl(song.url))
-            .on("finish", async() => {
+        console.log("About to play the audio")
+        const resource = createAudioResource(ytdl(song.url, {
+            highWaterMark: 1 << 30
+        }));
+        player.play(resource);
+        player.on(AudioPlayerStatus.Idle, async() => {
+            //check if the current song should loop
+            loop = await getLoop.execute(guild)
+            if(loop === undefined)
+                loop = false
 
-                //check if the current song should loop
-                loop = await getLoop.execute(guild)
-                if(loop === undefined)
-                    loop = false
+            //if loop isn't enabled shift the queue to get the next song
+            if(!loop)
+              serverQueue.songs.shift();
 
-                //if loop isn't enabled shift the queue to get the next song
-                if(!loop)
-                  serverQueue.songs.shift();
-
-                //call play recursively to play the next song
-                module.exports.play(message, guild, serverQueue.songs[0]);
-          })
-          .on("error", (error) => {
-              message.channel.send(error.message)
-              console.error(error)
-              dispatcher.end()
-          })
-
-        dispatcher.setVolumeLogarithmic(serverQueue.volume / 5); //sets the volume to 1/5 of the max on the first execution
+            //call play recursively to play the next song
+            await module.exports.play(message, guild, serverQueue.songs[0]);
+        });
+        player.on('error', error => {
+            console.error(`Error: ${error.message} playing resource`);
+        })
         serverQueue.textChannel.send(`Start playing: **${song.title}**`);
     },
 
     //method that is used to get the song title and url 
     async getSongInfo(message, searchKeywords) {
-        
         options = {pages: 1} //limit the search results to 10 videos
         let values
 

@@ -7,7 +7,7 @@ module.exports =
     {
         if(message.mentions.members.first() != null)
         {
-            if(message.member.hasPermission("ADMINISTRATOR"))
+            if(message.member.permissions.has("ADMINISTRATOR"))
             {
                 member = message.mentions.members.first()
 

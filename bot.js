@@ -1,15 +1,53 @@
-const discord = require('discord.js')
-const client = new discord.Client
+const discord = require('discord.js');
+const { Client, Intents} = discord;
+const client = new Client({ intents:
+        [Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INVITES,
+        Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+            Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILDS]
+});
 const mongoUtil = require('./util/mongoUtil')
 const config = require('./config.json')
 const fs = require('fs')
 const getPrefix = require('./util/getPrefix')
 const setPrefix = require('./commands/admin/setPrefix')
+const express = require('express');
+const app = express();
+const port = 8090
 client.commands = new discord.Collection()
 client.queue = new Map()
 client.prefix = new Map()
 
 
+//endpoints used to retrieve server info for connected servers
+app.get('/channels/:serverId', (req, res) => {
+    res.send('Hello World!')
+})
+
+app.get('/servers', (req, res) => {
+
+})
+
+app.get('/channel/:channelId', (req, res) => {
+
+})
+
+app.get('/server/:serverId', (req, res) => {
+
+})
+
+app.get('/messages/:serverId/:channelId/:messageCount', (req, res) => {
+
+})
+
+app.post('/message/:serverId/:channelId', (req, res) => {
+
+})
+
+app.listen(port, () => {
+    console.log(`App listening at port: ${port}`);
+})
 
 const getDirectories = fs.readdirSync('./commands', { withFileTypes: true }).filter(dirent => dirent.isDirectory())
                         .map(dirent => dirent.name)
@@ -37,45 +75,34 @@ mongoUtil.connectToServer(() =>
 })
 
 
-client.on('ready', () => 
+client.on('ready', async () => 
 {
     client.user.setPresence(
-        { activity: 
-            { 
-            name: 'Rainbow Six Siege youtube.com/watch?v=NCRRt9izjP4', 
-            type: "WATCHING", 
-            }, status: 'online' }).then()
-    .catch(console.error)
+        { activities:
+                [{
+                    name: 'Rainbow Six Siege youtube.com/watch?v=NCRRt9izjP4',
+                    type: "WATCHING",
+                }],
+            status: 'online' })
 })
 
 client.on("voiceStateUpdate", async (oldState, newState) =>
 {
-    general = await client.channels.fetch("760697529166987294")
     if(newState.channel === null && newState.member.id === "703427817009840188") 
     {
         client.queue.delete(oldState.guild.id)
     }
-
-    else if(newState.channel === null)
-    {
-        general.send(newState.member.user.tag + " has left the voice channel")
-    }
-
-    else if(oldState.channel === null)
-        general.send(newState.member.user.tag + " has joined the voice channel")
     
     let serverQueue
     if(oldState.channel)
         serverQueue = oldState.channel.client.queue.get(oldState.channel.guild.id)
     if(serverQueue)
     {
-        if(serverQueue.voiceChannel.members.array().length === 1 && serverQueue.voiceChannel.members.array()[0].id === "703427817009840188")
+        if(serverQueue.voiceChannel.members.size === 1 && serverQueue.voiceChannel.members.first().id === "703427817009840188")
         {
             serverQueue = serverQueue.voiceChannel.client.queue.get(serverQueue.voiceChannel.guild.id)
-            if(serverQueue.connection.dispatcher.paused)
-                serverQueue.connection.dispatcher.resume()
             serverQueue.songs = [];
-            serverQueue.connection.dispatcher.end();
+            serverQueue.connection.destroy();
         }
     }
     
@@ -83,8 +110,10 @@ client.on("voiceStateUpdate", async (oldState, newState) =>
 
 
 //event that is ran when a new message is received
-client.on('message', async message => 
+client.on('messageCreate', async message =>
 {
+    console.log(message.content)
+    
     if(!message.client.prefix.get(message.guild.id))
     {
         prefix = await getPrefix.execute(message)
@@ -95,9 +124,6 @@ client.on('message', async message =>
     {
         prefix = message.client.prefix.get(message.guild.id)
     }
-        
-    await client.commands.get("archiveMessages").execute(message)
-    client.commands.get("archiveDeletion").execute(message)
 
     if(message.content.includes("printprefix"))
     {

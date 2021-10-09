@@ -2,7 +2,7 @@ module.exports =
 {
     name: "reset",
     description: "Forces the bot to leave the voice channel and remove the music queue",
-    aliases: ['r'],
+    aliases: ['r', 'leave'],
     execute(message, args)
     {
         if (!message.member.voice.channel)

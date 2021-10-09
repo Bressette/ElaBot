@@ -16,14 +16,15 @@ module.exports =
             }
     
             const messages = await channel.messages.fetch(options);
-            sum_messages.push(...messages.array());
-            last_id = messages.last().id;
+            sum_messages.push(...Array.from(messages));
+            last_id = messages?.last()?.id;
     
-            if (messages.size != 100 || sum_messages >= limit) 
+            if (messages?.size !== 100 || sum_messages >= limit)
             {
                 break;
             }
         }
+        console.log('Size of sum_messages: ' + sum_messages.length);
     
         return sum_messages;
     }
