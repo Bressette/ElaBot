@@ -13,36 +13,50 @@ const fs = require('fs')
 const getPrefix = require('./util/getPrefix')
 const setPrefix = require('./commands/admin/setPrefix')
 const express = require('express');
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
+const serverManagement = require('./WebServer/Services/ServerManagement.js');
+const {fetchServerById, fetchServerMessagesByChannelId} = require("./WebServer/Services/ServerManagement");
 const app = express();
 const port = 8090
+const insertMessages = require('./util/storeMessages');
 client.commands = new discord.Collection()
 client.queue = new Map()
 client.prefix = new Map()
 
 
 //endpoints used to retrieve server info for connected servers
-app.get('/channels/:serverId', (req, res) => {
-    res.send('Hello World!')
+app.get('/channels/:serverId', async (req, res) => {
+    const channels = await serverManagement.fetchChannelsByServerId(req.params.serverId, client);
+    res.json(channels);
+});
+
+app.get('/servers', async (req, res) => {
+    const servers = await serverManagement.fetchServers(client);
+    console.log(`Retrieved servers: ${servers.size}`)
+    const outputJson = JSON.stringify(servers, (key, value) =>
+        typeof value === "bigint" ? value.toString() + "n" : value
+    );
+    res.setHeader('Content-Type', 'application/json');
+    res.end(outputJson);
+});
+
+app.get('/server/icon/:serverId', async(req, res) => {
+    res.json({iconUrl: await serverManagement.fetchServerIconLink(client, req.params.serverId)});
+});
+
+app.get('/server/:serverId', async (req, res) => {
+    res.json(await fetchServerById(client, req.params.serverId));
 })
 
-app.get('/servers', (req, res) => {
-
+// implement mongodb find to retrieve the messages for a certain channel in a server
+app.get('/messages/:serverId/:channelId/:messageCount', async (req, res) => {
+    res.json(await fetchServerMessagesByChannelId(req.params.serverId, req.params.channelId, req.params.messageCount));
 })
 
-app.get('/channel/:channelId', (req, res) => {
-
-})
-
-app.get('/server/:serverId', (req, res) => {
-
-})
-
-app.get('/messages/:serverId/:channelId/:messageCount', (req, res) => {
-
-})
-
-app.post('/message/:serverId/:channelId', (req, res) => {
-
+app.post('/message/:serverId/:channelId', jsonParser, async (req, res) => {
+    await serverManagement.postMessage(client, req.params.serverId, req.params.channelId, req.body.message);
+    res.sendStatus(200);
 })
 
 app.listen(port, () => {
@@ -112,7 +126,9 @@ client.on("voiceStateUpdate", async (oldState, newState) =>
 //event that is ran when a new message is received
 client.on('messageCreate', async message =>
 {
-    console.log(message.content)
+    console.log(message.content);
+
+    await insertMessages.execute(Array.of(message));
     
     if(!message.client.prefix.get(message.guild.id))
     {
