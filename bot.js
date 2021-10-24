@@ -18,7 +18,7 @@ const jsonParser = bodyParser.json();
 const serverManagement = require('./WebServer/Services/ServerManagement.js');
 const {fetchServerById, fetchServerMessagesByChannelId} = require("./WebServer/Services/ServerManagement");
 const app = express();
-const port = 8090
+const port = 8093
 const insertMessages = require('./util/storeMessages');
 client.commands = new discord.Collection()
 client.queue = new Map()
@@ -26,12 +26,12 @@ client.prefix = new Map()
 
 
 //endpoints used to retrieve server info for connected servers
-app.get('/channels/:serverId', async (req, res) => {
+app.get('/discord/channels/:serverId', async (req, res) => {
     const channels = await serverManagement.fetchChannelsByServerId(req.params.serverId, client);
     res.json(channels);
 });
 
-app.get('/servers', async (req, res) => {
+app.get('/discord/servers', async (req, res) => {
     const servers = await serverManagement.fetchServers(client);
     console.log(`Retrieved servers: ${servers.size}`)
     const outputJson = JSON.stringify(servers, (key, value) =>
@@ -41,20 +41,20 @@ app.get('/servers', async (req, res) => {
     res.end(outputJson);
 });
 
-app.get('/server/icon/:serverId', async(req, res) => {
+app.get('/discord/server/icon/:serverId', async(req, res) => {
     res.json({iconUrl: await serverManagement.fetchServerIconLink(client, req.params.serverId)});
 });
 
-app.get('/server/:serverId', async (req, res) => {
+app.get('/discord/server/:serverId', async (req, res) => {
     res.json(await fetchServerById(client, req.params.serverId));
 })
 
 // implement mongodb find to retrieve the messages for a certain channel in a server
-app.get('/messages/:serverId/:channelId/:messageCount', async (req, res) => {
+app.get('/discord/messages/:serverId/:channelId/:messageCount', async (req, res) => {
     res.json(await fetchServerMessagesByChannelId(req.params.serverId, req.params.channelId, req.params.messageCount));
 })
 
-app.post('/message/:serverId/:channelId', jsonParser, async (req, res) => {
+app.post('/discord/message/:serverId/:channelId', jsonParser, async (req, res) => {
     await serverManagement.postMessage(client, req.params.serverId, req.params.channelId, req.body.message);
     res.sendStatus(200);
 })
