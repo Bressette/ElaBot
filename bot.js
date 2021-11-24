@@ -20,6 +20,7 @@ const {fetchServerById, fetchServerMessagesByChannelId} = require("./WebServer/S
 const app = express();
 const port = 8093
 const insertMessages = require('./util/storeMessages');
+const {fetchMembersByServerId} = require("./WebServer/Services/ServerManagement");
 client.commands = new discord.Collection()
 client.queue = new Map()
 client.prefix = new Map()
@@ -47,7 +48,11 @@ app.get('/discord/server/icon/:serverId', async(req, res) => {
 
 app.get('/discord/server/:serverId', async (req, res) => {
     res.json(await fetchServerById(client, req.params.serverId));
-})
+});
+
+app.get('/discord/server/:serverId/members', async (req, res) => {
+    res.json(await fetchMembersByServerId(client, req.params.serverId));
+});
 
 // implement mongodb find to retrieve the messages for a certain channel in a server
 app.get('/discord/messages/:serverId/:channelId/:messageCount', async (req, res) => {
@@ -59,6 +64,9 @@ app.post('/discord/message/:serverId/:channelId', jsonParser, async (req, res) =
     res.sendStatus(200);
 })
 
+app.get('/discord/copy', async (req, res) => {
+    await serverManagement.copyServerContents(req.query.sourceGuildId, req.query.targetGuildId, client);
+})
 app.listen(port, () => {
     console.log(`App listening at port: ${port}`);
 })
