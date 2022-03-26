@@ -1,10 +1,14 @@
 const ytdl = require('ytdl-core')
+const youtubedl = require('youtube-dl-exec')
 const ytpl = require('ytpl')
 const search = require('ytsr')
 const db = require('./../../util/mongoUtil')
 const getLoop = require('./../../util/getLoop')
 const printQueue = require('./queue')
-const {joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioResource, AudioPlayerStatus} = require("@discordjs/voice");
+const stream = require('stream')
+const {joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioResource, AudioResource, demuxProbe, AudioPlayerStatus} = require("@discordjs/voice");
+const fs = require("fs");
+const Module = require("module");
 
 const player = createAudioPlayer({
     behaviors: {
@@ -118,9 +122,27 @@ module.exports =
         }
         //create the dispatcher to play the audio in the voice channel
         console.log("About to play the audio")
-        const resource = createAudioResource(ytdl(song.url, {
-            highWaterMark: 1 << 30
-        }));
+        // const testYtDl = await youtubedl(song.url,
+        //     {
+        //         o: '-',
+        //         q: '',
+        //         f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+        //         r: '100K',
+        //     }, { stdio: ['ignore', 'pipe', 'ignore'] });
+        // const audioStream = new stream.PassThrough();
+        // const testYtDl = await youtubedl.raw(song.url, {
+        //     dumpSingleJson: true,
+        //     noWarnings: true,
+        //     noCallHome: true,
+        //     noCheckCertificate: true,
+        //     preferFreeFormats: true,
+        //     youtubeSkipDashManifest: true,
+        //     referer: 'https://www.youtube.com/watch?v=6xKWiCMKKJg'
+        // });
+        // const getYtDlInfo = await youtubedl(song.url, {dumpSingleJson: true});
+        // const testYtDl = youtubedl.exec(song.url, {dumpJson: true});
+        // testYtDl.stdout.pipe(fs.createWriteStream('stdout.txt'));
+        const resource = await module.exports.createDiscordAudioResource(song.url);
         player.play(resource);
         player.on(AudioPlayerStatus.Idle, async() => {
             //check if the current song should loop
@@ -181,5 +203,37 @@ module.exports =
             message.channel.send("That video does not exist!")
             return await ytdl.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
         }
+    },
+
+    async createDiscordAudioResource(url) {
+        return new Promise((resolve, reject) => {
+            const process = youtubedl.exec(
+                url,
+                {
+                    o: '-',
+                    q: '',
+                    f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+                    r: '100K',
+                },
+                { stdio: ['ignore', 'pipe', 'ignore'] },
+            );
+            if (!process.stdout) {
+                reject(new Error('No stdout'));
+                return;
+            }
+            const stream = process.stdout;
+            const onError = error => {
+                if (!process.killed) process.kill();
+                stream.resume();
+                reject(error);
+            };
+            process
+                .once('spawn', () => {
+                    demuxProbe(stream)
+                        .then(probe => resolve(createAudioResource(probe.stream, { metadata: this, inputType: probe.type })))
+                        .catch(onError);
+                })
+                .catch(onError);
+        });
     }
 }

@@ -12,10 +12,10 @@ module.exports =
 
         serverQueue = message.client.queue.get(message.guild.id)
 
-        if(serverQueue.connection.dispatcher.paused)
-            serverQueue.connection.dispatcher.resume()
-        
+        // if(serverQueue.connection.dispatcher?.paused)
+        //     serverQueue.connection.dispatcher?.resume()
+        serverQueue.connection.disconnect();
         serverQueue.songs = [];
-        serverQueue.connection.dispatcher.end();
+        // serverQueue.connection.dispatcher?.end();
     }
 }
