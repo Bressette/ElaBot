@@ -8,7 +8,7 @@ module.exports =
         try
           {
             serverQueue = message.client.queue.get(message.guild.id)
-            serverQueue.connection.dispatcher.pause()
+            serverQueue.audioPlayer.pause();
             message.channel.send("The audio has been paused.")
           } catch(err)
           {

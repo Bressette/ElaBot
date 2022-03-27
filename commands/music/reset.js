@@ -14,6 +14,7 @@ module.exports =
 
         // if(serverQueue.connection.dispatcher?.paused)
         //     serverQueue.connection.dispatcher?.resume()
+        serverQueue.audioPlayer.stop(true);
         serverQueue.connection.disconnect();
         serverQueue.songs = [];
         // serverQueue.connection.dispatcher?.end();

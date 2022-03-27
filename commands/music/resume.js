@@ -7,8 +7,8 @@ module.exports =
     {
         try
           {
-            serverQueue = message.client.queue.get(message.guild.id)
-            serverQueue.connection.dispatcher.resume()
+              serverQueue = message.client.queue.get(message.guild.id)
+              serverQueue.audioPlayer.resume();
           } catch(err)
           {
               message.channel.send(err)

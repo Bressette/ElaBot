@@ -9,14 +9,15 @@ module.exports =
     {
         try
           {
-              serverQueue = message.client.queue.get(message.guild.id)
+              const serverQueue = message.client.queue.get(message.guild.id)
               play.execute(message, serverQueue.songs[0].url).then(() =>
               {
-                  serverQueue.connection.dispatcher.end()
+                  serverQueue.audioPlayer.stop();
               })
           } catch(err)
           {
-              message.channel.send(err)
+              console.log("Encountered error restarting the current song: " + JSON.stringify(err));
+              message.channel.send("Could not restart the current song");
           }
     }
 }

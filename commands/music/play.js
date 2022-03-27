@@ -76,6 +76,7 @@ module.exports =
             textChannel: message.channel,
             voiceChannel: voiceChannel,
             connection: null,
+            audioPlayer: null,
             songs: [],
             volume: 5,
             playing: true
@@ -94,6 +95,7 @@ module.exports =
               });
               connection.subscribe(player);
               queueContruct.connection = connection;
+              queueContruct.audioPlayer = player;
               await module.exports.play(message, message.guild, queueContruct.songs[0]);
           } catch (err) {
               console.log(err);

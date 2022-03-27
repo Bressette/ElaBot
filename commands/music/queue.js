@@ -5,12 +5,12 @@ module.exports =
     aliases: [],
     execute(message, args)
     {
-        serverQueue = message.client.queue.get(message.guild.id)
+        const serverQueue = message.client.queue.get(message.guild.id)
         if(!serverQueue)
             message.channel.send("The queue is empty")
         else
         {
-            temp = "**Queue**\n"
+            let temp = "**Queue**\n"
             for(i in serverQueue.songs)
             {
                 position = parseInt(i) + parseInt(1)
