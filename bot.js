@@ -124,7 +124,7 @@ client.on("voiceStateUpdate", async (oldState, newState) =>
         {
             serverQueue = serverQueue.voiceChannel.client.queue.get(serverQueue.voiceChannel.guild.id)
             serverQueue.songs = [];
-            serverQueue.connection.destroy();
+            serverQueue.connection?.destroy();
         }
     }
     

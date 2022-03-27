@@ -9,14 +9,9 @@ module.exports =
         return message.channel.send(
           "You have to be in a voice channel to stop the music!"
         );
-
-        serverQueue = message.client.queue.get(message.guild.id)
-
-        // if(serverQueue.connection.dispatcher?.paused)
-        //     serverQueue.connection.dispatcher?.resume()
+        const serverQueue = message.client.queue.get(message.guild.id)
         serverQueue.audioPlayer.stop(true);
-        serverQueue.connection.disconnect();
+        serverQueue.audioPlayer = null;
         serverQueue.songs = [];
-        // serverQueue.connection.dispatcher?.end();
     }
 }
