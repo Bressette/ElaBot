@@ -1,4 +1,6 @@
-module.exports = 
+const isUrl = require('isUrl');
+
+module.exports =
 {
     name: "messageUrlCheck",
     description: "Checks if a message contains a url",
@@ -6,12 +8,12 @@ module.exports =
     {
         status = false
 
-        for(i = 0; i < content.length; i++)
+        for(let i = 0; i < content.length; i++)
         {
-            for(j = i; j < content.length; j++)
+            for(let j = i; j < content.length; j++)
             {
-                tempString = content.substring(i, j+1)
-                if(module.exports.isUrl(tempString))
+                const tempString = content.substring(i, j+1)
+                if(isUrl.execute(tempString))
                 {
                     return true
                 }

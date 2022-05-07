@@ -7,11 +7,11 @@ module.exports =
     {
         try
           {
-              serverQueue = message.client.queue.get(message.guild.id)
+              const serverQueue = message.client.queue.get(message.guild.id);
               serverQueue.audioPlayer.resume();
           } catch(err)
           {
-              message.channel.send(err)
+              message.channel.send(err);
           }
     }
 }

@@ -6,8 +6,8 @@ module.exports =
     description: 'Returns the current prefix for the guild that the message is from',
     async execute(message, args)
     {
-        dbo = mongoUtil.getDb()
-        result = await dbo.collection("servers").findOne({id: message.guild.id})
+        const dbo = mongoUtil.getDb()
+        const result = await dbo.collection("servers").findOne({id: message.guild.id})
         if(result === null || result === undefined)
         {
             dbo.collection("servers").insertOne({id: message.guild.id, prefix: "-", loop: false}, (err, res) =>

@@ -13,7 +13,7 @@ module.exports =
     aliases: [],
     async execute(message, args)
     {
-        content = message.content.substr(message.content.indexOf(args[0]), message.content.length)
+        let content = message.content.substr(message.content.indexOf(args[0]), message.content.length)
         if(content.includes("-full"))
         {
             isFullResults = true
@@ -24,15 +24,15 @@ module.exports =
 
         try {
 
-            images = await client.search(content, options)
+            let images = await client.search(content, options)
             if(images)
             {
                 if(isFullResults)
                 {
-                    results = [""]
-                    j = 0
-                    k = 1
-                    for(i in images)
+                    let results = [""]
+                    let j = 0
+                    let k = 1
+                    for(const i in images)
                     {
                         if(images[i].url.includes("fbsbx.com"))
                             continue
@@ -51,7 +51,7 @@ module.exports =
 
                 else
                 {
-                    i = 0
+                    let i = 0
                     while(images[i].url.includes("fbsbx.com"))
                     {
                         i++

@@ -1,5 +1,6 @@
 const mongoUtil = require("./../../util/mongoUtil");
 const getMention = require("./../../util/getMention");
+const getMessages = require("./../../util/getMessages");
 const isUrl = require("./../../util/isUrl");
 
 async function fetchChannelsByServerId(serverId, client) {
@@ -74,6 +75,21 @@ async function copyServerContents(sourceGuildId, targetGuildId, client) {
     }
 }
 
+async function removeColin(client) {
+    console.log("removing colin");
+    const channels = Array.from(await fetchChannelsByServerId("502575389550575636", client));
+    for(const i of channels) {
+        console.log(`Value of i is: ${JSON.stringify(i)}`);
+        const messages = await getMessages.execute(i, 250);
+        console.log(`Fetched messages: ${JSON.stringify(messages)}`);
+        for(const j of messages) {
+            if(j.content === ":neutral_face" && j.author.bot) {
+                await j.delete();
+            }
+        }
+    }
+}
+
 async function fetchMembersByServerId(client, serverId) {
     const guild = await client.guilds.fetch(serverId);
     return await guild.members.fetch();
@@ -87,5 +103,6 @@ module.exports = {
     postMessage,
     fetchServerMessagesByChannelId,
     copyServerContents,
-    fetchMembersByServerId
+    fetchMembersByServerId,
+    removeColin
 }

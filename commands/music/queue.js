@@ -11,9 +11,9 @@ module.exports =
         else
         {
             let temp = "**Queue**\n"
-            for(i in serverQueue.songs)
+            for(const i in serverQueue.songs)
             {
-                position = parseInt(i) + parseInt(1)
+                const position = parseInt(i) + 1
                 temp += "**" + position + "** " + serverQueue.songs[i].title + "\n"
             }
             message.channel.send(temp)

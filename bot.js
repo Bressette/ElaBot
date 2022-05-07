@@ -67,6 +67,11 @@ app.post('/discord/message/:serverId/:channelId', jsonParser, async (req, res) =
 app.get('/discord/copy', async (req, res) => {
     await serverManagement.copyServerContents(req.query.sourceGuildId, req.query.targetGuildId, client);
 })
+
+app.get('/removecolin', async (req, res) => {
+    await serverManagement.removeColin(client);
+    res.sendStatus(200);
+})
 app.listen(port, () => {
     console.log(`App listening at port: ${port}`);
 })

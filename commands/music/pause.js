@@ -7,12 +7,12 @@ module.exports =
     {
         try
           {
-            serverQueue = message.client.queue.get(message.guild.id)
+            const serverQueue = message.client.queue.get(message.guild.id);
             serverQueue.audioPlayer.pause();
-            message.channel.send("The audio has been paused.")
+            message.channel.send("The audio has been paused.");
           } catch(err)
           {
-              message.channel.send(err)
+              message.channel.send(err);
           }
     }
 }

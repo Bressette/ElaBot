@@ -14,8 +14,8 @@ module.exports =
             {
                 options.before = last_id;
             }
-    
             const messages = await channel.messages.fetch(options);
+            console.log(JSON.stringify(messages));
             sum_messages.push(...Array.from(messages));
             last_id = messages?.last()?.id;
     

@@ -9,7 +9,7 @@ module.exports =
         return message.channel.send(
           "You have to be in a voice channel to stop the music!"
         );
-        const serverQueue = message.client.queue.get(message.guild.id)
+        const serverQueue = message.client.queue.get(message.guild.id);
         serverQueue.audioPlayer.stop(true);
         serverQueue.audioPlayer = null;
         serverQueue.songs = [];
