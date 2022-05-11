@@ -18,7 +18,7 @@ A config.json file is also required in the base directory of the bot, at the sam
 
     {
         "token" : "<bot token goes here>",
-        "googlekey" : "<google cse api key goes here"
+        "googlekey" : "<google cse api key goes here>"
     }  
     
 A valid installation of Python 3.2+ is required. Download [Python](https://www.python.org/)  
