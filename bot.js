@@ -14,6 +14,7 @@ client.commands = new discord.Collection()
 client.queue = new Map()
 client.prefix = new Map()
 require('./WebServer/Services/AppEndpoints')(client);
+const logger = require('logger');
 
 
 const getDirectories = fs.readdirSync('./commands', { withFileTypes: true }).filter(dirent => dirent.isDirectory())
@@ -47,7 +48,6 @@ for (const file of eventFiles) {
     }
 }
 
-
 mongoUtil.connectToServer(() =>
 {
 })
@@ -56,4 +56,5 @@ process.on('uncaughtException', function(err) {
     console.log('Caught exception: ' + err);
   });
 
-client.login(config.token)
+client.login(config.token).then(val => logger.info("Bot logged into Discord Bot Client"))
+    .catch(err => logger.error("Failed to login to the Discord Bot Client: " + err));
