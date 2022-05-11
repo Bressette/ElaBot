@@ -3,13 +3,13 @@ A discord.js based Discord Bot that I built for my personal servers.
 The bot currently contains the following command categories:
 - Admin  
 basic admin commands for kicking/banning deleting messages  
-- Music
+- Music  
 plays youtube videos based on search terms or direct links  
-- Image Search
+- Image Search  
 searches google images through a google custom search engine API
-- Management Endpoints
+- Management Endpoints  
 Express.js endpoints lets you retrieve data about the server and write messages as the bot using a REST client
-- Economy
+- Economy  
 Basic economy management commands and gambling through a conflip and slots command
 
 # Installation
