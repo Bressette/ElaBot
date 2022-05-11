@@ -21,8 +21,7 @@ A config.json file is also required in the base directory of the bot, at the sam
     }``  
 A valid installation of Python 3.2+ is required. Download [Python](https://www.python.org/)  
 Run an npm install to install the necessary dependencies and then you can run the app using the node command or use PM2 to manage the process.  
-``
-    npm install
+    npm install  
     node bot.js
     pm2 start bot.js
-``
+
