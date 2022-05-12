@@ -14,7 +14,7 @@ client.commands = new discord.Collection()
 client.queue = new Map()
 client.prefix = new Map()
 require('./WebServer/Services/AppEndpoints')(client);
-const logger = require('logger');
+const logger = require('./logger');
 
 
 const getDirectories = fs.readdirSync('./commands', { withFileTypes: true }).filter(dirent => dirent.isDirectory())
