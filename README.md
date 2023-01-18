@@ -14,7 +14,7 @@ Basic economy management commands and gambling through a conflip and slots comma
 
 # Installation
 The bot requires an installation of MongoDB on your system. MongoDB Community can be installed for your operatin system [here](https://www.mongodb.com/try/download/community)  
-A config.json file is also required in the base directory of the bot, at the same level as the bot.js file. This file contains your bot api key and your google custom search engine API key.  
+A config.json file is also required in the base directory of the bot, at the same level as the bot.ts file. This file contains your bot api key and your google custom search engine API key.  
 
     {
         "token" : "<bot token goes here>",
@@ -25,6 +25,6 @@ A valid installation of Python 3.2+ is required. Download [Python](https://www.p
 Run an npm install to install the necessary dependencies and then you can run the app using the node command or use PM2 to manage the process.  
 
     npm install  
-    node bot.js
-    pm2 start bot.js
+    node bot.ts
+    pm2 start bot.ts
 
