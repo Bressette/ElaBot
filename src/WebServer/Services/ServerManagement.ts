@@ -1,4 +1,8 @@
 import {MongoUtil} from "../../util/mongoUtil";
+import {Collection, Guild, GuildBan, GuildChannel, GuildEmoji, GuildMember, Role} from "discord.js";
+import {GuildModel} from "../../models/GuildModel";
+import {logger} from "../../logger";
+import {GuildMemberModel} from "../../models/GuildMemberModel";
 const getMention = require("../../util/getMention");
 const getMessages = require("../../util/getMessages");
 const isUrl = require("../../util/isUrl");
@@ -106,12 +110,86 @@ async function fetchStickersByServerId(client, serverId) {
     return await guild.stickers.fetch();
 }
 
+async function storeServerContents(client, serverId) {
+    const guild: Guild = await client.guilds.fetch(serverId);
+    let guildModel: GuildModel = <GuildModel>{};
+
+    //setting guild properties to store in MongoDB
+    guildModel._id = guild.id;
+    guildModel.name = guild.name;
+    guildModel.icon = guild.icon;
+    guildModel.features = guild.features;
+    let guildMembers: Collection<string, GuildMember> = await guild.members.fetch();
+    guildModel.members = [];
+    guildMembers.forEach((value, key) => guildModel.members.push(value.id));
+    let guildChannels: Collection<string, GuildChannel> = await guild.channels.fetch();
+    guildModel.channels = [];
+    guildChannels.forEach((value, key) => guildModel.channels.push(value.id));
+    let guildRoles: Collection<string, Role> = await guild.roles.fetch();
+    guildModel.roles = [];
+    guildRoles.forEach((value, key) => guildModel.roles.push(value.id));
+    guildModel.splash = guild.splash;
+    guildModel.verificationLevel = guild.verificationLevel;
+    guildModel.nsfwLevel = guild.nsfwLevel;
+    guildModel.memberCount = guild.memberCount;
+    guildModel.afkTimeout = guild.afkTimeout;
+    guildModel.afkChannelId = guild.afkChannelId;
+    guildModel.systemChannelId = guild.systemChannelId;
+    guildModel.premiumTier = guild.premiumTier;
+    guildModel.premiumSubscriptionCount = guild.premiumSubscriptionCount;
+    guildModel.explicitContentFilter = guild.explicitContentFilter;
+    guildModel.joinedTimestamp = guild.joinedTimestamp;
+    guildModel.defaultMessageNotifications = guild.defaultMessageNotifications;
+    guildModel.maximumMembers = guild.maximumMembers;
+    guildModel.maximumPresences = guild.maximumPresences;
+    guildModel.preferredLocale = guild.preferredLocale;
+    guildModel.ownerId = guild.ownerId;
+    let emojis: Collection<string, GuildEmoji> = await guild.emojis.fetch();
+    guildModel.emojis = [];
+    emojis.forEach((value, key) => guildModel.emojis.push(value.id));
+    guildModel.nameAcronym = guild.nameAcronym;
+    guildModel.splashURL = guild.splashURL();
+    guildModel.bannerURL = guild.bannerURL();
+    guildModel.discoverySplashURL = guild.discoverySplashURL();
+
+    const dbo = MongoUtil.getDb();
+    let result = await dbo.collection("guild").insertOne(guildModel);
+    if(result === null || result === undefined) {
+        logger.error("Guild insert was unsuccessful");
+    }
+
+    let guildMembersModels: GuildMemberModel[] = [];
+    guildMembers.forEach((value, key) => {
+        let guildMemberModel = <GuildMemberModel>{};
+        guildMemberModel.guildId = value.guild.id;
+        let roles: Collection<string, Role> = value.roles.cache;
+        guildMemberModel.roles = [];
+        roles.forEach((role, key) => guildMemberModel.roles.push(role.id));
+        guildMemberModel.deleted = value.deleted;
+        guildMemberModel.joinedTimestamp = value.joinedTimestamp;
+        guildMemberModel.nickname = value.nickname;
+        guildMemberModel.displayName = value.displayName;
+        guildMemberModel.pending = value.pending;
+        guildMemberModel.premiumSinceTimestamp = value.premiumSinceTimestamp;
+        guildMemberModel.userId = value.user.id;
+        guildMembersModels.push(guildMemberModel);
+    });
+
+    result = await dbo.collection("guildmember").insertMany(guildMembersModels);
+    if(result === null || result === undefined) {
+        logger.error("GuildMember insert was unsuccessful");
+    }
+
+    return guildModel;
+}
+
 module.exports = {
     fetchChannelsByServerId,
     fetchServers,
     fetchServerIconLink,
     fetchServerById,
     postMessage,
+    storeServerContents,
     fetchServerMessagesByChannelId,
     copyServerContents,
     fetchMembersByServerId,

@@ -9,3 +9,4 @@ module.exports = {
             status: 'online' });
     }
 };
+//# sourceMappingURL=ready.js.map

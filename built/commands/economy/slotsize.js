@@ -57,3 +57,4 @@ module.exports =
             });
         }
     };
+//# sourceMappingURL=slotsize.js.map

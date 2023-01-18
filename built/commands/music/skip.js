@@ -12,3 +12,4 @@ module.exports =
             serverQueue.audioPlayer.stop();
         }
     };
+//# sourceMappingURL=skip.js.map

@@ -1,0 +1,31 @@
+export interface GuildModel {
+    _id: string;
+    name: string;
+    icon: string;
+    features: string[];
+    members: string[];
+    channels: string[];
+    bans: string[];
+    roles: string[];
+    splash: string;
+    verificationLevel: string;
+    nsfwLevel: string;
+    memberCount: number;
+    afkTimeout: number;
+    afkChannelId: string;
+    systemChannelId: string;
+    premiumTier: string;
+    premiumSubscriptionCount: number;
+    explicitContentFilter: string;
+    joinedTimestamp: number;
+    defaultMessageNotifications: number | "ALL_MESSAGES" | "ONLY_MENTIONS";
+    maximumMembers: number;
+    maximumPresences: number;
+    preferredLocale: string;
+    ownerId: string;
+    emojis: string[];
+    nameAcronym: string;
+    splashURL: string;
+    bannerURL: string;
+    discoverySplashURL: string;
+}

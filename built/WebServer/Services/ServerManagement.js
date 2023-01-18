@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoUtil_1 = require("../../util/mongoUtil");
+var logger_1 = require("../../logger");
 var getMention = require("../../util/getMention");
 var getMessages = require("../../util/getMessages");
 var isUrl = require("../../util/isUrl");
@@ -285,12 +286,101 @@ function fetchStickersByServerId(client, serverId) {
         });
     });
 }
+function storeServerContents(client, serverId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var guild, guildModel, guildMembers, guildChannels, guildRoles, emojis, dbo, result, guildMembersModels;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, client.guilds.fetch(serverId)];
+                case 1:
+                    guild = _a.sent();
+                    guildModel = {};
+                    //setting guild properties to store in MongoDB
+                    guildModel._id = guild.id;
+                    guildModel.name = guild.name;
+                    guildModel.icon = guild.icon;
+                    guildModel.features = guild.features;
+                    return [4 /*yield*/, guild.members.fetch()];
+                case 2:
+                    guildMembers = _a.sent();
+                    guildModel.members = [];
+                    guildMembers.forEach(function (value, key) { return guildModel.members.push(value.id); });
+                    return [4 /*yield*/, guild.channels.fetch()];
+                case 3:
+                    guildChannels = _a.sent();
+                    guildModel.channels = [];
+                    guildChannels.forEach(function (value, key) { return guildModel.channels.push(value.id); });
+                    return [4 /*yield*/, guild.roles.fetch()];
+                case 4:
+                    guildRoles = _a.sent();
+                    guildModel.roles = [];
+                    guildRoles.forEach(function (value, key) { return guildModel.roles.push(value.id); });
+                    guildModel.splash = guild.splash;
+                    guildModel.verificationLevel = guild.verificationLevel;
+                    guildModel.nsfwLevel = guild.nsfwLevel;
+                    guildModel.memberCount = guild.memberCount;
+                    guildModel.afkTimeout = guild.afkTimeout;
+                    guildModel.afkChannelId = guild.afkChannelId;
+                    guildModel.systemChannelId = guild.systemChannelId;
+                    guildModel.premiumTier = guild.premiumTier;
+                    guildModel.premiumSubscriptionCount = guild.premiumSubscriptionCount;
+                    guildModel.explicitContentFilter = guild.explicitContentFilter;
+                    guildModel.joinedTimestamp = guild.joinedTimestamp;
+                    guildModel.defaultMessageNotifications = guild.defaultMessageNotifications;
+                    guildModel.maximumMembers = guild.maximumMembers;
+                    guildModel.maximumPresences = guild.maximumPresences;
+                    guildModel.preferredLocale = guild.preferredLocale;
+                    guildModel.ownerId = guild.ownerId;
+                    return [4 /*yield*/, guild.emojis.fetch()];
+                case 5:
+                    emojis = _a.sent();
+                    guildModel.emojis = [];
+                    emojis.forEach(function (value, key) { return guildModel.emojis.push(value.id); });
+                    guildModel.nameAcronym = guild.nameAcronym;
+                    guildModel.splashURL = guild.splashURL();
+                    guildModel.bannerURL = guild.bannerURL();
+                    guildModel.discoverySplashURL = guild.discoverySplashURL();
+                    dbo = mongoUtil_1.MongoUtil.getDb();
+                    return [4 /*yield*/, dbo.collection("guild").insertOne(guildModel)];
+                case 6:
+                    result = _a.sent();
+                    if (result === null || result === undefined) {
+                        logger_1.logger.error("Guild insert was unsuccessful");
+                    }
+                    guildMembersModels = [];
+                    guildMembers.forEach(function (value, key) {
+                        var guildMemberModel = {};
+                        guildMemberModel.guildId = value.guild.id;
+                        var roles = value.roles.cache;
+                        guildMemberModel.roles = [];
+                        roles.forEach(function (role, key) { return guildMemberModel.roles.push(role.id); });
+                        guildMemberModel.deleted = value.deleted;
+                        guildMemberModel.joinedTimestamp = value.joinedTimestamp;
+                        guildMemberModel.nickname = value.nickname;
+                        guildMemberModel.displayName = value.displayName;
+                        guildMemberModel.pending = value.pending;
+                        guildMemberModel.premiumSinceTimestamp = value.premiumSinceTimestamp;
+                        guildMemberModel.userId = value.user.id;
+                        guildMembersModels.push(guildMemberModel);
+                    });
+                    return [4 /*yield*/, dbo.collection("guildmember").insertMany(guildMembersModels)];
+                case 7:
+                    result = _a.sent();
+                    if (result === null || result === undefined) {
+                        logger_1.logger.error("GuildMember insert was unsuccessful");
+                    }
+                    return [2 /*return*/, guildModel];
+            }
+        });
+    });
+}
 module.exports = {
     fetchChannelsByServerId: fetchChannelsByServerId,
     fetchServers: fetchServers,
     fetchServerIconLink: fetchServerIconLink,
     fetchServerById: fetchServerById,
     postMessage: postMessage,
+    storeServerContents: storeServerContents,
     fetchServerMessagesByChannelId: fetchServerMessagesByChannelId,
     copyServerContents: copyServerContents,
     fetchMembersByServerId: fetchMembersByServerId,
@@ -299,3 +389,4 @@ module.exports = {
     fetchEmojisByServerId: fetchEmojisByServerId,
     fetchStickersByServerId: fetchStickersByServerId
 };
+//# sourceMappingURL=ServerManagement.js.map

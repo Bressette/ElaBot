@@ -22,3 +22,4 @@ module.exports = {
         }
     }
 };
+//# sourceMappingURL=setPrefix.js.map

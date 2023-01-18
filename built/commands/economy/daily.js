@@ -120,3 +120,4 @@ module.exports =
             });
         }
     };
+//# sourceMappingURL=daily.js.map

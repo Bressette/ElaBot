@@ -104,3 +104,4 @@ module.exports =
             });
         }
     };
+//# sourceMappingURL=imagesearch.js.map

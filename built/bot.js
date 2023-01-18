@@ -75,3 +75,4 @@ process.on('uncaughtException', function (err) {
 });
 client.login(config.token).then(function (val) { return logger_1.logger.info("Bot logged into Discord Bot Client"); })
     .catch(function (err) { return logger_1.logger.error("Failed to login to the Discord Bot Client: " + err); });
+//# sourceMappingURL=bot.js.map

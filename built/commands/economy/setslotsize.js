@@ -65,3 +65,4 @@ module.exports =
             });
         }
     };
+//# sourceMappingURL=setslotsize.js.map

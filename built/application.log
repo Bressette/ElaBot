@@ -1,2 +1,13 @@
 {"level":"info","message":"Bot logged into Discord Bot Client"}
 {"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Bot logged into Discord Bot Client"}
+{"level":"info","message":"Guild insertOne Callback"}
+{"code":11000,"driver":true,"index":0,"keyPattern":{"_id":1},"keyValue":{"_id":"502575389550575636"},"level":"error","name":"MongoError"}

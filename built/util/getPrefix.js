@@ -74,3 +74,4 @@ module.exports =
             });
         }
     };
+//# sourceMappingURL=getPrefix.js.map

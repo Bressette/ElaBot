@@ -182,3 +182,4 @@ module.exports =
                 return ":seven:";
         }
     };
+//# sourceMappingURL=slots.js.map

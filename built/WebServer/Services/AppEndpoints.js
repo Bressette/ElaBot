@@ -118,6 +118,19 @@ module.exports = function (client) {
             }
         });
     }); });
+    app.get('/discord/storeServer/:serverId', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    _b = (_a = res).json;
+                    return [4 /*yield*/, serverManagement.storeServerContents(client, req.params.serverId)];
+                case 1:
+                    _b.apply(_a, [_c.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
     app.get('/discord/server/:serverId/members', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
         var _a, _b;
         return __generator(this, function (_c) {
@@ -236,3 +249,4 @@ module.exports = function (client) {
         console.log("App listening at port: ".concat(port));
     });
 };
+//# sourceMappingURL=AppEndpoints.js.map

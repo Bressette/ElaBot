@@ -14,3 +14,4 @@ module.exports =
             }
         }
     };
+//# sourceMappingURL=pause.js.map

@@ -12,3 +12,4 @@ module.exports =
             serverQueue.songs = [];
         }
     };
+//# sourceMappingURL=reset.js.map

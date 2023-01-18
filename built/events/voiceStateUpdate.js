@@ -18,3 +18,4 @@ module.exports = {
         }
     }
 };
+//# sourceMappingURL=voiceStateUpdate.js.map

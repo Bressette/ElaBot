@@ -12,3 +12,4 @@ var logConfiguration = {
 };
 var logger = winston.createLogger(logConfiguration);
 exports.logger = logger;
+//# sourceMappingURL=logger.js.map

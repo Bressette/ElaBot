@@ -17,3 +17,4 @@ module.exports =
             }
         }
     };
+//# sourceMappingURL=skipto.js.map

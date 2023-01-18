@@ -23,3 +23,4 @@ module.exports =
             }
         }
     };
+//# sourceMappingURL=kick.js.map

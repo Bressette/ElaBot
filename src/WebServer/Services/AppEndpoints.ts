@@ -41,6 +41,10 @@ module.exports = function(client) {
         res.json(await serverManagement.fetchServerById(client, req.params.serverId));
     });
 
+    app.get('/discord/storeServer/:serverId', async (req, res) => {
+        res.json(await serverManagement.storeServerContents(client, req.params.serverId));
+    });
+
     app.get('/discord/server/:serverId/members', async (req, res) => {
         res.json(await serverManagement.fetchMembersByServerId(client, req.params.serverId));
     });

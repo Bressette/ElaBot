@@ -25,3 +25,4 @@ module.exports =
             });
         }
     };
+//# sourceMappingURL=addbalance.js.map

@@ -74,3 +74,4 @@ module.exports = {
         });
     }
 };
+//# sourceMappingURL=messageCreate.js.map

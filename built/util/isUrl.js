@@ -8,3 +8,4 @@ module.exports =
             return url.test(linkString);
         }
     };
+//# sourceMappingURL=isUrl.js.map
