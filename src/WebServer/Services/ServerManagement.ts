@@ -1,8 +1,15 @@
 import {MongoUtil} from "../../util/mongoUtil";
-import {Collection, Guild, GuildBan, GuildChannel, GuildEmoji, GuildMember, Role} from "discord.js";
+import {Collection, Guild, GuildChannel, GuildEmoji, GuildMember, Message, Role, Sticker} from 'discord.js';
 import {GuildModel} from "../../models/GuildModel";
 import {logger} from "../../logger";
 import {GuildMemberModel} from "../../models/GuildMemberModel";
+import {UserModel} from "../../models/UserModel";
+import {ChannelModel} from "../../models/ChannelModel";
+import {RoleModel} from "../../models/RoleModel";
+import {EmojiModel} from "../../models/EmojiModel";
+import {Attachment} from "../../models/Attachment";
+import {EmbedModel} from "../../models/EmbedModel";
+import {MessageModel} from "../../models/MessageModel";
 const getMention = require("../../util/getMention");
 const getMessages = require("../../util/getMessages");
 const isUrl = require("../../util/isUrl");
@@ -112,6 +119,21 @@ async function fetchStickersByServerId(client, serverId) {
 
 async function storeServerContents(client, serverId) {
     const guild: Guild = await client.guilds.fetch(serverId);
+    await storeGuild(guild);
+    let guildMembers: Collection<string, GuildMember> = await guild.members.fetch();
+    await storeGuildMembers(guildMembers);
+    let channels = await guild.channels.fetch();
+    await storeGuildChannels(channels);
+    const roles = await guild.roles.fetch();
+    await storeGuildRoles(roles);
+    const emojis = await guild.emojis.fetch();
+    await storeEmojis(emojis);
+    await storeMessages(guild);
+    logger.info(`Finished saving data for guild: ${guild.id}`);
+    return true;
+}
+
+async function storeGuild(guild) {
     let guildModel: GuildModel = <GuildModel>{};
 
     //setting guild properties to store in MongoDB
@@ -127,7 +149,11 @@ async function storeServerContents(client, serverId) {
     guildChannels.forEach((value, key) => guildModel.channels.push(value.id));
     let guildRoles: Collection<string, Role> = await guild.roles.fetch();
     guildModel.roles = [];
-    guildRoles.forEach((value, key) => guildModel.roles.push(value.id));
+
+    // add guild roles
+    guildRoles.forEach((value, key) => {
+        guildModel.roles.push(value.id);
+    });
     guildModel.splash = guild.splash;
     guildModel.verificationLevel = guild.verificationLevel;
     guildModel.nsfwLevel = guild.nsfwLevel;
@@ -153,12 +179,23 @@ async function storeServerContents(client, serverId) {
     guildModel.discoverySplashURL = guild.discoverySplashURL();
 
     const dbo = MongoUtil.getDb();
-    let result = await dbo.collection("guild").insertOne(guildModel);
-    if(result === null || result === undefined) {
-        logger.error("Guild insert was unsuccessful");
+    try {
+        let result = await dbo.collection("guild").insertOne(guildModel);
+        if(result === null || result === undefined) {
+            logger.error("Guild insert was unsuccessful");
+        } else {
+            logger.info(`Inserted Guild: {${guildModel.name}, ${guildModel._id}`);
+        }
+    } catch(err) {
+        logger.error("Guild insert was unsuccessful: " + JSON.stringify(err));
     }
 
+
+}
+
+async function storeGuildMembers(guildMembers) {
     let guildMembersModels: GuildMemberModel[] = [];
+    let userModels: UserModel[] = [];
     guildMembers.forEach((value, key) => {
         let guildMemberModel = <GuildMemberModel>{};
         guildMemberModel.guildId = value.guild.id;
@@ -172,15 +209,225 @@ async function storeServerContents(client, serverId) {
         guildMemberModel.pending = value.pending;
         guildMemberModel.premiumSinceTimestamp = value.premiumSinceTimestamp;
         guildMemberModel.userId = value.user.id;
+        let userModel = <UserModel>{};
+        userModel._id = value.user.id;
+        userModel.bot = value.user.bot;
+        userModel.tag = value.user.tag;
+        userModel.createdTimestamp = value.user.createdTimestamp;
+        userModel.avatar = value.user.avatar;
+        userModel.avatarURL = value.user.avatarURL();
+        userModel.defaultAvatarURL = value.user.defaultAvatarURL;
+        userModel.discriminator = value.user.discriminator;
+        userModel.system = value.user.system;
+        userModel.username = value.user.username;
+        userModels.push(userModel);
         guildMembersModels.push(guildMemberModel);
     });
 
-    result = await dbo.collection("guildmember").insertMany(guildMembersModels);
-    if(result === null || result === undefined) {
+    const dbo = MongoUtil.getDb();
+    try {
+        let result = await dbo.collection("guildmember").insertMany(guildMembersModels, {ordered: false});
+        if (result === null || result === undefined) {
+            logger.error("GuildMember insert was unsuccessful");
+        } else {
+            logger.info("Successfully inserted guild members");
+        }
+    }
+    catch(err) {
         logger.error("GuildMember insert was unsuccessful");
     }
+    try {
+        const result = await dbo.collection("user").insertMany(userModels, {ordered: false});
+        if(result === null || result === undefined) {
+            logger.error("User insert was unsuccessful");
+        } else {
+            logger.info("Successfully inserted users");
+        }
+    } catch(err) {
+        logger.error("User insert was unsuccessful");
+    }
+}
 
-    return guildModel;
+async function storeGuildChannels(channels) {
+    let channelModels: ChannelModel[] = [];
+    channels.forEach((value, key) => {
+        let channelModel = <ChannelModel>{};
+        channelModel._id = value.id;
+        channelModel.name = value.name;
+        channelModel.deleted = value.deleted;
+        channelModel.createdTimestamp = value.createdTimestamp;
+        channelModel.type = value.type;
+        channelModel.guildId = value.guildId;
+        channelModel.parentId = value.parentId;
+        channelModel.rawPosition = value.rawPosition;
+        channelModels.push(channelModel);
+    });
+    const dbo = MongoUtil.getDb();
+    try {
+        const result = await dbo.collection("channel").insertMany(channelModels, {ordered: false});
+        if(result === null || result === undefined) {
+            logger.error("Channel insert was unsuccessful");
+        } else {
+            logger.error("Channel insert was successful");
+        }
+    } catch(err) {
+        logger.error("Channel insert was unsuccessful");
+    }
+}
+
+async function storeGuildRoles(roles: Collection<string, Role>) {
+    const roleModels: RoleModel[] = [];
+    roles.forEach((value) => {
+        let roleModel = {} as RoleModel;
+        roleModel.guild = value.guild.id;
+        roleModel._id = value.id;
+        roleModel.name = value.name;
+        roleModel.color = value.color;
+        roleModel.hoist = value.hoist;
+        roleModel.rawPosition = value.rawPosition;
+        roleModel.permissions = value.permissions.toArray();
+        roleModel.managed = value.managed;
+        roleModel.mentionable = value.mentionable;
+        roleModel.deleted = value.deleted;
+        roleModel.createdTimestamp = value.createdTimestamp;
+        roleModels.push(roleModel);
+    });
+
+    try {
+        const dbo = MongoUtil.getDb();
+        const result = await dbo.collection("role").insertMany(roleModels, {ordered: false});
+        if(result === null || result === undefined) {
+            logger.error("Role insert was unsuccessful");
+        } else {
+            logger.error("Role insert was successful");
+        }
+    } catch(err) {
+        logger.error("Role insert was unsuccessful");
+    }
+}
+
+async function storeEmojis(emojis: Collection<string, GuildEmoji>) {
+    const emojiModels: EmojiModel[] = []
+    emojis.forEach((value) => {
+        const emojiModel = {} as EmojiModel;
+        emojiModel._id = value.id;
+        emojiModel.animated = value.animated;
+        emojiModel.name = value.name;
+        emojiModel.deleted = value.deleted;
+        emojiModel.guildId = value.guild.id;
+        emojiModel.requiresColons = value.requiresColons;
+        emojiModel.managed = value.managed;
+        emojiModel.available = value.available;
+        emojiModel.author = value.author.id;
+        emojiModel.createdTimestamp = value.createdTimestamp;
+        emojiModel.url = value.url;
+        emojiModel.identifier = value.identifier;
+        emojiModels.push(emojiModel);
+    });
+    try {
+        const dbo = MongoUtil.getDb();
+        const result = await dbo.collection("emoji").insertMany(emojiModels, {ordered: false});
+        if(result === null || result === undefined) {
+            logger.error("Emoji insert was unsuccessful");
+        } else {
+            logger.error("Emoji insert was successful");
+        }
+    } catch(err) {
+        logger.error("Emoji insert was unsuccessful");
+    }
+}
+
+async function storeMessages(guild: Guild) {
+    let channels: Collection<string, GuildChannel> = await guild.channels.fetch();
+    let allMessages = [];
+    channels = channels.filter((value => value.isText()));
+    const channelValues: IterableIterator<GuildChannel> = channels.values();
+    try {
+        for(let channel; !(channel = channelValues.next().value).done;) {
+            logger.info(`Fetching messages for guild: ${guild.id}, channel: ${channel.name}`);
+            let messages = await getMessages.execute(channel, 100000000);
+            for(const i of messages)
+            {
+                const message: MessageModel = {} as Message;
+                if(i[1].attachments.size > 0) {
+                    const attachments: Attachment[] = [];
+                    i[1].attachments.forEach(value => {
+                        const attachment = {} as Attachment;
+                        attachment._id = value.id;
+                        attachment.height = value.height;
+                        attachment.contentType = value.contentType;
+                        attachment.name = value.name;
+                        attachment.proxyURL = value.proxyURL;
+                        attachment.size = value.size;
+                        attachment.spoiler = value.spoiler;
+                        attachment.url = value.url;
+                        attachment.width = value.width;
+                        attachments.push(attachment);
+                    });
+                    message.attachments = attachments;
+                }
+                if(i[1].embeds.size > 0) {
+                    const embeds: EmbedModel[] = [];
+                    i[1].embeds.forEach(value => {
+                        const embed = {} as EmbedModel;
+                        embed.title = value.title;
+                        embed.description = value.description;
+                        embed.url = value.url;
+                        embed.color = value.color;
+                        embed.timestamp = value.timestamp;
+                        embed.thumbnail = value.thumbnail;
+                        embed.image = value.image;
+                        embed.video = value.video;
+                        embed.author = value.author;
+                        embed.provider = value.provider;
+                        embeds.push(embed);
+                    });
+                    message.embeds = embeds;
+                }
+
+
+                const stickers: Collection<string, Sticker> = await i[1].stickers;
+                const stickerIds: string[] = [];
+                stickers.forEach(value => {
+                    stickerIds.push(value.id);
+                });
+                message.stickers = stickerIds;
+                message.createdTimestamp = i[1].createdTimestamp;
+                message.editedTimestamp = i[1].editedTimestamp;
+                message.channelId = i[1].channel.id;
+                message.guildId = i[1].guild.id;
+                message.deleted = i[1].deleted;
+                message._id = i[1].id;
+                message.type = i[1].type;
+                message.system = i[1].system;
+                message.content = i[1].content;
+                message.authorId = i[1].author.id;
+                message.pinned = i[1].pinned;
+                message.tts = i[1].tts;
+                allMessages.push(message);
+            }
+            await persistMessagesForChannel(allMessages);
+        }
+    } catch(err) {
+        logger.error(`Error inserting messages: ${err}`);
+    }
+}
+
+async function persistMessagesForChannel(messages: Message[]) {
+    try {
+        while(messages.length > 0) {
+            const subMessages = messages.splice(0, 100);
+            const dbo = MongoUtil.getDb();
+            const result = await dbo.collection("message").insertMany(subMessages, {ordered: false});
+            if(result === null || result === undefined) {
+                logger.error("Messages were inserted unsuccessfully");
+            } else {
+                logger.error("Messages were inserted successfully");
+            }
+        }
+    } catch(err) {
+        logger.error(err);
+    }
 }
 
 module.exports = {

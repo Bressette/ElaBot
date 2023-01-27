@@ -1,7 +1,7 @@
-export interface Emoji {
+export interface EmojiModel {
     animated: boolean;
     name: string;
-    id: string;
+    _id: string;
     deleted: boolean;
     guildId: string;
     requiresColons: boolean;

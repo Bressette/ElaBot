@@ -58,7 +58,6 @@ module.exports =
                             return [4 /*yield*/, channel.messages.fetch(options_1)];
                         case 2:
                             messages = _b.sent();
-                            console.log(JSON.stringify(messages));
                             sum_messages.push.apply(sum_messages, Array.from(messages));
                             last_id = (_a = messages === null || messages === void 0 ? void 0 : messages.last()) === null || _a === void 0 ? void 0 : _a.id;
                             if ((messages === null || messages === void 0 ? void 0 : messages.size) !== 100 || sum_messages >= limit) {

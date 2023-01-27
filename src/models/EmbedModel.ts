@@ -1,4 +1,4 @@
-export interface Embed {
+export interface EmbedModel {
     type: string;
     title: string;
     description: string;

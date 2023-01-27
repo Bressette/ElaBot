@@ -1,5 +1,5 @@
-export interface User {
-    id: string;
+export interface UserModel {
+    _id: string;
     bot: boolean;
     system: boolean;
     flags: number;

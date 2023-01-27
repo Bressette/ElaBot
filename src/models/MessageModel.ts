@@ -1,18 +1,19 @@
-import {Embed} from "./Embed";
+import {EmbedModel} from "./EmbedModel";
+import {Attachment} from "./Attachment";
 
-export interface Message {
+export interface MessageModel {
     channelId: string;
     guildId: string;
     deleted: boolean;
-    id: string;
+    _id: string;
     type: string;
     system: boolean;
     content: string;
     authorId: string;
     pinned: boolean;
     tts: boolean;
-    embeds: Embed[];
-    attachments: string[];
+    embeds: EmbedModel[];
+    attachments: Attachment[];
     stickers: string[];
     createdTimestamp: number;
     editedTimestamp: number;

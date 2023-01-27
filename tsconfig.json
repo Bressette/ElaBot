@@ -3,7 +3,8 @@
     "outDir": "./built",
     "allowJs": true,
     "target": "es5",
-    "sourceMap": true
+    "sourceMap": true,
+    "moduleResolution": "Node16"
   },
   "include": ["./src/**/*"]
 }

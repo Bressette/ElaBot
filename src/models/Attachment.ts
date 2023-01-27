@@ -1,7 +1,7 @@
 export interface Attachment {
     contentType: string;
     height: number;
-    id: string;
+    _id: string;
     name: string;
     proxyURL: string;
     size: number;

@@ -1,11 +1,11 @@
-export interface Role {
+export interface RoleModel {
     guild: string;
-    id: string;
+    _id: string;
     name: string;
     color: number;
-    hoist: string;
+    hoist: boolean;
     rawPosition: number;
-    permissions: string;
+    permissions: string[];
     managed: boolean;
     mentionable: boolean;
     deleted: boolean;
