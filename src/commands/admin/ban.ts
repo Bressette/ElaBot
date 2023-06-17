@@ -1,9 +1,9 @@
-module.exports = 
+export class Ban
 {
-    name: "ban",
-    description: "Bans the provided user",
-    aliases: [],
-    execute(message, args)
+    public static commandName = "ban";
+    public static description = "Bans the provided user";
+    public static aliases = [];
+    public static execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

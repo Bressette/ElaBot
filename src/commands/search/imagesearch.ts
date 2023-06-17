@@ -6,12 +6,12 @@ let options = {page:1}
 
 let isFullResults
 
-module.exports = 
+export class Imagesearch
 {
-    name: "imagesearch",
-    description: "Searches for images using google image search",
-    aliases: [],
-    async execute(message, args)
+    public static commandName = "imagesearch";
+    public static description = "Searches for images using google image search";
+    public static aliases = [];
+    public static async execute(message, args)
     {
         let content = message.content.substr(message.content.indexOf(args[0]), message.content.length)
         if(content.includes("-full"))

@@ -1,10 +1,11 @@
 import {MongoUtil} from "../../util/mongoUtil";
 
-module.exports = {
-    name: "setprefix",
-    description: "sets the prefix used to give the bots commands ex: -prefix !(Sets the new prefix to !)",
-    aliases: [],
-    execute(message, args)
+export class SetPrefix
+{
+    public static commandName = "setprefix";
+    public static description = "sets the prefix used to give the bots commands ex: -prefix !(Sets the new prefix to !)";
+    public static aliases = [];
+    public static execute(message, args)
     {
         if(args[0] === undefined)
             return message.content.send("You must enter a new prefix")

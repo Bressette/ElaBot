@@ -1,13 +1,13 @@
-const addBalance = require('./util/addbalance')
-const balance = require('./balance')
 import {MongoUtil} from "../../util/mongoUtil";
+import {EconomyUtil} from "./util/EconomyUtil";
+import {Balance} from "./balance";
 
-module.exports = 
+export class Daily
 {
-    name: "daily",
-    description: "Claims the daily balance",
-    aliases: [],
-    async execute(message, args)
+    public static commandName = "daily";
+    public static description = "Claims the daily balance";
+    public static aliases = [];
+    public static async execute(message, args)
     {
         let userId = message.author.id
         console.log(userId)
@@ -30,14 +30,14 @@ module.exports =
         {
             if(userData.date === null || userData.date === undefined)
             {
-                addBalance.execute(userId, dailyAmount)
+                EconomyUtil.addBalance(userId, dailyAmount);
                 dbo.collection("users").updateOne({ name: userId}, { $set: {date: date}}, function(err, res) {
                 })
                 message.channel.send("You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again")
                 setTimeout(function() 
                 {
                     let temp = []
-                    balance.execute(message, temp)
+                    Balance.execute(message, temp);
                 }, 100)
             }
 
@@ -49,14 +49,14 @@ module.exports =
                 
                 if(timeDiff > 24 * 3600000 )
                 {
-                    addBalance.execute(userId, dailyAmount)
+                    EconomyUtil.addBalance(userId, dailyAmount);
                     dbo.collection("users").updateOne({ name: userId}, { $set: {date: date}}, function(err, res) {
                     })
 
                     message.channel.send(`You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again`)
                     setTimeout(function() 
                     {
-                        balance.execute(message, [])
+                        Balance.execute(message, []);
                     }, 100)
                 }
 

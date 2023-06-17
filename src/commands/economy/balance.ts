@@ -1,16 +1,15 @@
-// @ts-ignore
-const getBalance = require('./util/getbalance')
+import {EconomyUtil} from "./util/EconomyUtil";
 
-module.exports = 
+export class Balance
 {
-    name: "balance",
-    description: "Retrieves the users balance",
-    aliases: [],
-    execute(message, args)
+    public static commandName = "balance";
+    public static description = "Retrieves the users balance";
+    public static aliases = [];
+    public static execute(message, args)
     {
-        getBalance.execute(message.author.id, function(amount)
+        EconomyUtil.getBalance(message.author.id, function(amount)
         {
             message.channel.send("Your current balance is: " + amount)
-        })
+        });
     }
 }

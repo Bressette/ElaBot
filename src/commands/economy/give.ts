@@ -1,14 +1,9 @@
-// @ts-ignore
-const getBalance = require('./util/getbalance')
-// @ts-ignore
-const addBalance = require('./util/addbalance')
-
-module.exports = 
+export class Give
 {
-    name: "give",
-    description: "Gives another user some of your money",
-    aliases: [],
-    execute(message, args)
+    public static commandName = "give";
+    public static description = "Gives another user some of your money";
+    public static aliases = [];
+    public static execute(message, args)
     {
         if(message.mentions.members.first() === null)
             return message.content.send("That is not a valid user mention")

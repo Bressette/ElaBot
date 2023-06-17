@@ -1,9 +1,9 @@
-module.exports =
+export class Pause
 {
-    name: "pause",
-    description: "Pauses the audio being played by the bot",
-    aliases: ['stop'],
-    execute(message, args)
+    public static commandName = "pause";
+    public static description = "Pauses the audio being played by the bot";
+    public static aliases = ['stop'];
+    public static execute(message, args)
     {
         try
           {

@@ -5,12 +5,12 @@ const getMentions = require('../../util/getMention');
 const isUrl = require('../../util/isUrl');
 import {MongoUtil} from "../../util/mongoUtil";
 
-module.exports =
+export class ReturnLinkCount
     {
-        name: "linkcount",
-        description: "Returns the amount of links a given user has posted",
-        aliases: [],
-        async execute(message, args)
+        public static commandName = "linkcount";
+        public static description = "Returns the amount of links a given user has posted";
+        public static aliases = [];
+        public static async execute(message, args)
         {
             const dbo = MongoUtil.getDb();
             if(getMentions.execute(args[0])) {

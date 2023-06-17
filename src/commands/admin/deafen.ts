@@ -1,9 +1,9 @@
-module.exports = 
+export class Deafen
 {
-    name: "deafen",
-    description: "Deafens the given user",
-    aliases: [],
-    execute(message, args)
+    public static commandName = "deafen";
+    public static description = "Deafens the given user";
+    public static aliases = [];
+    public static execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

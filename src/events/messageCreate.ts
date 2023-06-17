@@ -1,7 +1,7 @@
-module.exports = {
-    name: 'messageCreate',
-    once: false,
-    async execute(message) {
+export class MessageCreate {
+    public static eventName = 'messageCreate';
+    public static once = false;
+    public static async execute(message) {
         console.log(message.content);
         let prefix = "-";
         if (!message.client.prefix.get(message.guild.id))

@@ -1,9 +1,9 @@
-module.exports = 
+export class Skipto
 {
-    name: "skipto",
-    description: "Skips to the song in the specified queue position",
-    aliases: [],
-    execute(message, args)
+    public static commandName = "skipto";
+    public static description = "Skips to the song in the specified queue position";
+    public static aliases = [];
+    public static execute(message, args)
     {
         const serverQueue = message.client.queue.get(message.guild.id)
         const position = parseInt(args[0])

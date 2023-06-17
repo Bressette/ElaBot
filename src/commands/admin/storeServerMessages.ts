@@ -3,12 +3,12 @@ const getMessages = require('../../util/getMessages');
 const pushMessages = require('../../util/pushMessages');
 const storeMessages = require('../../util/storeMessages');
 
-module.exports =
+export class StoreServerMessages
 {
-    name: "storeserver",
-    description: "Stores all of the messages in the current server in a mongodb database",
-    aliases: [],
-    async execute(message, args)
+    public static commandName = "storeserver";
+    public static description = "Stores all of the messages in the current server in a mongodb database";
+    public static aliases = [];
+    public static async execute(message, args)
     {
         message.channel.send("Storing server content in the database");
         console.log('Collecting all of the messages in the server');

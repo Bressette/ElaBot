@@ -1,9 +1,9 @@
-module.exports = 
+export class Skip
 {
-    name: "skip",
-    description: "Skips the current song that is playing",
-    aliases: [],
-    execute(message, args)
+    public static commandName = "skip";
+    public static description = "Skips the current song that is playing";
+    public static aliases = [];
+    public static execute(message, args)
     {
         const serverQueue = message.client.queue.get(message.guild.id);
         if (!message.member.voice.channel)

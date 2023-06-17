@@ -1,9 +1,9 @@
-module.exports = 
+export class Queue
 {
-    name: "queue",
-    description: "Prints the current queue",
-    aliases: [],
-    execute(message, args)
+    public static commandName = "queue";
+    public static description = "Prints the current queue";
+    public static aliases = [];
+    public static execute(message, args)
     {
         const serverQueue = message.client.queue.get(message.guild.id)
         if(!serverQueue)

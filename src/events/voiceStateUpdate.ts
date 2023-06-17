@@ -1,7 +1,7 @@
-module.exports = {
-    name: 'voiceStateUpdate',
-    once: false,
-    execute(oldState, newState, client) {
+export class VoiceStateUpdate {
+    public static eventName = 'voiceStateUpdate';
+    public static once = false;
+    public static execute(oldState, newState, client) {
         if(newState.channel === null && newState.member.id === "703427817009840188")
         {
             client.queue.delete(oldState.guild.id)

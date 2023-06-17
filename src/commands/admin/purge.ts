@@ -1,9 +1,9 @@
-module.exports = 
+export class Purge
 {
-    name: "purge",
-    description: "Deletes a given number of messages from the channel the command is invoked in",
-    aliases: [],
-    async execute(message, args)
+    public static commandName = "purge";
+    public static description = "Deletes a given number of messages from the channel the command is invoked in";
+    public static aliases = [];
+    public static async execute(message, args)
     {
 
         if(message.member.permissions.has("ADMINISTRATOR"))

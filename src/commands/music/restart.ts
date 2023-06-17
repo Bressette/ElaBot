@@ -1,16 +1,16 @@
-const play = require('./play')
+import {Play} from "./play";
 
-module.exports = 
+export class Restart
 {
-    name: "restart",
-    description: "Restarts the current playing song",
-    aliases: [],
-    execute(message, args)
+    public static commandName = "restart";
+    public static description = "Restarts the current playing song";
+    public static aliases = [];
+    public static execute(message, args)
     {
         try
           {
               const serverQueue = message.client.queue.get(message.guild.id);
-              play.execute(message, serverQueue.songs[0].url).then(() =>
+              Play.execute(message, serverQueue.songs[0].url).then(() =>
               {
                   serverQueue.audioPlayer.stop();
               });
