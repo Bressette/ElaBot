@@ -1,4 +1,4 @@
-const winston = require('winston');
+import * as winston from "winston";
 const logConfiguration = {
     'transports': [
         new winston.transports.Console(),

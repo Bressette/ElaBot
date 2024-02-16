@@ -1,10 +1,10 @@
-import {MongoUtil} from "./mongoUtil";
+import {MongoUtil} from "./mongoUtil.js";
 
-module.exports = 
+export class GetLoop
 {
-    name: "getloop",
-    description: "Returns if the music is looping in the given guild",
-    async execute(guild)
+    static commandName = "getloop";
+    static description = "Returns if the music is looping in the given guild";
+    static async execute(guild)
     {
         const dbo = MongoUtil.getDb()
         let result = await dbo.collection("servers").findOne({id: guild.id})

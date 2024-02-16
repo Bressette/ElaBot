@@ -1,12 +1,12 @@
 // @ts-ignore
-const getBalance = require('./util/getbalance')
+import {Getbalance as getBalance} from "./util/getbalance.js";
 
-module.exports = 
+export class Balance
 {
-    name: "balance",
-    description: "Retrieves the users balance",
-    aliases: [],
-    execute(message, args)
+    static commandName = "balance";
+    static description = "Retrieves the users balance";
+    static aliases = [];
+    static execute(message, args)
     {
         getBalance.execute(message.author.id, function(amount)
         {

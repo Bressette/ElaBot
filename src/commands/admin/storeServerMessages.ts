@@ -1,14 +1,14 @@
 // @ts-ignore
-const getMessages = require('../../util/getMessages');
-const pushMessages = require('../../util/pushMessages');
-const storeMessages = require('../../util/storeMessages');
+import {GetMessages as getMessages} from "../../util/getMessages.js";
+import {PushMessages as pushMessages} from "../../util/pushMessages.js";
+import {StoreMessages as storeMessages} from "../../util/storeMessages.js";
 
-module.exports =
+export class StoreServerMessages
 {
-    name: "storeserver",
-    description: "Stores all of the messages in the current server in a mongodb database",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "storeserver";
+    static description = "Stores all of the messages in the current server in a mongodb database";
+    static aliases = [];
+    static async execute(message, args)
     {
         message.channel.send("Storing server content in the database");
         console.log('Collecting all of the messages in the server');

@@ -1,11 +1,11 @@
-import {MongoUtil} from "../../util/mongoUtil";
+import {MongoUtil} from "../../util/mongoUtil.js";
 
-module.exports = 
+export class Leaderboard
 {
-    name: "leaderboard",
-    description: "Shows the leaderboard of richest users",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "leaderboard";
+    static description = "Shows the leaderboard of richest users";
+    static aliases = [];
+    static async execute(message, args)
     {
         let dbo = MongoUtil.getDb()
         let cursor = dbo.collection("users").find({}).sort([['amount', -1]])

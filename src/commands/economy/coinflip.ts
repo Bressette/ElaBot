@@ -1,21 +1,20 @@
 // @ts-ignore
-const getBalance = require('./util/getbalance')
+import {Getbalance as getBalance} from "./util/getbalance.js";
 // @ts-ignore
-const addBalance = require('./util/addbalance')
-const balance = require('./balance')
+import {Addbalance as addBalance} from "./util/addbalance.js";
 
-module.exports = 
+export class Coinflip
 {
-    name: "coinflip",
-    description: "Coinflips a users balance doubling money if successfull",
-    aliases: [],
-    execute(message, args)
+    static commandName = "coinflip";
+    static description = "Coinflips a users balance doubling money if successfull";
+    static aliases = [];
+    static execute(message, args)
     {
         let userId = message.author.id
         //parse the staked amount from the content string 
         let amount = parseInt(args[0])
 
-        //call get balance to check if the user entered a value value to stake
+        //call get balance to check if the user entered a value to stake
         getBalance.execute(userId, function(balance) 
         {
             if(!isNaN(amount) && isFinite(amount))

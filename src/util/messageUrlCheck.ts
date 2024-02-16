@@ -1,10 +1,10 @@
-const isUrl = require('src/util/isUrl');
+import {IsUrl as isUrl} from "./isUrl.js";
 
-module.exports =
+export class MessageUrlCheck
 {
-    name: "messageUrlCheck",
-    description: "Checks if a message contains a url",
-    execute(content)
+    static commandName = "messageUrlCheck";
+    static description = "Checks if a message contains a url";
+    static execute(content)
     {
         let status = false
 

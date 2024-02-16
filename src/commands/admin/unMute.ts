@@ -1,9 +1,9 @@
-module.exports = 
+export class UnMute
 {
-    name: "unMute",
-    description: "Unmutes the provided user",
-    aliases: [],
-    execute(message, args)
+    static commandName = "unMute";
+    static description = "Unmutes the provided user";
+    static aliases = [];
+    static execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

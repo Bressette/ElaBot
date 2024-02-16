@@ -1,7 +1,7 @@
-module.exports = {
-    name: 'ready',
-    once: true,
-    execute(client) {
+export class Ready {
+    static commandName = 'ready';
+    static once = true;
+    static execute(client) {
         client.user.setPresence(
             { activities:
                     [{

@@ -1,23 +1,23 @@
-const imageSearch = require('image-search-google')
-const config = require('../../config.json')
+import * as imageSearch from 'image-search-google'
+import config from './../../config.json' assert {type: "json"};
  
-const client = new imageSearch(config.csekey, config.googlekey)
+const client = new imageSearch.default(config.csekey, config.googlekey)
 let options = {page:1}
 
 let isFullResults
 
-module.exports = 
+export class Imagesearch
 {
-    name: "imagesearch",
-    description: "Searches for images using google image search",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "imagesearch";
+    static description = "Searches for images using google image search";
+    static aliases = [];
+    static async execute(message, args)
     {
-        let content = message.content.substr(message.content.indexOf(args[0]), message.content.length)
+        let content = message.content.substring(message.content.indexOf(args[0]), message.content.length)
         if(content.includes("-full"))
         {
             isFullResults = true
-            content = content.substr(5, content.length).trim()
+            content = content.substring(5, content.length).trim()
         }
         else
             isFullResults = false

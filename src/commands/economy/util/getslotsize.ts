@@ -1,8 +1,8 @@
-import {MongoUtil} from "../../../util/mongoUtil";
+import {MongoUtil} from "../../../util/mongoUtil.js";
 
-module.exports = 
+export class Getslotsize
 {
-    async execute(message)
+    static async execute(message)
     {
         let dbo = MongoUtil.getDb()
         let result = await dbo.collection("servers").findOne({id: message.guild.id})

@@ -1,9 +1,9 @@
-module.exports = 
+export class Mute
 {
-    name: "mute",
-    description: "Mutes the given user",
-    aliases: [],
-    execute(message, args)
+    static commandName = "mute";
+    static description = "Mutes the given user";
+    static aliases = [];
+    static execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

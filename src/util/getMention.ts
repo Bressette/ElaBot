@@ -1,8 +1,8 @@
-module.exports = 
+export class GetMention
 {
-    name: "getMention",
-    description: "Returns the mention if the message includes a mention, otherwise returns null",
-    execute(content)
+    static commandName = "getMention";
+    static description = "Returns the mention if the message includes a mention, otherwise returns null";
+    static execute(content)
     {
         if(content.startsWith("<@") && content.endsWith(">"))
         {

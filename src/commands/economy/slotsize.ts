@@ -1,11 +1,11 @@
-const fetchSlotSize = require('./util/getslotsize')
+import {Getslotsize as fetchSlotSize} from "./util/getslotsize.js";
 
-module.exports = 
+export class Slotsize
 {
-    name: "slotsize",
-    description: "Prints the current slot size",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "slotsize";
+    static description = "Prints the current slot size";
+    static aliases = [];
+    static async execute(message, args)
     {
         message.channel.send("The current slot size is: " + await fetchSlotSize.execute(message))
     }

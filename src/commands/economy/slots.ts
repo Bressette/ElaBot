@@ -1,16 +1,14 @@
-const getSlotSize = require('./util/getslotsize')
-// @ts-ignore
-const getBalance = require('./util/getbalance')
-const printBalance = require('./balance')
-// @ts-ignore
-const addBalance = require('./util/addbalance')
+import {Getslotsize as getSlotSize} from "./util/getslotsize.js";
+import {Getbalance as getBalance} from "./util/getbalance.js";
+import {Balance as printBalance} from "./balance.js";
+import {Addbalance as addBalance} from "./util/addbalance.js";
 
-module.exports =
+export class Slots
 {
-    name: "slots",
-    description: "Gambles balance using a slot machine",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "slots";
+    static description = "Gambles balance using a slot machine";
+    static aliases = [];
+    static async execute(message, args)
     {
         let userId = message.author.id
         let slotSize = await getSlotSize.execute(message)
@@ -153,9 +151,9 @@ module.exports =
                 message.channel.send("You must enter a valid number to gamble!")
             }
         }
-    },
+    }
 
-    getSlotEmoji(value)
+    static getSlotEmoji(value)
     {
         if(value < 30)
             return ":seven:"

@@ -1,12 +1,12 @@
-import {MongoUtil} from "../../util/mongoUtil";
-const getLoop = require('../../util/getLoop')
+import {MongoUtil} from "../../util/mongoUtil.js";
+import {GetLoop as getLoop} from "../../util/getLoop.js";
 
-module.exports = 
+export class Loop
 {
-    name: "loop",
-    description: "Enables looping for the currently playing song",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "loop";
+    static description = "Enables looping for the currently playing song";
+    static aliases = [];
+    static async execute(message, args)
     {
         const dbo = MongoUtil.getDb()
         const loop = await getLoop.execute(message.guild)

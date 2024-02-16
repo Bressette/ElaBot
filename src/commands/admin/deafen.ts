@@ -1,9 +1,8 @@
-module.exports = 
-{
-    name: "deafen",
-    description: "Deafens the given user",
-    aliases: [],
-    execute(message, args)
+export class Deafen {
+    static commandName = "deafen";
+    static description = "Deafens the given user";
+    static aliases = [];
+    static execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

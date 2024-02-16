@@ -1,9 +1,9 @@
-module.exports = 
+export class UnDeafen
 {
-    name: "unDeafen",
-    description: "Undeafens the specified user",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "unDeafen";
+    static description = "Undeafens the specified user";
+    static aliases = [];
+    static async execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

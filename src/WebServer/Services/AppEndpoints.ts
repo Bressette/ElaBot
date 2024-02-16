@@ -1,13 +1,13 @@
-const express = require('express');
+import express from 'express';
 const app = express();
 const port = 8093
-const serverManagement = require("./ServerManagement");
-const bodyParser = require('body-parser');
+import * as serverManagement from "./ServerManagement.js";
+import bodyParser from 'body-parser';
 const jsonParser = bodyParser.json();
 // @ts-ignore
-const getMessages = require("../../util/getMessages");
+import { GetMessages as getMessages } from "../../util/getMessages.js";
 
-module.exports = function(client) {
+const startEndpoints = function(client) {
     //endpoints used to retrieve server info for connected servers
     app.get('/discord/channels/:serverId', async (req, res) => {
         const channels = await serverManagement.fetchChannelsByServerId(req.params.serverId, client);
@@ -91,4 +91,6 @@ module.exports = function(client) {
         console.log(`App listening at port: ${port}`);
     })
 }
+
+export default {startEndpoints}
 

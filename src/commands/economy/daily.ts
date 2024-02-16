@@ -1,13 +1,13 @@
-const addBalance = require('./util/addbalance')
-const balance = require('./balance')
-import {MongoUtil} from "../../util/mongoUtil";
+import {Addbalance as addBalance} from "./util/addbalance.js";
+import {Balance as balance} from "./balance.js";
+import {MongoUtil} from "../../util/mongoUtil.js";
 
-module.exports = 
+export class Daily
 {
-    name: "daily",
-    description: "Claims the daily balance",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "daily";
+    static description = "Claims the daily balance";
+    static aliases = [];
+    static async execute(message, args)
     {
         let userId = message.author.id
         console.log(userId)

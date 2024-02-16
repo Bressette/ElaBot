@@ -1,9 +1,9 @@
-module.exports = 
+export class Resume
 {
-    name: "resume",
-    description: "Resumes music playing if it is paused",
-    aliases: ['unpause'],
-    execute(message, args)
+    static commandName = "resume";
+    static description = "Resumes music playing if it is paused";
+    static aliases = ['unpause'];
+    static execute(message, args)
     {
         try
           {

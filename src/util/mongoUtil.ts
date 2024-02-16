@@ -1,4 +1,4 @@
-import {MongoClient} from 'mongodb'
+import MongoClient from 'mongodb'
 
 export class MongoUtil {
   private static url = 'mongodb://127.0.0.1:27017'

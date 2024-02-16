@@ -1,12 +1,12 @@
-import {MongoUtil} from "../../util/mongoUtil";
+import {MongoUtil} from "../../util/mongoUtil.js";
 
-module.exports = 
+export class Setslotsize
 {
-    name: "setslotsize",
-    description: "Sets the number of rows and columns when playing slots",
-    aliases: [],
-    
-    async execute(message, args)
+    static commandName = "setslotsize";
+    static description = "Sets the number of rows and columns when playing slots";
+    static aliases = [];
+
+    static async execute(message, args)
     {
         let dbo = MongoUtil.getDb()
         let newSize = parseInt(args[0])

@@ -1,17 +1,9 @@
-const youtubedl = require('youtube-dl-exec')
-const ytpl = require('ytpl')
-const search = require('ytsr')
-import {MongoUtil} from "../../util/mongoUtil";
-const getLoop = require('../../util/getLoop')
-const printQueue = require('./queue')
-const isUrl = require("../../util/isUrl");
-const stream = require('stream')
-const {joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioResource, AudioResource, demuxProbe, AudioPlayerStatus,
-    AudioPlayerState,
-    AudioPlayerPausedState
-} = require("@discordjs/voice");
-const fs = require("fs");
-const Module = require("module");
+import * as youtubedl from 'youtube-dl-exec'
+import * as search from 'ytsr'
+import {GetLoop as getLoop} from "../../util/getLoop.js";
+import {Queue as printQueue} from "./queue.js";
+import {IsUrl as isUrl} from "../../util/isUrl.js";
+import {joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioResource, demuxProbe, AudioPlayerStatus} from '@discordjs/voice';
 
 const player = createAudioPlayer({
     behaviors: {
@@ -19,14 +11,14 @@ const player = createAudioPlayer({
     }
 });
 
-module.exports = 
+export class Play
 {
-    name: "play",
-    description: "Searches and plays a song from youtube",
-    aliases: ['p'],
+    static commandName = "play";
+    static description = "Searches and plays a song from youtube";
+    static aliases = ['p'];
 
 
-    async execute(message, args)
+    static async execute(message, args)
     {
         const serverQueue = message.client.queue.get(message.guild.id)
         if(args.length === 0 && serverQueue.audioPlayer.state.status.includes("paused")) {
@@ -121,7 +113,7 @@ module.exports =
             message.channel.send(`${song.title} has been added to the queue!`);
             printQueue.execute(message, args)
         }
-    },
+    }
 
     async play(message, guild, song)
     {
@@ -138,12 +130,12 @@ module.exports =
         const resource = await module.exports.createDiscordAudioResource(song.url);
         player.play(resource);
         serverQueue.textChannel.send(`Start playing: **${song.title}**`);
-    },
+    }
 
     //method that is used to get the song title and url 
     async getSongInfo(message, searchKeywords) {
         if(isUrl.execute(searchKeywords)) {
-            const videoDetails = await youtubedl(searchKeywords, {
+            const videoDetails = await youtubedl.default(searchKeywords, {
                 dumpSingleJson: true
             });
             if(videoDetails?.title) {
@@ -167,7 +159,7 @@ module.exports =
             //loop that iterates over the search results until a video that can be played is found.
             for(const i of videos) {
                 try {
-                    const videoDetails = await youtubedl(i.url, {
+                    const videoDetails = await youtubedl.default(i.url, {
                         dumpSingleJson: true
                     });
                     return {title: videoDetails.title, url: videoDetails.webpage_url};
@@ -180,18 +172,12 @@ module.exports =
         else {
             return message.channel.send("That video does not exist!");
         }
-    },
+    }
 
     async createDiscordAudioResource(url) {
         return new Promise((resolve, reject) => {
             const process = youtubedl.exec(
-                url,
-                {
-                    o: '-',
-                    q: '',
-                    f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio'
-                },
-                { stdio: ['ignore', 'pipe', 'ignore'] },
+                url
             );
             if (!process.stdout) {
                 reject(new Error('No stdout'));

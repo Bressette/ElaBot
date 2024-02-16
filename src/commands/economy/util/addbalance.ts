@@ -1,8 +1,8 @@
-import {MongoUtil} from "../../../util/mongoUtil";
+import {MongoUtil} from "../../../util/mongoUtil.js";
 
-module.exports = 
+export class Addbalance
 {
-    execute(name, amount)
+    static execute(name, amount)
     {
         //connect to mongodb
         let dbo = MongoUtil.getDb()

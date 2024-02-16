@@ -1,9 +1,8 @@
-module.exports = 
-{
-    name: "kick",
-    description: "Kicks the provided user from the server",
-    aliases: [],
-    execute(message, args)
+export class Kick {
+    static commandName = "kick";
+    static description = "Kicks the provided user from the server";
+    static aliases = [];
+    static execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

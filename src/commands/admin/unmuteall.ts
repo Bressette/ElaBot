@@ -1,8 +1,8 @@
-module.exports = 
+export class Unmuteall
 {
-    name: "unmuteall",
-    description: "Unmutes everyone in the channel",
-    aliases: [],
+    static commandName = "unmuteall";
+    static description = "Unmutes everyone in the channel";
+    static aliases = [];
     execute(message, args)
     {
         const voiceChannel = message.member.voice.channel

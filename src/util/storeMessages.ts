@@ -1,10 +1,10 @@
-import {MongoUtil} from "./mongoUtil";
+import {MongoUtil} from "./mongoUtil.js";
 
-module.exports =
+export class StoreMessages
     {
-        name: "storeMessages",
-        description: "stores the passed in array of messages into the database for future retrieval",
-        async execute(messages)
+        static commandName = "storeMessages";
+        static description = "stores the passed in array of messages into the database for future retrieval";
+        static async execute(messages)
         {
             const mongoDbObject = MongoUtil.getDb();
             const storedMessages = [];

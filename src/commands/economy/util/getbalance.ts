@@ -1,8 +1,8 @@
-import {MongoUtil} from "../../../util/mongoUtil";
+import {MongoUtil} from "../../../util/mongoUtil.js";
 
-module.exports = 
+export class Getbalance
 {
-    execute(name, fn)
+    static execute(name, fn)
     {
         let dbo = MongoUtil.getDb()
         

@@ -1,5 +1,5 @@
-import {EmbedModel} from "./EmbedModel";
-import {Attachment} from "./Attachment";
+import {EmbedModel} from "./EmbedModel.js";
+import {Attachment} from "./Attachment.js";
 
 export interface MessageModel {
     channelId: string;

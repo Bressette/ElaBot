@@ -1,10 +1,10 @@
-import {MongoUtil} from "./mongoUtil";
+import {MongoUtil} from "./mongoUtil.js";
 
-module.exports = 
+export class GetPrefix
 {
-    name: 'getPrefix',
-    description: 'Returns the current prefix for the guild that the message is from',
-    async execute(message, args)
+    static commandName = 'getPrefix';
+    static description = 'Returns the current prefix for the guild that the message is from';
+    static async execute(message, args)
     {
         const dbo = MongoUtil.getDb()
         const result = await dbo.collection("servers").findOne({id: message.guild.id})

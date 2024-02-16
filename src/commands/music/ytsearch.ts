@@ -1,11 +1,12 @@
-const search = require('ytsr')
+import * as search from 'ytsr';
+import {Video} from "ytsr";
 
-module.exports = 
+export class Ytsearch
 {
-    name: "ytsearch",
-    description: "Prints out the search results for a given query",
-    aliases: [],
-    async execute(message, args)
+    static commandName = "ytsearch";
+    static description = "Prints out the search results for a given query";
+    static aliases = [];
+    static async execute(message, args)
     {
         const searchKeywords = message.content.substr(message.content.indexOf(args[0]), message.content.length)
         const options = {limit: 10}
@@ -13,9 +14,9 @@ module.exports =
         let returnStr = ""
         for(let i in values.items)
         {
-            if(values.items[i].title != undefined)
+            if(((values.items[i]) as Video).title != undefined)
             {
-                returnStr += values.items[i].title + "\n"
+                returnStr += ((values.items[i]) as Video).title + "\n"
             }
         }
 
