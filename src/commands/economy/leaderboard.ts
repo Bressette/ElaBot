@@ -2,10 +2,10 @@ import {MongoUtil} from "../../util/mongoUtil.js";
 
 export class Leaderboard
 {
-    static commandName = "leaderboard";
-    static description = "Shows the leaderboard of richest users";
-    static aliases = [];
-    static async execute(message, args)
+    public static commandName = "leaderboard";
+    public static description = "Shows the leaderboard of richest users";
+    public static aliases = [];
+    public static async execute(message, args)
     {
         let dbo = MongoUtil.getDb()
         let cursor = dbo.collection("users").find({}).sort([['amount', -1]])

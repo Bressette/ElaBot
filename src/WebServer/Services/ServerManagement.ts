@@ -1,5 +1,15 @@
 import {MongoUtil} from "../../util/mongoUtil.js";
-import {Collection, Guild, GuildChannel, GuildEmoji, GuildMember, Message, Role, Sticker} from 'discord.js';
+import {
+    ClientOptions,
+    Collection,
+    Guild,
+    GuildChannel,
+    GuildEmoji,
+    GuildMember,
+    Message,
+    Role,
+    Sticker
+} from 'discord.js';
 import {GuildModel} from "../../models/GuildModel.js";
 import {logger} from "../../logger.js";
 import {GuildMemberModel} from "../../models/GuildMemberModel.js";
@@ -10,8 +20,13 @@ import {EmojiModel} from "../../models/EmojiModel.js";
 import {Attachment} from "../../models/Attachment.js";
 import {EmbedModel} from "../../models/EmbedModel.js";
 import {MessageModel} from "../../models/MessageModel.js";
-import {GetMention} from "../../util/getMention.js";
-import {GetMessages} from '../../util/getMessages.js'
+import {Utils} from "../../util/Utils.js";
+
+export async function deleteChannel(client, serverId: string, channelId: string) {
+    const guild = await client.guilds.fetch(serverId);
+    const channel = await guild.channels.fetch(channelId);
+    await channel.delete();
+}
 
 async function fetchChannelsByServerId(serverId, client) {
     const guild = await client.guilds.fetch(serverId);
@@ -69,7 +84,7 @@ async function copyServerContents(sourceGuildId, targetGuildId, client) {
                         {
                             const tempString = j.content.substring(x, y+1)
 
-                            const mention = GetMention.execute(tempString)
+                            const mention = Utils.getMention(tempString);
                             if(mention)
                             {
                                 j.content = j.content.replace(mention, "")
@@ -274,6 +289,12 @@ async function storeGuildChannels(channels) {
     }
 }
 
+async function createChannel(client: ClientOptions, serverId: string, channelName: string) {
+    const guild = await client.guilds.fetch(serverId);
+    guild.channels.create(channelName);
+
+}
+
 async function storeGuildRoles(roles: Collection<string, Role>) {
     const roleModels: RoleModel[] = [];
     roles.forEach((value) => {
@@ -344,7 +365,7 @@ async function storeMessages(guild: Guild) {
     try {
         for(let channel; !(channel = channelValues.next().value).done;) {
             logger.info(`Fetching messages for guild: ${guild.id}, channel: ${channel.name}`);
-            let messages = await GetMessages.execute(channel, 100000000);
+            let messages = await Utils.getMessages(channel, 100000000);
             for(const i of messages)
             {
                 const message: MessageModel = {} as Message;
@@ -442,5 +463,6 @@ export {
     fetchRolesByServerId,
     fetchUsersByServerId,
     fetchEmojisByServerId,
-    fetchStickersByServerId
+    fetchStickersByServerId,
+    createChannel
 }

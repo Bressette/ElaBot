@@ -1,21 +1,18 @@
-// @ts-ignore
-import {Getbalance as getBalance} from "./util/getbalance.js";
-// @ts-ignore
-import {Addbalance as addBalance} from "./util/addbalance.js";
+import {EconomyUtil} from "./util/EconomyUtil.js";
+
 
 export class Coinflip
 {
-    static commandName = "coinflip";
-    static description = "Coinflips a users balance doubling money if successfull";
-    static aliases = [];
-    static execute(message, args)
+    public static commandName = "coinflip";
+    public static description = "Coinflips a users balance doubling money if successfull";
+    public static aliases = [];
+    public static execute(message, args)
     {
         let userId = message.author.id
         //parse the staked amount from the content string 
         let amount = parseInt(args[0])
 
-        //call get balance to check if the user entered a value to stake
-        getBalance.execute(userId, function(balance) 
+        EconomyUtil.getBalance(userId, function(balance)
         {
             if(!isNaN(amount) && isFinite(amount))
             {
@@ -37,15 +34,15 @@ export class Coinflip
                 //execute the coinflip otherwise
                 else
                 {
-                    if(Math.floor(Math.random() * 2) === 1) 
+                    if(Math.floor(Math.random() * 2) === 1)
                     {
-                        addBalance.execute(userId, amount)
-                        message.channel.send("You won the coinflip and " + amount)
+                        EconomyUtil.addBalance(userId, amount);
+                        message.channel.send("You won the coinflip and " + amount);
                     }
 
-                    else 
+                    else
                     {
-                        addBalance.execute(userId, -Math.abs(amount))
+                        EconomyUtil.addBalance(userId, -Math.abs(amount));
                         message.channel.send("You lost the coinflip and " + amount)
                     }
 
@@ -56,6 +53,6 @@ export class Coinflip
             {
                 message.channel.send("You must enter a valid number to coinflip")
             }
-        })
+        });
     }
 }

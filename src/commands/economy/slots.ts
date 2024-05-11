@@ -1,17 +1,15 @@
-import {Getslotsize as getSlotSize} from "./util/getslotsize.js";
-import {Getbalance as getBalance} from "./util/getbalance.js";
-import {Balance as printBalance} from "./balance.js";
-import {Addbalance as addBalance} from "./util/addbalance.js";
+import {EconomyUtil} from "./util/EconomyUtil.js";
+import {Balance} from "./balance.js";
 
 export class Slots
 {
-    static commandName = "slots";
-    static description = "Gambles balance using a slot machine";
-    static aliases = [];
-    static async execute(message, args)
+    public static commandName = "slots";
+    public static description = "Gambles balance using a slot machine";
+    public static aliases = [];
+    public static async execute(message, args)
     {
         let userId = message.author.id
-        let slotSize = await getSlotSize.execute(message)
+        let slotSize = await EconomyUtil.getSlotSize(message);
         if(slotSize === undefined)
             slotSize = 3
         //parse the staked amount from the content string 
@@ -19,7 +17,7 @@ export class Slots
         if(!isNaN(amount) && isFinite(amount) && amount > 0)
         {
             //call get balance to check if the user entered a value to stake
-            getBalance.execute(userId, function(balance) {
+            EconomyUtil.getBalance(userId, function(balance) {
                 if(amount > balance)
                 {
                     message.channel.send("You cannot gamble more than you have!")
@@ -84,7 +82,7 @@ export class Slots
                     if(results.length === 0)
                     {
                         message.channel.send("No rows won")
-                        addBalance.execute(userId, -Math.abs(amount))
+                        EconomyUtil.addBalance(userId, -Math.abs(amount))
                     }
                         
                     else
@@ -111,14 +109,14 @@ export class Slots
                                     break
                             }
                         }
-                        addBalance.execute(userId, Math.abs(reward))
+                        EconomyUtil.addBalance(userId, Math.abs(reward));
                         message.channel.send("You won " + results.length + " rows")
                     }
 
                     //tell the user their new balance after waiting for db to finish
                     setTimeout(function() 
                     {
-                        printBalance.execute(message, [])
+                        Balance.execute(message, []);
                     }, 100)
                 }
             })
@@ -153,7 +151,7 @@ export class Slots
         }
     }
 
-    static getSlotEmoji(value)
+    getSlotEmoji(value)
     {
         if(value < 30)
             return ":seven:"

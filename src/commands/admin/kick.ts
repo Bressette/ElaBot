@@ -1,8 +1,9 @@
-export class Kick {
-    static commandName = "kick";
-    static description = "Kicks the provided user from the server";
-    static aliases = [];
-    static execute(message, args)
+export class Kick
+{
+    public static commandName = "kick";
+    public static description = "Kicks the provided user from the server";
+    public static aliases = [];
+    public static execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

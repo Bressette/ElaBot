@@ -1,9 +1,9 @@
 export class Resume
 {
-    static commandName = "resume";
-    static description = "Resumes music playing if it is paused";
-    static aliases = ['unpause'];
-    static execute(message, args)
+    public static commandName = "resume";
+    public static description = "Resumes music playing if it is paused";
+    public static aliases = [];
+    public static execute(message, args)
     {
         try
           {

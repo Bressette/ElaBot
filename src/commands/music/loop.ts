@@ -1,15 +1,15 @@
 import {MongoUtil} from "../../util/mongoUtil.js";
-import {GetLoop as getLoop} from "../../util/getLoop.js";
+import {Utils} from "../../util/Utils.js";
 
 export class Loop
 {
-    static commandName = "loop";
-    static description = "Enables looping for the currently playing song";
-    static aliases = [];
-    static async execute(message, args)
+    public static commandName = "loop";
+    public static description = "Enables looping for the currently playing song";
+    public static aliases = [];
+    public static async execute(message, args)
     {
         const dbo = MongoUtil.getDb()
-        const loop = await getLoop.execute(message.guild)
+        const loop = await Utils.getLoop(message.guild)
         if(!loop)
         {
             dbo.collection("servers").updateOne({id: message.guild.id}, {$set:{"loop":true}})

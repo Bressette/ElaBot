@@ -1,7 +1,7 @@
 export class Ready {
-    static commandName = 'ready';
-    static once = true;
-    static execute(client) {
+    public static eventName = 'ready';
+    public static once = true;
+    public static execute(client) {
         client.user.setPresence(
             { activities:
                     [{

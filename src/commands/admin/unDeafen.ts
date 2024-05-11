@@ -1,9 +1,9 @@
 export class UnDeafen
 {
-    static commandName = "unDeafen";
-    static description = "Undeafens the specified user";
-    static aliases = [];
-    static async execute(message, args)
+    public static commandName = "unDeafen";
+    public static description = "Undeafens the specified user";
+    public static aliases = [];
+    public static async execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

@@ -1,8 +1,9 @@
-export class Ban {
-    static commandName = "ban";
-    static description = "Bans the provided user";
-    static aliases = [];
-    static execute(message, args)
+export class Ban
+{
+    public static commandName = "ban";
+    public static description = "Bans the provided user";
+    public static aliases = [];
+    public static execute(message, args)
     {
         if(message.mentions.members.first() != null)
         {

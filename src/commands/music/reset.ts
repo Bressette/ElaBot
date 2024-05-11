@@ -1,9 +1,9 @@
 export class Reset
 {
-    static commandName = "reset";
-    static description = "Forces the bot to leave the voice channel and remove the music queue";
-    static aliases = ['r', 'leave'];
-    static execute(message, args)
+    public static commandName = "reset";
+    public static description = "Forces the bot to leave the voice channel and remove the music queue";
+    public static aliases = ['r', 'leave'];
+    public static execute(message, args)
     {
         if (!message.member.voice.channel)
         return message.channel.send(

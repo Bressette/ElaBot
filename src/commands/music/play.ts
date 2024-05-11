@@ -1,9 +1,15 @@
-import * as youtubedl from 'youtube-dl-exec'
-import * as search from 'ytsr'
-import {GetLoop as getLoop} from "../../util/getLoop.js";
-import {Queue as printQueue} from "./queue.js";
-import {IsUrl as isUrl} from "../../util/isUrl.js";
-import {joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioResource, demuxProbe, AudioPlayerStatus} from '@discordjs/voice';
+import {
+    AudioPlayerStatus,
+    createAudioPlayer, createAudioResource,
+    demuxProbe,
+    joinVoiceChannel,
+    NoSubscriberBehavior
+} from "@discordjs/voice";
+import {Utils} from "../../util/Utils.js";
+import {Queue} from "./queue.js";
+import {default as youtubedl} from "youtube-dl-exec";
+import * as search from 'ytsr';
+
 
 const player = createAudioPlayer({
     behaviors: {
@@ -13,12 +19,12 @@ const player = createAudioPlayer({
 
 export class Play
 {
-    static commandName = "play";
-    static description = "Searches and plays a song from youtube";
-    static aliases = ['p'];
+    public static commandName = "play";
+    public static description = "Searches and plays a song from youtube";
+    public static aliases = ['p'];
 
 
-    static async execute(message, args)
+    public static async execute(message, args)
     {
         const serverQueue = message.client.queue.get(message.guild.id)
         if(args.length === 0 && serverQueue.audioPlayer.state.status.includes("paused")) {
@@ -77,7 +83,7 @@ export class Play
               const serverQueue = message.client.queue.get(guild.id);
               if(serverQueue?.connection) {
                   //check if the current song should loop
-                  const loop = await getLoop.execute(guild)
+                  const loop = await Utils.getLoop(guild)
 
                   //if loop isn't enabled shift the queue to get the next song
                   if(!loop)
@@ -111,7 +117,7 @@ export class Play
         else {
             serverQueue.songs.push(song);
             message.channel.send(`${song.title} has been added to the queue!`);
-            printQueue.execute(message, args)
+            Queue.execute(message, args)
         }
     }
 
@@ -134,8 +140,8 @@ export class Play
 
     //method that is used to get the song title and url 
     async getSongInfo(message, searchKeywords) {
-        if(isUrl.execute(searchKeywords)) {
-            const videoDetails = await youtubedl.default(searchKeywords, {
+        if(Utils.isUrl(searchKeywords)) {
+            const videoDetails = await youtubedl(searchKeywords, {
                 dumpSingleJson: true
             });
             if(videoDetails?.title) {
@@ -159,7 +165,7 @@ export class Play
             //loop that iterates over the search results until a video that can be played is found.
             for(const i of videos) {
                 try {
-                    const videoDetails = await youtubedl.default(i.url, {
+                    const videoDetails = await youtubedl(i.url, {
                         dumpSingleJson: true
                     });
                     return {title: videoDetails.title, url: videoDetails.webpage_url};
@@ -174,28 +180,35 @@ export class Play
         }
     }
 
-    async createDiscordAudioResource(url) {
-        return new Promise((resolve, reject) => {
-            const process = youtubedl.exec(
-                url
-            );
-            if (!process.stdout) {
-                reject(new Error('No stdout'));
-                return;
-            }
-            const stream = process.stdout;
-            const onError = error => {
-                if (!process.killed) process.kill();
-                stream.resume();
-                reject(error);
-            };
-            process
-                .once('spawn', () => {
-                    demuxProbe(stream)
-                        .then(probe => resolve(createAudioResource(probe.stream, { metadata: this, inputType: probe.type })))
-                        .catch(onError);
-                })
-                .catch(onError);
-        });
-    }
+    // async createDiscordAudioResource(url) {
+    //     return new Promise((resolve, reject) => {
+    //         const process = youtubedl(
+    //             url,
+    //             {
+    //                 // o: '-',
+    //                 // q: '',
+    //                 // f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio'
+    //             },
+    //             { stdio: ['ignore', 'pipe', 'ignore'] }).then(process => {
+    //             if (!process.stdout) {
+    //                 reject(new Error('No stdout'));
+    //                 return;
+    //             }
+    //             const stream = process.stdout;
+    //             const onError = error => {
+    //                 if (!process.killed) process.kill();
+    //                 stream.resume();
+    //                 reject(error);
+    //             };
+    //             process
+    //                 .once('spawn', () => {
+    //                     demuxProbe(stream)
+    //                         .then(probe => resolve(createAudioResource(probe.stream, { metadata: this, inputType: probe.type })))
+    //                         .catch(onError);
+    //                 })
+    //                 .catch(onError);
+    //         });
+    //
+    //     });
+    // }
 }

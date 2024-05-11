@@ -1,13 +1,13 @@
-import {Addbalance as addBalance} from "./util/addbalance.js";
-import {Balance as balance} from "./balance.js";
 import {MongoUtil} from "../../util/mongoUtil.js";
+import {EconomyUtil} from "./util/EconomyUtil.js";
+import {Balance} from "./balance.js";
 
 export class Daily
 {
-    static commandName = "daily";
-    static description = "Claims the daily balance";
-    static aliases = [];
-    static async execute(message, args)
+    public static commandName = "daily";
+    public static description = "Claims the daily balance";
+    public static aliases = [];
+    public static async execute(message, args)
     {
         let userId = message.author.id
         console.log(userId)
@@ -30,14 +30,14 @@ export class Daily
         {
             if(userData.date === null || userData.date === undefined)
             {
-                addBalance.execute(userId, dailyAmount)
+                EconomyUtil.addBalance(userId, dailyAmount);
                 dbo.collection("users").updateOne({ name: userId}, { $set: {date: date}}, function(err, res) {
                 })
                 message.channel.send("You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again")
                 setTimeout(function() 
                 {
                     let temp = []
-                    balance.execute(message, temp)
+                    Balance.execute(message, temp);
                 }, 100)
             }
 
@@ -49,14 +49,14 @@ export class Daily
                 
                 if(timeDiff > 24 * 3600000 )
                 {
-                    addBalance.execute(userId, dailyAmount)
+                    EconomyUtil.addBalance(userId, dailyAmount);
                     dbo.collection("users").updateOne({ name: userId}, { $set: {date: date}}, function(err, res) {
                     })
 
                     message.channel.send(`You claimed your daily balance of ${dailyAmount}. Wait 24h to claim it again`)
                     setTimeout(function() 
                     {
-                        balance.execute(message, [])
+                        Balance.execute(message, []);
                     }, 100)
                 }
 
